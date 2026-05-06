@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AOKC 준비">
+<title>AOKC 2026 대회 준비</title>
+<style>
+:root {
+  --c-bg: #F7F6F2;
+  --c-surface: #FFFFFF;
+  --c-border: #E4E1D8;
+  --c-text: #1A1916;
+  --c-muted: #6B6860;
+  --c-accent: #1D6B47;
+  --c-accent-light: #E8F4EE;
+  --c-amber: #B87B1A;
+  --c-amber-light: #FDF3E0;
+  --c-coral: #B84A2A;
+  --c-coral-light: #FCF0EC;
+  --c-blue: #1A5CA0;
+  --c-blue-light: #EBF2FC;
+  --c-purple: #5C3DAF;
+  --c-purple-light: #F0ECFB;
+  --tab-h: 52px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  padding-bottom: calc(var(--tab-h) + 8px + var(--safe-bottom));
+}
+
+/* ── 상단 헤더 ── */
+.header {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  padding: 16px 20px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header h1 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--c-text);
+}
+.header p {
+  font-size: 12px;
+  color: var(--c-muted);
+  margin-top: 2px;
+}
+
+/* ── 하단 탭바 ── */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--tab-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(255,255,255,0.95);
+  border-top: 1px solid var(--c-border);
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+  -webkit-align-items: stretch;
+  align-items: stretch;
+  z-index: 200;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.tab-btn {
+  -webkit-flex: 1;
+  flex: 1;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 3px;
+  padding: 6px 0 0;
+  transition: opacity 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+.tab-btn .tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--c-muted);
+  letter-spacing: -0.2px;
+}
+.tab-btn.active .tab-label { color: var(--c-accent); }
+.tab-btn.active .tab-icon { filter: none; }
+
+/* ── 패널 ── */
+.panel { display: none; padding: 16px; }
+.panel.active { display: block; }
+
+/* ── 공통 카드 ── */
+.card {
+  background: var(--c-surface);
+  border-radius: 14px;
+  border: 1px solid var(--c-border);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: 12px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── 뱃지 ── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin: 2px 3px 2px 0;
+}
+.b-green { background: var(--c-accent-light); color: var(--c-accent); }
+.b-amber { background: var(--c-amber-light); color: var(--c-amber); }
+.b-coral { background: var(--c-coral-light); color: var(--c-coral); }
+.b-blue { background: var(--c-blue-light); color: var(--c-blue); }
+.b-purple { background: var(--c-purple-light); color: var(--c-purple); }
+
+/* ── 주차 토글 ── */
+.week-toggle {
+  display: -webkit-flex;
+  display: flex;
+  background: var(--c-bg);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 14px;
+}
+.week-btn {
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 7px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-muted);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all 0.2s;
+}
+.week-btn.active {
+  background: var(--c-surface);
+  color: var(--c-text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+
+/* ── 식단 행 ── */
+.meal-day {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+.meal-day:first-child { margin-top: 0; }
+.meal-grid {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 4px 8px;
+  font-size: 13px;
+}
+.meal-lbl {
+  font-weight: 600;
+  color: var(--c-muted);
+  font-size: 12px;
+  padding-top: 1px;
+}
+.meal-val { color: var(--c-text); line-height: 1.5; }
+.meal-alt { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
+
+.tip {
+  background: var(--c-accent-light);
+  border-left: 3px solid var(--c-accent);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--c-accent);
+  line-height: 1.5;
+  margin-top: 10px;
+}
+.warn {
+  background: var(--c-coral-light);
+  border-left: 3px solid var(--c-coral);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--c-coral);
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+/* ── 운동 프로그램 ── */
+.place-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.place-btn {
+  padding: 10px 8px;
+  border: 1.5px solid var(--c-border);
+  border-radius: 10px;
+  background: var(--c-surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-muted);
+  cursor: pointer;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all 0.2s;
+}
+.place-btn.active {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-light);
+}
+.ex-block { margin-bottom: 14px; }
+.ex-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: 5px;
+}
+.ex-sub {
+  font-size: 12px;
+  color: var(--c-muted);
+  line-height: 1.6;
+}
+.ex-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.ex-table th {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-muted);
+  text-align: left;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--c-border);
+}
+.ex-table td {
+  font-size: 12px;
+  color: var(--c-text);
+  padding: 7px 6px;
+  border-bottom: 1px solid var(--c-bg);
+  vertical-align: top;
+}
+.ex-table tr:last-child td { border-bottom: none; }
+.alt-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-amber);
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+/* ── 스케줄 ── */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.sched-day { font-size: 11px; font-weight: 700; color: var(--c-muted); margin-bottom: 4px; }
+.sched-pill {
+  font-size: 10px;
+  padding: 5px 2px;
+  border-radius: 8px;
+  line-height: 1.3;
+  min-height: 42px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+.s-gym { background: var(--c-accent-light); color: var(--c-accent); }
+.s-field { background: var(--c-blue-light); color: var(--c-blue); }
+.s-rest { background: var(--c-bg); color: var(--c-muted); }
+.s-korf { background: var(--c-amber-light); color: var(--c-amber); }
+.s-family { background: var(--c-coral-light); color: var(--c-coral); }
+
+/* ── 멘탈 루틴 ── */
+.routine-list { list-style: none; }
+.routine-item {
+  display: -webkit-flex;
+  display: flex;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--c-bg);
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+.routine-item:last-child { border-bottom: none; }
+.r-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-accent);
+  min-width: 52px;
+  padding-top: 1px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+.r-content { font-size: 13px; color: var(--c-text); line-height: 1.5; }
+.r-sub { font-size: 12px; color: var(--c-muted); margin-top: 3px; line-height: 1.5; }
+
+.reframe-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.reframe-bad {
+  background: #FEF2F2;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #B91C1C;
+  line-height: 1.4;
+}
+.reframe-good {
+  background: var(--c-accent-light);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--c-accent);
+  line-height: 1.4;
+}
+.reframe-arrow {
+  text-align: center;
+  font-size: 13px;
+  color: var(--c-muted);
+  margin: 2px 0;
+}
+
+/* ── 체크리스트 ── */
+.progress-wrap {
+  background: var(--c-bg);
+  border-radius: 6px;
+  height: 8px;
+  margin: 10px 0 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 8px;
+  background: var(--c-accent);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+.progress-text {
+  font-size: 11px;
+  color: var(--c-muted);
+  text-align: right;
+}
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-box {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-num { font-size: 26px; font-weight: 700; color: var(--c-text); }
+.stat-lbl { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
+
+.check-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px;
+}
+.check-section-title:first-child { margin-top: 0; }
+
+.check-item {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background 0.15s;
+}
+.check-item:active { background: var(--c-bg); }
+.check-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--c-border);
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: var(--c-surface);
+}
+.check-box.done {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+.check-box.done::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 10px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  -webkit-transform: rotate(45deg) translate(-1px,-1px);
+  transform: rotate(45deg) translate(-1px,-1px);
+}
+.check-text { font-size: 14px; color: var(--c-text); line-height: 1.3; }
+.check-text.done {
+  text-decoration: line-through;
+  color: var(--c-muted);
+}
+
+.reset-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: none;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--c-muted);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── 장보기 리스트 ── */
+.grocery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+.grocery-item {
+  background: var(--c-bg);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--c-text);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏆 AOKC 2026 대회 준비</h1>
+  <p>말레이시아 · 12월 · 마지막 무대를 최고의 컨디션으로</p>
+</div>
+
+<!-- ══════════════════════════════
+     패널 1: 식단
+══════════════════════════════ -->
+<div id="panel-diet" class="panel active">
+
+  <div style="margin-bottom:12px">
+    <span class="badge b-green">저퓨린 통풍</span>
+    <span class="badge b-amber">고지혈증 대응</span>
+    <span class="badge b-coral">저나트륨 혈압</span>
+    <span class="badge b-blue">고단백 체지방↓</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏰ 운동 시간대 추천</div>
+    <div style="font-size:14px;font-weight:700;color:var(--c-accent);margin-bottom:6px">점심 이후 (13:00~14:00)</div>
+    <div style="font-size:12px;color:var(--c-muted);line-height:1.6">기상 직후 혈압이 가장 높은 시간대(오전 6시)는 혈압이 살짝 높은 상태에서 고강도 운동 시 주의 필요. 점심 급식 후 에너지 보충 상태에서 체온·혈류가 안정적.</div>
+    <div class="warn">오전 6시 불가피 시: 워밍업 15분 이상 + 저강도로 시작</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 주간 스케줄</div>
+    <div class="schedule-grid">
+      <div class="sched-day">월</div>
+      <div class="sched-day">화</div>
+      <div class="sched-day">수</div>
+      <div class="sched-day">목</div>
+      <div class="sched-day">금</div>
+      <div class="sched-day">토</div>
+      <div class="sched-day">일</div>
+      <div class="sched-pill s-gym">헬스장</div>
+      <div class="sched-pill s-field">잔디·드릴</div>
+      <div class="sched-pill s-rest">회복</div>
+      <div class="sched-pill s-gym">헬스장</div>
+      <div class="sched-pill s-field">잔디·드릴</div>
+      <div class="sched-pill s-family">가족</div>
+      <div class="sched-pill s-korf">코프볼 3h</div>
+    </div>
+    <div class="tip" style="margin-top:12px">토요일(일 훈련 전날) 완전 휴식 — 일요일 코프볼 퍼포먼스를 위해</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🥗 식단 (점심 = 학교 급식)</div>
+
+    <div class="week-toggle">
+      <button class="week-btn active" onclick="toggleWeek('A', this)">A주 기본</button>
+      <button class="week-btn" onclick="toggleWeek('B', this)">B주 대체</button>
+    </div>
+
+    <div id="week-A">
+      <div class="meal-day">월·수·금 — 아침</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">주메뉴</div>
+        <div class="meal-val">귀리죽(귀리 50g) + 삶은 달걀 2개 + 방울토마토 7~8개
+          <div class="meal-alt">저GI · 퓨린 낮음 · 항산화</div>
+        </div>
+        <div class="meal-lbl">음료</div>
+        <div class="meal-val">물 500ml (통풍 수분 필수)</div>
+      </div>
+
+      <div class="meal-day">화·목·토 — 아침</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">주메뉴</div>
+        <div class="meal-val">그릭요거트 150g + 바나나 1개 + 아몬드 10알
+          <div class="meal-alt">단백질 15~18g · 칼륨으로 혈압 조절</div>
+        </div>
+        <div class="meal-lbl">음료</div>
+        <div class="meal-val">물 500ml / 보리차</div>
+      </div>
+
+      <div class="meal-day">일 — 아침</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">주메뉴</div>
+        <div class="meal-val">통밀빵 2쪽 + 아보카도 슬라이스 + 달걀 스크램블 2개 + 오이
+          <div class="meal-alt">주말 여유 조리 · 불포화지방+단백질 균형</div>
+        </div>
+      </div>
+
+      <div class="meal-day">매일 — 저녁</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">단백질</div>
+        <div class="meal-val">닭가슴살 150g (구이·찜)
+          <div class="meal-alt">또는 연어 120g (주 2회 이하 — 퓨린 중간)</div>
+        </div>
+        <div class="meal-lbl">채소</div>
+        <div class="meal-val">시금치·브로콜리 볶음 or 샐러드 (올리브오일 1ts)</div>
+        <div class="meal-lbl">탄수</div>
+        <div class="meal-val">잡곡밥 2/3공기 (현미·귀리 혼합)</div>
+        <div class="meal-lbl">국</div>
+        <div class="meal-val">미역국 or 두부된장국
+          <div class="meal-alt">건더기 위주 · 소금 최소화</div>
+        </div>
+      </div>
+      <div class="tip">국물은 조금만, 건더기 위주로. 소스류 최소화.</div>
+    </div>
+
+    <div id="week-B" style="display:none">
+      <div class="meal-day">월·수·금 — 아침 (대체)</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">주메뉴</div>
+        <div class="meal-val">두부 스크램블 150g + 현미밥 반공기 + 김
+          <div class="meal-alt">식물성 단백질 · 퓨린 낮음 · 콜레스테롤 없음</div>
+        </div>
+      </div>
+
+      <div class="meal-day">화·목·토 — 아침 (대체)</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">주메뉴</div>
+        <div class="meal-val">사과 1개 + 저지방 우유 200ml + 삶은 달걀 2개
+          <div class="meal-alt">간편 · 칼륨+단백질 확보</div>
+        </div>
+      </div>
+
+      <div class="meal-day">매일 — 저녁 (대체)</div>
+      <div class="meal-grid">
+        <div class="meal-lbl">단백질</div>
+        <div class="meal-val">돼지 안심 150g or 두부구이 200g
+          <div class="meal-alt">안심: 지방 낮음·퓨린 중간 / 소고기는 월 2회 이하</div>
+        </div>
+        <div class="meal-lbl">채소</div>
+        <div class="meal-val">양배추·당근·파프리카 볶음 or 생채</div>
+        <div class="meal-lbl">탄수</div>
+        <div class="meal-val">고구마 1개(중간) or 잡곡밥 2/3공기</div>
+        <div class="meal-lbl">국</div>
+        <div class="meal-val">콩나물국 or 버섯들깨탕 (소금 최소)</div>
+      </div>
+
+      <div class="meal-day">🛒 B주 장보기 리스트</div>
+      <div class="grocery-grid">
+        <div class="grocery-item">귀리·현미 혼합</div>
+        <div class="grocery-item">달걀 10개</div>
+        <div class="grocery-item">두부 2모</div>
+        <div class="grocery-item">돼지 안심</div>
+        <div class="grocery-item">사과·바나나</div>
+        <div class="grocery-item">저지방 우유</div>
+        <div class="grocery-item">양배추·당근</div>
+        <div class="grocery-item">파프리카</div>
+        <div class="grocery-item">고구마</div>
+        <div class="grocery-item">아몬드</div>
+        <div class="grocery-item">올리브오일</div>
+        <div class="grocery-item">통밀빵</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ 건강 조건별 주의</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div>
+        <div class="badge b-green" style="margin-bottom:6px">통풍</div>
+        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">내장류, 등푸른생선 과다, 맥주·소주, 과당음료 ❌<br>체리, 저지방유제품 ✅</div>
+      </div>
+      <div>
+        <div class="badge b-amber" style="margin-bottom:6px">고지혈증</div>
+        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">튀김, 가공육, 버터 ❌<br>오메가3, 견과류, 올리브오일 ✅</div>
+      </div>
+      <div style="margin-top:4px">
+        <div class="badge b-coral" style="margin-bottom:6px">혈압</div>
+        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">국물 과다, 젓갈, 라면 ❌<br>바나나, 칼륨 채소 ✅</div>
+      </div>
+      <div style="margin-top:4px">
+        <div class="badge b-blue" style="margin-bottom:6px">수분</div>
+        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">하루 2~2.5L 이상<br>보리차·물 위주 ✅</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     패널 2: 운동
+══════════════════════════════ -->
+<div id="panel-exercise" class="panel">
+
+  <div class="card">
+    <div class="card-title">📍 장소별 운동 프로그램</div>
+    <div class="place-toggle">
+      <button class="place-btn active" onclick="showPlace('gym', this)">🏋️ 헬스장</button>
+      <button class="place-btn" onclick="showPlace('field', this)">⚽ 인조잔디</button>
+      <button class="place-btn" onclick="showPlace('indoor', this)">🏃 실내체육관</button>
+      <button class="place-btn" onclick="showPlace('home', this)">🏠 집·공터</button>
+    </div>
+
+    <!-- 헬스장 -->
+    <div id="place-gym">
+      <div class="ex-block">
+        <div class="ex-title">🔵 주 추천: 기능성 복합 근력 (55분)</div>
+        <table class="ex-table">
+          <tr><th>운동</th><th>세트×횟수</th><th>목적</th></tr>
+          <tr><td>고블릿 스쿼트</td><td>4×12</td><td>하체+코어, 무릎 부담↓</td></tr>
+          <tr><td>루마니안 데드리프트</td><td>3×10</td><td>슬굴곡근·둔근, 달리기 파워</td></tr>
+          <tr><td>덤벨 스텝업</td><td>3×10(각발)</td><td>편측 하체, 균형감각</td></tr>
+          <tr><td>케이블 로테이션</td><td>3×12</td><td>코어 회전력, 슛·킥 파워</td></tr>
+          <tr><td>TRX 인버티드 로우</td><td>3×12</td><td>등 근력, 자세 교정</td></tr>
+          <tr><td>덤벨 숄더프레스</td><td>3×10</td><td>어깨 안정화</td></tr>
+        </table>
+      </div>
+      <div class="alt-label">🟡 대체 (초기 2주 적응용)</div>
+      <div class="ex-sub">레그프레스 → 시티드 로우 → 레그컬 → 체스트프레스 → 복근 머신 서킷</div>
+      <div class="warn">통풍 주의: 세트 사이 수분 보충 필수. 무게보다 자세·가동범위 우선.</div>
+    </div>
+
+    <!-- 인조잔디 -->
+    <div id="place-field" style="display:none">
+      <div class="ex-block">
+        <div class="ex-title">🔵 주 추천: 코프볼·축구 기능성 드릴 (50분)</div>
+        <div class="ex-sub">
+          <strong>워밍업 10분</strong>: 조깅 400m → 레그스윙·횡이동 → 동적 스트레칭<br><br>
+          <strong>민첩성 드릴 15분</strong>: 4방향 셔틀런 (10m×4, 5세트) / 라인 이용 지그재그<br><br>
+          <strong>방향전환·점프 15분</strong>: 5m 폭발 스타트 6회 / 점프 착지 자세 집중<br><br>
+          <strong>볼 드릴 10분</strong>: 패스&amp;런 2인 드릴 / 코프볼 슛 동작 반복
+        </div>
+      </div>
+      <div class="alt-label">🟡 대체: 인터벌 런 + 코어</div>
+      <div class="ex-sub">조깅 10분 → 100m 인터벌 (75% 강도, 8회, 휴식 90초) → 플랭크·사이드플랭크 → 쿨다운</div>
+    </div>
+
+    <!-- 실내체육관 -->
+    <div id="place-indoor" style="display:none">
+      <div class="ex-block">
+        <div class="ex-title">🔵 주 추천: 플라이오 + 코어 서킷 (50분)</div>
+        <div class="ex-sub">
+          <strong>워밍업</strong>: 트랙 400m 조깅 + 동적 워밍업<br><br>
+          <strong>플라이오 서킷 3라운드</strong>: 수직 점프 8회 → 박스 스텝업 10회 → 측면 런지 10회 → 버피 5회 → 휴식 90초<br><br>
+          <strong>코어 집중 3세트</strong>: 데드버그 12회 + 러시안 트위스트 15회 + 바이시클 크런치 20회
+        </div>
+      </div>
+      <div class="alt-label">🟡 대체: 밴드 저항 운동 + 스트레칭</div>
+      <div class="ex-sub">저항밴드 클램쉘·사이드스텝·몬스터워크 → 고관절 유연성 집중 → 폼롤러 근막이완</div>
+    </div>
+
+    <!-- 집·공터 -->
+    <div id="place-home" style="display:none">
+      <div class="ex-block">
+        <div class="ex-title">🔵 주 추천: 맨몸 복합 서킷 (45분)</div>
+        <div class="ex-sub">
+          <strong>서킷 4라운드 (휴식 60초)</strong><br>
+          스쿼트 점프 10회 / 푸시업 12회 / 싱글레그 힙힌지 8회(각발) / 마운틴클라이머 20회 / 측면 도약 스텝 10회<br><br>
+          <strong>마무리</strong>: 플랭크 1분 × 3세트 / 정적 스트레칭 10분
+        </div>
+      </div>
+      <div class="alt-label">🟡 대체: 빠르게 걷기 + 밴드 운동</div>
+      <div class="ex-sub">빠른 걷기 20분 + 밴드 저항운동 20분 + 스트레칭 — 피로·컨디션 저하일 때</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 운동 핵심 원칙</div>
+    <div style="font-size:13px;color:var(--c-text);line-height:1.7">
+      처음 <strong>2~3주는 강도보다 패턴</strong>을 잡는 데 집중하세요. 갑작스런 고강도가 가장 큰 부상 위험입니다.<br><br>
+      고립형 운동(팔·가슴만) 보다 <strong>복합 기능성 동작</strong> — 실제 코프볼·축구에서 쓰이는 고관절 회전, 편측 하체, 코어 회전력 위주.
+    </div>
+    <div class="tip">일요일 코프볼 3시간이 메인 훈련. 토요일은 반드시 완전 휴식.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     패널 3: 멘탈
+══════════════════════════════ -->
+<div id="panel-mental" class="panel">
+
+  <div class="card" style="border-color:var(--c-purple)">
+    <div style="font-size:13px;font-weight:700;color:var(--c-purple);margin-bottom:8px">핵심 원칙</div>
+    <div style="font-size:13px;color:var(--c-text);line-height:1.6">38세의 경험·전술 이해·예측 능력은 20대를 훨씬 앞섭니다. 압박감은 "잘하고 싶다"는 동기의 다른 얼굴 — 방향을 바꾸면 자신감이 됩니다.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🕐 하루 멘탈 루틴</div>
+    <ul class="routine-list">
+      <li class="routine-item">
+        <div class="r-time">기상 직후</div>
+        <div>
+          <div class="r-content">의도 설정 (2분)</div>
+          <div class="r-sub">"오늘 나는 ___에 집중한다" — 추상적 목표가 아닌 행동 단위로. 예: "오늘 수비 위치선정에 집중한다"</div>
+        </div>
+      </li>
+      <li class="routine-item">
+        <div class="r-time">운동 전</div>
+        <div>
+          <div class="r-content">활성화 루틴 (5분)</div>
+          <div class="r-sub">좋아하는 음악 1~2곡 + 파워포즈 2분(양손 허리) → 박스 호흡: 4초 흡입→4초 정지→4초 호기→4초 정지, 3회 반복</div>
+        </div>
+      </li>
+      <li class="routine-item">
+        <div class="r-time">경기 중</div>
+        <div>
+          <div class="r-content">현재 집중 키워드</div>
+          <div class="r-sub">미리 정해둔 한 단어를 반복: "지금", "연결", "가볍게" — 실수 후 즉시 리셋 신호로 활용</div>
+        </div>
+      </li>
+      <li class="routine-item">
+        <div class="r-time">운동 직후</div>
+        <div>
+          <div class="r-content">3가지 긍정 리뷰 (3분)</div>
+          <div class="r-sub">잘한 것 3가지만 기록. 부족한 점은 "다음에 ___을 해보자" 형태로만. 비판 금지.</div>
+        </div>
+      </li>
+      <li class="routine-item">
+        <div class="r-time">취침 전</div>
+        <div>
+          <div class="r-content">이미지 트레이닝 (5~10분)</div>
+          <div class="r-sub">눈 감고 성공적인 플레이 장면 상상 — 코프볼 슛, 패스 타이밍, 수비 전환. 감각까지 생생하게.</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 자기대화 재구성</div>
+    <div class="reframe-row" style="grid-template-columns:1fr;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700;color:var(--c-muted);display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center">
+        <div>❌ 지금 하는 말</div><div>✅ 바꿀 말</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <div class="reframe-bad">"예전처럼 못하면 어쩌지"</div>
+      <div class="reframe-good">"나는 16년 경험을 가진 선수다"</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <div class="reframe-bad">"실수하면 안 돼"</div>
+      <div class="reframe-good">"실수는 정보다. 다음 플레이에 반영한다"</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <div class="reframe-bad">"마지막 대회인데 잘해야 해"</div>
+      <div class="reframe-good">"16년을 마무리하는 축하의 무대"</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div class="reframe-bad">"이 경기 꼭 이겨야 해"</div>
+      <div class="reframe-good">"오늘은 첫 터치를 정확하게 하는 데 집중한다"</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 은퇴 프레이밍 전환</div>
+    <div style="font-size:13px;color:var(--c-text);line-height:1.7">"마지막이라 잘해야 해"가 가장 큰 적입니다.<br><br>2008년 코프볼을 처음 시작했을 때의 <strong>설렘</strong>을 떠올리세요. 그 마음이 가장 강력한 앵커입니다.<br><br>대회 이후 코치·취미 선수로 더 긴 인생이 남아 있어요. 이 경기는 마침표가 아닌 <strong>쉼표</strong>입니다.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     패널 4: 체크리스트
+══════════════════════════════ -->
+<div id="panel-check" class="panel">
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-num" id="done-count">0</div>
+      <div class="stat-lbl">완료</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="total-count">0</div>
+      <div class="stat-lbl">전체</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="prog-bar"></div>
+  </div>
+  <div class="progress-text" id="prog-text">0% 달성</div>
+
+  <div id="checklist-area"></div>
+
+  <button class="reset-btn" onclick="resetAll()">체크 모두 초기화</button>
+
+</div>
+
+<!-- ══ 하단 탭바 ══ -->
+<div class="tabbar">
+  <button class="tab-btn active" onclick="showTab('diet', this)">
+    <span class="tab-icon">🥗</span>
+    <span class="tab-label">식단</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('exercise', this)">
+    <span class="tab-icon">🏋️</span>
+    <span class="tab-label">운동</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('mental', this)">
+    <span class="tab-icon">🧠</span>
+    <span class="tab-label">멘탈</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('check', this)">
+    <span class="tab-icon">✅</span>
+    <span class="tab-label">체크</span>
+  </button>
+</div>
+
+<script>
+// ── 탭 전환 ──
+function showTab(name, btn) {
+  var panels = document.querySelectorAll('.panel');
+  for (var i = 0; i < panels.length; i++) {
+    panels[i].classList.remove('active');
+  }
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.remove('active');
+  }
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── 주차 토글 ──
+function toggleWeek(week, btn) {
+  document.getElementById('week-A').style.display = week === 'A' ? '' : 'none';
+  document.getElementById('week-B').style.display = week === 'B' ? '' : 'none';
+  var btns = document.querySelectorAll('.week-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.remove('active');
+  }
+  btn.classList.add('active');
+}
+
+// ── 장소 전환 ──
+function showPlace(name, btn) {
+  var places = ['gym', 'field', 'indoor', 'home'];
+  for (var i = 0; i < places.length; i++) {
+    var el = document.getElementById('place-' + places[i]);
+    if (el) el.style.display = places[i] === name ? '' : 'none';
+  }
+  var btns = document.querySelectorAll('.place-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.remove('active');
+  }
+  btn.classList.add('active');
+}
+
+// ── 체크리스트 ──
+var ITEMS = {
+  '🥗 식단': [
+    '아침 식단 계획대로 섭취',
+    '저녁 단백질 식품 준비·섭취',
+    '채소 반찬 1가지 이상 포함',
+    '국·찌개 건더기 위주 (나트륨 절제)',
+    '하루 물 2L 이상 마시기',
+    '튀김·가공육·맥주 피하기',
+    '야식·과자 섭취 없음'
+  ],
+  '🏃 운동': [
+    '예정된 운동 완료',
+    '워밍업 10분 이상 실시',
+    '운동 중 수분 보충 (500ml 이상)',
+    '쿨다운·스트레칭 10분 실시',
+    '운동 후 단백질 섭취 (30분 이내)',
+    '무리한 강도 없이 조절함'
+  ],
+  '🧠 멘탈·회복': [
+    '아침 의도 설정 (집중 포인트 1가지)',
+    '운동 전 활성화 루틴 실시',
+    '오늘 잘한 것 3가지 기록',
+    '취침 전 이미지 트레이닝 5분',
+    '자기비판 없이 하루 마무리',
+    '과정 목표에 집중 (결과 집착 없음)'
+  ],
+  '🩺 건강 관리': [
+    '통풍 약 복용',
+    '고지혈증·혈압 약 복용',
+    '7시간 이상 수면',
+    '음주 없음',
+    '피로·통증 신호 무시하지 않음'
+  ]
+};
+
+var state = {};
+var allKeys = [];
+
+function buildChecklist() {
+  var area = document.getElementById('checklist-area');
+  area.innerHTML = '';
+  allKeys = [];
+
+  var sections = Object.keys(ITEMS);
+  for (var s = 0; s < sections.length; s++) {
+    var secName = sections[s];
+    var items = ITEMS[secName];
+
+    var title = document.createElement('div');
+    title.className = 'check-section-title';
+    title.textContent = secName;
+    area.appendChild(title);
+
+    for (var i = 0; i < items.length; i++) {
+      var key = s + '-' + i;
+      allKeys.push(key);
+      state[key] = false;
+
+      var item = document.createElement('div');
+      item.className = 'check-item';
+      item.setAttribute('data-key', key);
+      item.innerHTML =
+        '<div class="check-box" id="box-' + key + '"></div>' +
+        '<span class="check-text" id="txt-' + key + '">' + items[i] + '</span>';
+      item.addEventListener('click', (function(k) {
+        return function() { toggleCheck(k); };
+      })(key));
+      area.appendChild(item);
+    }
+  }
+  updateProgress();
+  document.getElementById('total-count').textContent = allKeys.length;
+}
+
+function toggleCheck(key) {
+  state[key] = !state[key];
+  var box = document.getElementById('box-' + key);
+  var txt = document.getElementById('txt-' + key);
+  if (state[key]) {
+    box.classList.add('done');
+    txt.classList.add('done');
+  } else {
+    box.classList.remove('done');
+    txt.classList.remove('done');
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  var done = 0;
+  for (var i = 0; i < allKeys.length; i++) {
+    if (state[allKeys[i]]) done++;
+  }
+  var total = allKeys.length;
+  var pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('done-count').textContent = done;
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = pct + '% 달성';
+}
+
+function resetAll() {
+  for (var i = 0; i < allKeys.length; i++) {
+    state[allKeys[i]] = false;
+    var box = document.getElementById('box-' + allKeys[i]);
+    var txt = document.getElementById('txt-' + allKeys[i]);
+    if (box) box.classList.remove('done');
+    if (txt) txt.classList.remove('done');
+  }
+  updateProgress();
+}
+
+buildChecklist();
+</script>
+</body>
+</html>
