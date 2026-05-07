@@ -5,58 +5,699 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="AOKC 준비">
-<title>AOKC 2026 대회 준비</title>
+<meta name="apple-mobile-web-app-title" content="AOKC 2026">
+<meta name="theme-color" content="#0F4C36">
+<title>AOKC 2026 — 마지막 무대</title>
 <style>
 :root {
-  --c-bg: #F7F6F2;
+  --c-bg: #F5F2EA;
   --c-surface: #FFFFFF;
-  --c-border: #E4E1D8;
+  --c-surface-2: #FAF8F2;
+  --c-border: #E0DCCF;
   --c-text: #1A1916;
-  --c-muted: #6B6860;
-  --c-accent: #1D6B47;
-  --c-accent-light: #E8F4EE;
-  --c-amber: #B87B1A;
-  --c-amber-light: #FDF3E0;
-  --c-coral: #B84A2A;
-  --c-coral-light: #FCF0EC;
+  --c-muted: #7A7468;
+  --c-accent: #0F4C36;
+  --c-accent-2: #1D6B47;
+  --c-accent-light: #DCE9E1;
+  --c-amber: #B57318;
+  --c-amber-light: #F8EBCF;
+  --c-coral: #B8412A;
+  --c-coral-light: #F8E2DA;
   --c-blue: #1A5CA0;
-  --c-blue-light: #EBF2FC;
+  --c-blue-light: #DEEAF7;
   --c-purple: #5C3DAF;
-  --c-purple-light: #F0ECFB;
-  --tab-h: 52px;
+  --c-purple-light: #E8E2F5;
+  --c-gold: #B8923A;
+  --tab-h: 56px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+html, body {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
 body {
-  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
   background: var(--c-bg);
   color: var(--c-text);
   min-height: 100vh;
-  min-height: -webkit-fill-available;
-  padding-bottom: calc(var(--tab-h) + 8px + var(--safe-bottom));
+  padding-bottom: calc(var(--tab-h) + 12px + var(--safe-bottom));
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* ── 상단 헤더 ── */
 .header {
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  padding: 16px 20px 12px;
+  background: linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
+  color: #fff;
+  padding: 16px 18px 14px;
   position: sticky;
   top: 0;
   z-index: 100;
 }
+.header-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
 .header h1 {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.3px;
-  color: var(--c-text);
+}
+.header h1 .yr {
+  opacity: 0.8;
+  font-weight: 500;
+  font-size: 13px;
 }
 .header p {
-  font-size: 12px;
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.dday-pill {
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dday-pill .num {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* 페이즈 인디케이터 */
+.phase-bar {
+  display: -webkit-flex;
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 9.5px;
+}
+.phase-seg {
+  -webkit-flex: 1;
+  flex: 1;
+  background: rgba(255,255,255,0.18);
+  padding: 5px 4px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+.phase-seg.active {
+  background: #fff;
+  color: var(--c-accent);
+  font-weight: 700;
+}
+
+/* ── 콘텐츠 영역 ── */
+.content {
+  padding: 14px;
+}
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── 카드 공통 ── */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 6px;
+}
+.card-sub {
+  font-size: 11px;
   color: var(--c-muted);
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+.day-badge {
+  display: inline-block;
+  background: var(--c-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+/* 배지 */
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+}
+.b-teal { background: var(--c-accent-light); color: var(--c-accent); }
+.b-amber { background: var(--c-amber-light); color: var(--c-amber); }
+.b-coral { background: var(--c-coral-light); color: var(--c-coral); }
+.b-blue { background: var(--c-blue-light); color: var(--c-blue); }
+.b-purple { background: var(--c-purple-light); color: var(--c-purple); }
+
+/* 식사·운동 행 */
+.row {
+  display: -webkit-flex;
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--c-border);
+  font-size: 13px;
+}
+.row:last-child { border-bottom: none; }
+.row-label {
+  width: 70px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-muted);
+  padding-top: 1px;
+}
+.row-content { -webkit-flex: 1; flex: 1; line-height: 1.55; }
+.alt {
+  display: block;
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 3px;
+}
+.tip {
+  background: var(--c-amber-light);
+  color: #5C3D08;
+  font-size: 11.5px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.tip-blue { background: var(--c-blue-light); color: #0E3F73; }
+.tip-coral { background: var(--c-coral-light); color: #6B1E0E; }
+
+/* 주차 토글 */
+.subtabs {
+  display: -webkit-flex;
+  display: flex;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 12px;
+}
+.subtab {
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--c-muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+.subtab.on {
+  background: var(--c-surface);
+  color: var(--c-text);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* ── 표 ── */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.tbl th, .tbl td {
+  text-align: left;
+  padding: 7px 6px;
+  border-bottom: 1px solid var(--c-border);
+}
+.tbl th {
+  background: var(--c-surface-2);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--c-muted);
+}
+
+/* ── 운동 세트 ── */
+.set-list { list-style: none; }
+.set-item {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--c-border);
+}
+.set-item:last-child { border-bottom: none; }
+.set-name { -webkit-flex: 1; flex: 1; font-weight: 500; padding-right: 8px; }
+.set-rep {
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.set-tip { font-size: 11px; color: var(--c-muted); margin-top: 2px; font-weight: 400; }
+
+/* 멘탈 재구성 */
+.reframe {
+  display: -webkit-flex;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.reframe-cell {
+  -webkit-flex: 1;
+  flex: 1;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  line-height: 1.45;
+}
+.r-bad {
+  background: var(--c-coral-light);
+  color: #6B1E0E;
+  border: 1px solid #E8B6A8;
+}
+.r-good {
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  border: 1px solid #A7CFB8;
+  font-weight: 500;
+}
+
+/* ── 체크리스트 ── */
+.check-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--c-border);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.check-row:last-child { border-bottom: none; }
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--c-muted);
+  border-radius: 6px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-right: 11px;
+  margin-top: 1px;
+  position: relative;
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  background: #fff;
+}
+.checkbox.done {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+.checkbox.done:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.check-text {
+  -webkit-flex: 1;
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.check-text.done {
+  color: var(--c-muted);
+  text-decoration: line-through;
+}
+.check-section {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 16px 0 4px;
+  padding-bottom: 4px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  gap: 8px;
+}
+.check-section:first-child { margin-top: 4px; }
+.section-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-muted);
+}
+
+/* 통계 박스 */
+.stat-grid {
+  display: -webkit-flex;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.stat-box {
+  -webkit-flex: 1;
+  flex: 1;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--c-accent);
+  line-height: 1.1;
+}
+.stat-num.gold { color: var(--c-gold); }
+.stat-num.coral { color: var(--c-coral); }
+.stat-lbl {
+  font-size: 10px;
+  color: var(--c-muted);
+  margin-top: 3px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+}
+
+/* 진행 바 */
+.progress-wrap {
+  background: var(--c-border);
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 6px 0 4px;
+}
+.progress-fill {
+  height: 100%;
+  background: -webkit-linear-gradient(left, var(--c-accent), var(--c-accent-2));
+  background: linear-gradient(90deg, var(--c-accent), var(--c-accent-2));
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
+  border-radius: 4px;
+}
+.progress-text {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-accent);
+  margin-bottom: 12px;
+}
+
+/* 날짜 컨트롤 */
+.date-bar {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+.date-btn {
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.date-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.date-text .sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-muted);
+  margin-top: 2px;
+}
+
+.reset-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--c-border);
+  padding: 11px;
+  border-radius: 10px;
+  color: var(--c-muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── 진행률 — 월별 달력 ── */
+.month-nav {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.month-nav h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.nav-btn {
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.nav-btn:disabled { opacity: 0.3; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-head {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--c-muted);
+  padding: 4px 0;
+}
+.cal-head.sun { color: var(--c-coral); }
+.cal-head.sat { color: var(--c-blue); }
+.cal-cell {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  font-size: 11px;
+  position: relative;
+  height: 46px;
+  padding: 2px 0;
+}
+@supports (aspect-ratio: 1) {
+  .cal-cell { aspect-ratio: 1; height: auto; min-height: 42px; }
+}
+.cal-cell.empty { background: transparent; border: none; }
+.cal-cell.today {
+  border: 2px solid var(--c-accent);
+  font-weight: 700;
+}
+.cal-cell.dday {
+  background: var(--c-gold);
+  color: #fff;
+  font-weight: 700;
+  border-color: var(--c-gold);
+}
+.cal-cell.future { opacity: 0.5; }
+.cal-day { font-weight: 600; }
+.cal-pct {
+  font-size: 8.5px;
+  margin-top: 1px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* 달성률 색상 */
+.cal-cell.lvl-0 { background: #F0EDE3; }
+.cal-cell.lvl-1 { background: #DCE9E1; color: #0F4C36; }
+.cal-cell.lvl-2 { background: #A7CFB8; color: #0F4C36; }
+.cal-cell.lvl-3 { background: #4B8E6F; color: #fff; }
+.cal-cell.lvl-4 { background: #0F4C36; color: #fff; }
+
+/* 히트맵 */
+.heatmap-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -14px;
+  padding: 0 14px;
+}
+.heatmap {
+  display: grid;
+  grid-template-rows: repeat(7, 13px);
+  grid-auto-flow: column;
+  grid-auto-columns: 13px;
+  gap: 2px;
+  width: -webkit-fit-content;
+  width: fit-content;
+}
+.hm-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2.5px;
+  background: #F0EDE3;
+}
+.hm-cell.lvl-1 { background: #DCE9E1; }
+.hm-cell.lvl-2 { background: #A7CFB8; }
+.hm-cell.lvl-3 { background: #4B8E6F; }
+.hm-cell.lvl-4 { background: #0F4C36; }
+.hm-cell.empty { background: transparent; }
+.hm-cell.dday { background: var(--c-gold); }
+.hm-cell.today { box-shadow: 0 0 0 1.5px var(--c-text); }
+
+.hm-legend {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--c-muted);
+}
+.hm-legend .hm-cell { width: 10px; height: 10px; }
+
+.month-strip {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--c-muted);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* 카테고리 통계 */
+.cat-bar {
+  margin: 10px 0;
+}
+.cat-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.cat-name { font-weight: 600; }
+.cat-pct { font-size: 11px; color: var(--c-muted); font-weight: 600; }
+.cat-track {
+  background: var(--c-border);
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cat-fill {
+  height: 100%;
+  border-radius: 3px;
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
+}
+.cat-fill.diet { background: var(--c-accent); }
+.cat-fill.exercise { background: var(--c-blue); }
+.cat-fill.mental { background: var(--c-purple); }
+.cat-fill.health { background: var(--c-coral); }
+
+.streak-row {
+  display: -webkit-flex;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.streak-box {
+  -webkit-flex: 1;
+  flex: 1;
+  background: -webkit-linear-gradient(135deg, #FFF7E1, #F8EBCF);
+  background: linear-gradient(135deg, #FFF7E1, #F8EBCF);
+  border: 1px solid #E8D4A0;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.streak-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--c-amber);
+}
+.streak-num span { font-size: 12px; font-weight: 600; }
+.streak-lbl {
+  font-size: 10px;
+  color: #6B5510;
+  font-weight: 600;
   margin-top: 2px;
 }
 
@@ -68,21 +709,19 @@ body {
   right: 0;
   height: calc(var(--tab-h) + var(--safe-bottom));
   padding-bottom: var(--safe-bottom);
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.97);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
   border-top: 1px solid var(--c-border);
   display: -webkit-flex;
   display: flex;
-  -webkit-justify-content: space-around;
-  justify-content: space-around;
-  -webkit-align-items: stretch;
-  align-items: stretch;
   z-index: 200;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
 }
 .tab-btn {
   -webkit-flex: 1;
   flex: 1;
+  background: transparent;
+  border: none;
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: column;
@@ -91,970 +730,1101 @@ body {
   align-items: center;
   -webkit-justify-content: center;
   justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  gap: 3px;
-  padding: 6px 0 0;
-  transition: opacity 0.15s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-.tab-btn .tab-icon { font-size: 22px; line-height: 1; }
-.tab-btn .tab-label {
-  font-size: 10px;
-  font-weight: 500;
   color: var(--c-muted);
-  letter-spacing: -0.2px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  padding-top: 6px;
+  letter-spacing: -0.1px;
 }
-.tab-btn.active .tab-label { color: var(--c-accent); }
-.tab-btn.active .tab-icon { filter: none; }
-
-/* ── 패널 ── */
-.panel { display: none; padding: 16px; }
-.panel.active { display: block; }
-
-/* ── 공통 카드 ── */
-.card {
-  background: var(--c-surface);
-  border-radius: 14px;
-  border: 1px solid var(--c-border);
-  padding: 16px;
-  margin-bottom: 12px;
+.tab-btn.on { color: var(--c-accent); }
+.tab-icon {
+  font-size: 19px;
+  margin-bottom: 2px;
 }
-.card-title {
+
+/* 진행률 패널 헤더 */
+.prog-section {
   font-size: 13px;
   font-weight: 700;
-  color: var(--c-text);
-  margin-bottom: 12px;
+  margin: 18px 0 10px;
   display: -webkit-flex;
   display: flex;
   -webkit-align-items: center;
   align-items: center;
   gap: 6px;
 }
+.prog-section:first-child { margin-top: 4px; }
 
-/* ── 뱃지 ── */
-.badge {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-  margin: 2px 3px 2px 0;
-}
-.b-green { background: var(--c-accent-light); color: var(--c-accent); }
-.b-amber { background: var(--c-amber-light); color: var(--c-amber); }
-.b-coral { background: var(--c-coral-light); color: var(--c-coral); }
-.b-blue { background: var(--c-blue-light); color: var(--c-blue); }
-.b-purple { background: var(--c-purple-light); color: var(--c-purple); }
-
-/* ── 주차 토글 ── */
-.week-toggle {
+/* 멘탈 시간대 표 */
+.mental-row {
   display: -webkit-flex;
   display: flex;
-  background: var(--c-bg);
-  border-radius: 10px;
-  padding: 3px;
-  margin-bottom: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--c-border);
+  font-size: 12.5px;
 }
-.week-btn {
+.mental-row:last-child { border-bottom: none; }
+.mental-time {
+  width: 76px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-purple);
+  padding-top: 1px;
+}
+.mental-name {
   -webkit-flex: 1;
   flex: 1;
-  padding: 7px;
-  border: none;
-  background: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--c-muted);
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: all 0.2s;
 }
-.week-btn.active {
-  background: var(--c-surface);
-  color: var(--c-text);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-}
-
-/* ── 식단 행 ── */
-.meal-day {
+.mental-name .sub {
+  display: block;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--c-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-  margin-top: 14px;
-}
-.meal-day:first-child { margin-top: 0; }
-.meal-grid {
-  display: grid;
-  grid-template-columns: 70px 1fr;
-  gap: 4px 8px;
-  font-size: 13px;
-}
-.meal-lbl {
-  font-weight: 600;
   color: var(--c-muted);
-  font-size: 12px;
-  padding-top: 1px;
-}
-.meal-val { color: var(--c-text); line-height: 1.5; }
-.meal-alt { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
-
-.tip {
-  background: var(--c-accent-light);
-  border-left: 3px solid var(--c-accent);
-  border-radius: 0 8px 8px 0;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--c-accent);
-  line-height: 1.5;
-  margin-top: 10px;
-}
-.warn {
-  background: var(--c-coral-light);
-  border-left: 3px solid var(--c-coral);
-  border-radius: 0 8px 8px 0;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--c-coral);
-  line-height: 1.5;
-  margin-top: 10px;
+  margin-top: 2px;
+  line-height: 1.4;
 }
 
-/* ── 운동 프로그램 ── */
-.place-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+/* ── 안내 박스 ── */
+.notice-box {
+  background: -webkit-linear-gradient(135deg, var(--c-accent-light), #C8DDD0);
+  background: linear-gradient(135deg, var(--c-accent-light), #C8DDD0);
+  border: 1px solid #A7CFB8;
+  border-radius: 12px;
+  padding: 12px 14px;
   margin-bottom: 14px;
-}
-.place-btn {
-  padding: 10px 8px;
-  border: 1.5px solid var(--c-border);
-  border-radius: 10px;
-  background: var(--c-surface);
   font-size: 12px;
-  font-weight: 500;
-  color: var(--c-muted);
-  cursor: pointer;
-  text-align: center;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: all 0.2s;
-}
-.place-btn.active {
-  border-color: var(--c-accent);
+  line-height: 1.55;
   color: var(--c-accent);
-  background: var(--c-accent-light);
 }
-.ex-block { margin-bottom: 14px; }
-.ex-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--c-text);
-  margin-bottom: 5px;
-}
-.ex-sub {
-  font-size: 12px;
-  color: var(--c-muted);
-  line-height: 1.6;
-}
-.ex-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-.ex-table th {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--c-muted);
-  text-align: left;
-  padding: 4px 6px;
-  border-bottom: 1px solid var(--c-border);
-}
-.ex-table td {
-  font-size: 12px;
-  color: var(--c-text);
-  padding: 7px 6px;
-  border-bottom: 1px solid var(--c-bg);
-  vertical-align: top;
-}
-.ex-table tr:last-child td { border-bottom: none; }
-.alt-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--c-amber);
-  margin-top: 12px;
-  margin-bottom: 4px;
-}
+.notice-box strong { font-weight: 700; }
 
-/* ── 스케줄 ── */
-.schedule-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  text-align: center;
-}
-.sched-day { font-size: 11px; font-weight: 700; color: var(--c-muted); margin-bottom: 4px; }
-.sched-pill {
-  font-size: 10px;
-  padding: 5px 2px;
-  border-radius: 8px;
-  line-height: 1.3;
-  min-height: 42px;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-.s-gym { background: var(--c-accent-light); color: var(--c-accent); }
-.s-field { background: var(--c-blue-light); color: var(--c-blue); }
-.s-rest { background: var(--c-bg); color: var(--c-muted); }
-.s-korf { background: var(--c-amber-light); color: var(--c-amber); }
-.s-family { background: var(--c-coral-light); color: var(--c-coral); }
-
-/* ── 멘탈 루틴 ── */
-.routine-list { list-style: none; }
-.routine-item {
-  display: -webkit-flex;
-  display: flex;
-  gap: 12px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--c-bg);
-  -webkit-align-items: flex-start;
-  align-items: flex-start;
-}
-.routine-item:last-child { border-bottom: none; }
-.r-time {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--c-accent);
-  min-width: 52px;
-  padding-top: 1px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-.r-content { font-size: 13px; color: var(--c-text); line-height: 1.5; }
-.r-sub { font-size: 12px; color: var(--c-muted); margin-top: 3px; line-height: 1.5; }
-
-.reframe-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-.reframe-bad {
-  background: #FEF2F2;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 12px;
-  color: #B91C1C;
-  line-height: 1.4;
-}
-.reframe-good {
-  background: var(--c-accent-light);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 12px;
-  color: var(--c-accent);
-  line-height: 1.4;
-}
-.reframe-arrow {
-  text-align: center;
-  font-size: 13px;
-  color: var(--c-muted);
-  margin: 2px 0;
-}
-
-/* ── 체크리스트 ── */
-.progress-wrap {
-  background: var(--c-bg);
-  border-radius: 6px;
-  height: 8px;
-  margin: 10px 0 4px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 8px;
-  background: var(--c-accent);
-  border-radius: 6px;
-  transition: width 0.3s ease;
-  width: 0%;
-}
-.progress-text {
-  font-size: 11px;
-  color: var(--c-muted);
-  text-align: right;
-}
-.stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.stat-box {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-}
-.stat-num { font-size: 26px; font-weight: 700; color: var(--c-text); }
-.stat-lbl { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
-
-.check-section-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--c-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 16px 0 8px;
-}
-.check-section-title:first-child { margin-top: 0; }
-
-.check-item {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-  transition: background 0.15s;
-}
-.check-item:active { background: var(--c-bg); }
-.check-box {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 2px solid var(--c-border);
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  transition: all 0.2s;
-  background: var(--c-surface);
-}
-.check-box.done {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-}
-.check-box.done::after {
-  content: '';
-  display: block;
-  width: 6px;
-  height: 10px;
-  border: 2px solid white;
-  border-top: none;
-  border-left: none;
-  -webkit-transform: rotate(45deg) translate(-1px,-1px);
-  transform: rotate(45deg) translate(-1px,-1px);
-}
-.check-text { font-size: 14px; color: var(--c-text); line-height: 1.3; }
-.check-text.done {
-  text-decoration: line-through;
-  color: var(--c-muted);
-}
-
-.reset-btn {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin-top: 16px;
-  background: none;
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  font-size: 14px;
-  color: var(--c-muted);
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-/* ── 장보기 리스트 ── */
-.grocery-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-top: 8px;
-}
-.grocery-item {
-  background: var(--c-bg);
-  border-radius: 8px;
-  padding: 7px 10px;
-  font-size: 12px;
-  color: var(--c-text);
-}
 </style>
 </head>
 <body>
 
+<!-- ════ 헤더 ════ -->
 <div class="header">
-  <h1>🏆 AOKC 2026 대회 준비</h1>
-  <p>말레이시아 · 12월 · 마지막 무대를 최고의 컨디션으로</p>
+  <div class="header-row">
+    <div>
+      <h1>🏆 AOKC <span class="yr">2026</span></h1>
+      <p>16년의 마지막 무대를 최고의 컨디션으로</p>
+    </div>
+    <div class="dday-pill" id="dday-pill"><span class="num" id="dday-num">D-214</span></div>
+  </div>
+  <div class="phase-bar" id="phase-bar"></div>
 </div>
 
-<!-- ══════════════════════════════
+<div class="content">
+
+<!-- ════════════════════════════════════
+     패널 0: 진행률 (홈)
+════════════════════════════════════ -->
+<div id="panel-progress" class="panel active">
+
+  <div class="notice-box" id="phase-tip">
+    <!-- JS로 채워짐 -->
+  </div>
+
+  <!-- 핵심 통계 -->
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-num" id="overall-pct">0%</div>
+      <div class="stat-lbl">전체 달성</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num gold" id="streak-cur">0</div>
+      <div class="stat-lbl">연속 일수</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num coral" id="days-tracked">0</div>
+      <div class="stat-lbl">기록 일수</div>
+    </div>
+  </div>
+
+  <!-- 카테고리별 누적 -->
+  <div class="card">
+    <div class="card-title">📊 카테고리별 누적 달성률</div>
+    <div class="card-sub">전체 기록 일수 기준</div>
+    <div id="cat-bars"></div>
+  </div>
+
+  <!-- 월별 달력 -->
+  <div class="card">
+    <div class="month-nav">
+      <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+      <h3 id="cal-title">2026년 5월</h3>
+      <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-head sun">일</div>
+      <div class="cal-head">월</div>
+      <div class="cal-head">화</div>
+      <div class="cal-head">수</div>
+      <div class="cal-head">목</div>
+      <div class="cal-head">금</div>
+      <div class="cal-head sat">토</div>
+    </div>
+    <div class="cal-grid" id="cal-body" style="margin-top:4px"></div>
+  </div>
+
+  <!-- 연간 히트맵 -->
+  <div class="card">
+    <div class="card-title">🌱 7개월 전체 히트맵</div>
+    <div class="card-sub">5월 1일 ~ 12월 13일 (가로 스크롤)</div>
+    <div class="heatmap-wrap">
+      <div class="heatmap" id="heatmap"></div>
+    </div>
+    <div class="month-strip" id="month-strip"></div>
+    <div class="hm-legend">
+      <span>적게</span>
+      <div class="hm-cell"></div>
+      <div class="hm-cell lvl-1"></div>
+      <div class="hm-cell lvl-2"></div>
+      <div class="hm-cell lvl-3"></div>
+      <div class="hm-cell lvl-4"></div>
+      <span>많이</span>
+    </div>
+  </div>
+
+  <!-- 데이터 백업/복원 -->
+  <div class="card">
+    <div class="card-title">💾 데이터 백업·복원</div>
+    <div class="card-sub">사파리 캐시 정리에 대비해 가끔 백업하세요</div>
+    <div style="display:-webkit-flex;display:flex;gap:8px;margin-top:8px">
+      <button class="nav-btn" style="flex:1;padding:10px" onclick="exportData()">📤 내보내기</button>
+      <button class="nav-btn" style="flex:1;padding:10px" onclick="importData()">📥 가져오기</button>
+    </div>
+    <textarea id="data-area" style="width:100%;margin-top:10px;padding:8px;border:1px solid var(--c-border);border-radius:8px;font-size:11px;font-family:monospace;min-height:60px;display:none;-webkit-appearance:none;appearance:none;resize:vertical" placeholder="여기에 백업 데이터가 표시되거나, 붙여넣으세요"></textarea>
+    <div id="data-msg" style="font-size:11px;color:var(--c-muted);margin-top:6px"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════
      패널 1: 식단
-══════════════════════════════ -->
-<div id="panel-diet" class="panel active">
+════════════════════════════════════ -->
+<div id="panel-diet" class="panel">
 
-  <div style="margin-bottom:12px">
-    <span class="badge b-green">저퓨린 통풍</span>
-    <span class="badge b-amber">고지혈증 대응</span>
-    <span class="badge b-coral">저나트륨 혈압</span>
-    <span class="badge b-blue">고단백 체지방↓</span>
+  <div style="display:-webkit-flex;display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+    <span class="badge b-teal">통풍·저퓨린</span>
+    <span class="badge b-amber">고지혈증</span>
+    <span class="badge b-coral">저나트륨</span>
+    <span class="badge b-blue">고단백</span>
   </div>
 
-  <div class="card">
-    <div class="card-title">⏰ 운동 시간대 추천</div>
-    <div style="font-size:14px;font-weight:700;color:var(--c-accent);margin-bottom:6px">점심 이후 (13:00~14:00)</div>
-    <div style="font-size:12px;color:var(--c-muted);line-height:1.6">기상 직후 혈압이 가장 높은 시간대(오전 6시)는 혈압이 살짝 높은 상태에서 고강도 운동 시 주의 필요. 점심 급식 후 에너지 보충 상태에서 체온·혈류가 안정적.</div>
-    <div class="warn">오전 6시 불가피 시: 워밍업 15분 이상 + 저강도로 시작</div>
+  <div class="subtabs">
+    <button class="subtab on" id="wk-A-btn" onclick="showWeek('A')">A주 기본</button>
+    <button class="subtab" id="wk-B-btn" onclick="showWeek('B')">B주 대체</button>
   </div>
 
-  <div class="card">
-    <div class="card-title">📅 주간 스케줄</div>
-    <div class="schedule-grid">
-      <div class="sched-day">월</div>
-      <div class="sched-day">화</div>
-      <div class="sched-day">수</div>
-      <div class="sched-day">목</div>
-      <div class="sched-day">금</div>
-      <div class="sched-day">토</div>
-      <div class="sched-day">일</div>
-      <div class="sched-pill s-gym">헬스장</div>
-      <div class="sched-pill s-field">잔디·드릴</div>
-      <div class="sched-pill s-rest">회복</div>
-      <div class="sched-pill s-gym">헬스장</div>
-      <div class="sched-pill s-field">잔디·드릴</div>
-      <div class="sched-pill s-family">가족</div>
-      <div class="sched-pill s-korf">코프볼 3h</div>
-    </div>
-    <div class="tip" style="margin-top:12px">토요일(일 훈련 전날) 완전 휴식 — 일요일 코프볼 퍼포먼스를 위해</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🥗 식단 (점심 = 학교 급식)</div>
-
-    <div class="week-toggle">
-      <button class="week-btn active" onclick="toggleWeek('A', this)">A주 기본</button>
-      <button class="week-btn" onclick="toggleWeek('B', this)">B주 대체</button>
+  <!-- A주 -->
+  <div id="wk-A">
+    <div class="card">
+      <div class="day-badge">월·수·금 · 아침</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">현미밥 작은공기(2/3) + 삶은 달걀 2개 + 김 2장 + 방울토마토 7~8개<span class="alt">→ 저GI 탄수 + 저퓨린 단백질, 한식형 아침</span></div>
+      </div>
+      <div class="row">
+        <div class="row-label">음료</div>
+        <div class="row-content">물 500ml<span class="alt">통풍 요산 배출에 수분 필수</span></div>
+      </div>
+      <div class="tip">💡 전날 밤 지은 밥 또는 즉석현미밥 활용 / 달걀은 퓨린 매우 낮음 / 김은 칼륨·미네랄 공급</div>
     </div>
 
-    <div id="week-A">
-      <div class="meal-day">월·수·금 — 아침</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">주메뉴</div>
-        <div class="meal-val">귀리죽(귀리 50g) + 삶은 달걀 2개 + 방울토마토 7~8개
-          <div class="meal-alt">저GI · 퓨린 낮음 · 항산화</div>
-        </div>
-        <div class="meal-lbl">대체 ①</div>
-        <div class="meal-val">무첨가 두유 250ml + 삶은 달걀 2개 + 방울토마토
-          <div class="meal-alt">식물성 단백질 · 퓨린 낮음 · 고지혈증 ✅ — 반드시 무가당 제품으로</div>
-        </div>
-        <div class="meal-lbl">대체 ②</div>
-        <div class="meal-val">저염 토마토즙 150~200ml + 달걀 2개 + 아몬드 10알
-          <div class="meal-alt">칼륨·라이코펜 · 혈압 조절 ✅ — 나트륨 확인 필수 (저염·무염 제품)</div>
-        </div>
-        <div class="meal-lbl">음료</div>
-        <div class="meal-val">물 500ml (통풍 수분 필수)</div>
+    <div class="card">
+      <div class="day-badge">화·목·토 · 아침</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">플레인요거트 200g + 삶은 달걀 1개 + 바나나 1개 + 아몬드 10알<span class="alt">→ 단백질 약 15g, 불포화지방, 칼륨</span></div>
       </div>
-
-      <div class="meal-day">화·목·토 — 아침</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">주메뉴</div>
-        <div class="meal-val">서울우유 진한 요거트(플레인) 150g + 바나나 1개 + 아몬드 10알
-          <div class="meal-alt">그릭요거트와 동일한 방식으로 만든 제품 · 단백질 풍부 · 칼륨으로 혈압 조절 · 반드시 플레인(무가당) 선택</div>
-        </div>
-        <div class="meal-lbl">음료</div>
-        <div class="meal-val">물 500ml / 보리차</div>
+      <div class="row">
+        <div class="row-label">음료</div>
+        <div class="row-content">물 500ml / 보리차</div>
       </div>
-
-      <div class="meal-day">일 — 아침</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">주메뉴</div>
-        <div class="meal-val">통밀빵 2쪽 + 아보카도 슬라이스 + 달걀 스크램블 2개 + 오이
-          <div class="meal-alt">주말 여유 조리 · 불포화지방+단백질 균형</div>
-        </div>
-      </div>
-
-      <div class="meal-day">매일 — 저녁</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">단백질</div>
-        <div class="meal-val">닭가슴살 150g (구이·찜)
-          <div class="meal-alt">또는 연어 120g (주 2회 이하 — 퓨린 중간)</div>
-        </div>
-        <div class="meal-lbl">채소</div>
-        <div class="meal-val">시금치·브로콜리 볶음 or 샐러드 (올리브오일 1ts)</div>
-        <div class="meal-lbl">탄수</div>
-        <div class="meal-val">잡곡밥 2/3공기 (현미·귀리 혼합)</div>
-        <div class="meal-lbl">국</div>
-        <div class="meal-val">미역국 or 두부된장국
-          <div class="meal-alt">건더기 위주 · 소금 최소화</div>
-        </div>
-      </div>
-      <div class="tip">국물은 조금만, 건더기 위주로. 소스류 최소화.</div>
     </div>
 
-    <div id="week-B" style="display:none">
-      <div class="meal-day">월·수·금 — 아침 (대체)</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">주메뉴</div>
-        <div class="meal-val">두부 스크램블 150g + 현미밥 반공기 + 김
-          <div class="meal-alt">식물성 단백질 · 퓨린 낮음 · 콜레스테롤 없음</div>
-        </div>
+    <div class="card">
+      <div class="day-badge">일 · 아침 (여유 조리)</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">통밀빵 2쪽 + 아보카도 슬라이스 + 달걀 스크램블 2개 + 오이</div>
       </div>
+    </div>
 
-      <div class="meal-day">화·목·토 — 아침 (대체)</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">주메뉴</div>
-        <div class="meal-val">사과 1개 + 저지방 우유 200ml + 삶은 달걀 2개
-          <div class="meal-alt">간편 · 칼륨+단백질 확보</div>
-        </div>
+    <div class="card" style="border-color:var(--c-accent)">
+      <div class="day-badge" style="background:var(--c-accent-2)">매일 · 저녁 (A주)</div>
+      <div class="row">
+        <div class="row-label">단백질</div>
+        <div class="row-content"><strong>닭가슴살 150g</strong> 구이·찜 / 연어 120g(주2회 이하)<span class="alt">→ 연어 오메가3로 중성지방↓</span></div>
       </div>
-
-      <div class="meal-day">매일 — 저녁 (대체)</div>
-      <div class="meal-grid">
-        <div class="meal-lbl">단백질</div>
-        <div class="meal-val">돼지 안심 150g or 두부구이 200g
-          <div class="meal-alt">안심: 지방 낮음·퓨린 중간 / 소고기는 월 2회 이하</div>
-        </div>
-        <div class="meal-lbl">채소</div>
-        <div class="meal-val">양배추·당근·파프리카 볶음 or 생채</div>
-        <div class="meal-lbl">탄수</div>
-        <div class="meal-val">고구마 1개(중간) or 잡곡밥 2/3공기</div>
-        <div class="meal-lbl">국</div>
-        <div class="meal-val">콩나물국 or 버섯들깨탕 (소금 최소)</div>
+      <div class="row">
+        <div class="row-label">채소</div>
+        <div class="row-content">시금치·브로콜리 볶음 또는 샐러드<span class="alt">올리브오일 1티스푼, 소금 최소</span></div>
       </div>
-
-      <div class="meal-day">🛒 B주 장보기 리스트</div>
-      <div class="grocery-grid">
-        <div class="grocery-item">귀리·현미 혼합</div>
-        <div class="grocery-item">달걀 10개</div>
-        <div class="grocery-item">두부 2모</div>
-        <div class="grocery-item">돼지 안심</div>
-        <div class="grocery-item">사과·바나나</div>
-        <div class="grocery-item">저지방 우유</div>
-        <div class="grocery-item">양배추·당근</div>
-        <div class="grocery-item">파프리카</div>
-        <div class="grocery-item">고구마</div>
-        <div class="grocery-item">아몬드</div>
-        <div class="grocery-item">올리브오일</div>
-        <div class="grocery-item">통밀빵</div>
+      <div class="row">
+        <div class="row-label">탄수</div>
+        <div class="row-content">잡곡밥 2/3공기 (현미+귀리)</div>
       </div>
+      <div class="row">
+        <div class="row-label">국</div>
+        <div class="row-content">미역국 / 두부된장국 (소금 최소)</div>
+      </div>
+      <div class="tip tip-coral">⚠️ 저녁 나트륨 주의 — 국은 건더기 위주, 국물은 조금만</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">⚠️ 건강 조건별 주의</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div>
-        <div class="badge b-green" style="margin-bottom:6px">통풍</div>
-        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">내장류, 등푸른생선 과다, 맥주·소주, 과당음료 ❌<br>체리, 저지방유제품 ✅</div>
-      </div>
-      <div>
-        <div class="badge b-amber" style="margin-bottom:6px">고지혈증</div>
-        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">튀김, 가공육, 버터 ❌<br>오메가3, 견과류, 올리브오일 ✅</div>
-      </div>
-      <div style="margin-top:4px">
-        <div class="badge b-coral" style="margin-bottom:6px">혈압</div>
-        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">국물 과다, 젓갈, 라면 ❌<br>바나나, 칼륨 채소 ✅</div>
-      </div>
-      <div style="margin-top:4px">
-        <div class="badge b-blue" style="margin-bottom:6px">수분</div>
-        <div style="font-size:12px;color:var(--c-muted);line-height:1.5">하루 2~2.5L 이상<br>보리차·물 위주 ✅</div>
+  <!-- B주 -->
+  <div id="wk-B" style="display:none">
+    <div class="card">
+      <div class="day-badge">월·수·금 · 아침</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">두부 스크램블 150g + 현미밥 반공기 + 김<span class="alt">→ 식물성 단백질로 부담 분산</span></div>
       </div>
     </div>
+    <div class="card">
+      <div class="day-badge">화·목·토 · 아침</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">사과 1개 + 저지방 우유 200ml + 삶은 달걀 2개</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="day-badge">일 · 아침</div>
+      <div class="row">
+        <div class="row-label">주메뉴</div>
+        <div class="row-content">통밀빵 + 달걀 + 아보카도 (A주와 동일)</div>
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--c-accent)">
+      <div class="day-badge" style="background:var(--c-accent-2)">매일 · 저녁 (B주)</div>
+      <div class="row"><div class="row-label">단백질</div><div class="row-content">돼지 안심 150g 또는 두부구이 200g</div></div>
+      <div class="row"><div class="row-label">채소</div><div class="row-content">양배추·당근·파프리카 볶음 또는 생채</div></div>
+      <div class="row"><div class="row-label">탄수</div><div class="row-content">고구마 1개(중간) 또는 잡곡밥 2/3공기</div></div>
+      <div class="row"><div class="row-label">국</div><div class="row-content">콩나물국 또는 버섯들깨탕 (소금 최소)</div></div>
+    </div>
+  </div>
+
+  <!-- 장보기 -->
+  <div class="card">
+    <div class="card-title">🛒 주간 장보기</div>
+    <div style="font-size:11.5px;line-height:1.6;color:var(--c-muted)">
+      <strong style="color:var(--c-accent)">A주:</strong> 현미 / 달걀 10개 / 김 / 플레인요거트 / 닭가슴살 / 연어 / 방울토마토 / 시금치·브로콜리 / 아몬드 / 바나나 / 올리브오일 / 통밀빵 / 아보카도<br><br>
+      <strong style="color:var(--c-accent)">B주:</strong> 현미 / 달걀 10개 / 두부 2모 / 돼지안심 / 사과 / 저지방우유 / 양배추·당근·파프리카 / 고구마 / 아몬드
+    </div>
+  </div>
+
+  <!-- 대체 식품 리스트 -->
+  <div class="card" style="border-color:var(--c-blue)">
+    <div class="card-title">🔄 대체 식품 리스트</div>
+    <div class="card-sub">기분·시간·재료 상황에 따라 같은 영양 역할로 교체 가능</div>
+
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">아침 탄수</div>
+      <div class="row-content">현미밥 ↔ <strong>귀리죽</strong> · 오트밀(우유/두유) · 통밀빵 2쪽 · 고구마 1개 · 바나나 1개+플레인요거트<span class="alt">→ 저GI 탄수, 통풍 안전</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">아침 단백</div>
+      <div class="row-content">삶은 달걀 ↔ 달걀 스크램블 · 두부 스크램블 150g · 플레인요거트 200g · 저지방우유 200ml + 견과류<span class="alt">→ 모두 저퓨린</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">저녁 단백</div>
+      <div class="row-content">닭가슴살 ↔ 닭다리살(껍질 제거) · 돼지 안심 · 두부구이 · 흰살생선(대구·도미) · 연어(주2회 이하)<span class="alt">→ 등푸른생선 다량 섭취 X (퓨린)</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">저녁 탄수</div>
+      <div class="row-content">잡곡밥 ↔ 현미밥 · 고구마 · 통밀파스타 · 통보리밥<span class="alt">→ 흰쌀밥은 가급적 피하기</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">채소</div>
+      <div class="row-content">시금치·브로콜리 ↔ 양배추 · 파프리카 · 당근 · 오이 · 양상추 · 케일<span class="alt">→ 시금치·아스파라거스는 통풍 시 너무 자주 X</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">간식</div>
+      <div class="row-content">아몬드 ↔ 호두 · 캐슈넛 · 사과 · 블루베리 · 체리(통풍에 좋음) · 삶은 달걀<span class="alt">→ 견과류는 하루 한 줌</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">국</div>
+      <div class="row-content">미역국 ↔ 콩나물국 · 두부된장국 · 무국 · 버섯들깨탕<span class="alt">→ 멸치·진한 육수는 퓨린 ↑, 양 줄이기</span></div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">음료</div>
+      <div class="row-content">물 ↔ 보리차 · 옥수수수염차 · 저지방우유 · 블랙커피 1~2잔(요산 배출 도움)<span class="alt">→ 과당음료·맥주·소주 절대 X</span></div>
+    </div>
+    <div class="tip tip-blue">💡 동일 영양 역할 안에서는 자유롭게 교체. 단 통풍·고지혈증·혈압 주의 식품은 피할 것</div>
+  </div>
+
+  <!-- 대회 임박 -->
+  <div class="card" style="border-color:var(--c-amber)">
+    <div class="card-title">🏆 대회 임박 식단 (D-7 ~ D-1)</div>
+    <div class="card-sub">테이퍼링 기간 — 수분과 탄수 충전</div>
+    <div class="row">
+      <div class="row-label">D-7~3</div>
+      <div class="row-content">평소대로 / 단백질 약간 증가 / 채소 충분</div>
+    </div>
+    <div class="row">
+      <div class="row-label">D-2,1</div>
+      <div class="row-content">탄수 비율 ↑ (현미·고구마·바나나) / 익숙한 음식만 / 새로운 음식·생식 X</div>
+    </div>
+    <div class="row">
+      <div class="row-label">경기일</div>
+      <div class="row-content">3시간 전 식사: 흰밥+달걀+바나나 / 1시간 전: 바나나·물 / 카페인은 평소 양만</div>
+    </div>
+    <div class="tip tip-coral">⚠️ 대회기간 절대 금지: 회·생굴·내장류·맥주·소주 (통풍 발작 위험)</div>
   </div>
 
 </div>
 
-<!-- ══════════════════════════════
+<!-- ════════════════════════════════════
      패널 2: 운동
-══════════════════════════════ -->
+════════════════════════════════════ -->
 <div id="panel-exercise" class="panel">
 
   <div class="card">
-    <div class="card-title">📍 장소별 운동 프로그램</div>
-    <div class="place-toggle">
-      <button class="place-btn active" onclick="showPlace('gym', this)">🏋️ 헬스장</button>
-      <button class="place-btn" onclick="showPlace('field', this)">⚽ 인조잔디</button>
-      <button class="place-btn" onclick="showPlace('indoor', this)">🏃 실내체육관</button>
-      <button class="place-btn" onclick="showPlace('home', this)">🏠 집·공터</button>
-    </div>
-
-    <!-- 헬스장 -->
-    <div id="place-gym">
-      <div class="ex-block">
-        <div class="ex-title">🔵 주 추천: 기능성 복합 근력 (55분)</div>
-        <table class="ex-table">
-          <tr><th>운동</th><th>세트×횟수</th><th>목적</th></tr>
-          <tr><td>고블릿 스쿼트</td><td>4×12</td><td>하체+코어, 무릎 부담↓</td></tr>
-          <tr><td>루마니안 데드리프트</td><td>3×10</td><td>슬굴곡근·둔근, 달리기 파워</td></tr>
-          <tr><td>덤벨 스텝업</td><td>3×10(각발)</td><td>편측 하체, 균형감각</td></tr>
-          <tr><td>케이블 로테이션</td><td>3×12</td><td>코어 회전력, 슛·킥 파워</td></tr>
-          <tr><td>TRX 인버티드 로우</td><td>3×12</td><td>등 근력, 자세 교정</td></tr>
-          <tr><td>덤벨 숄더프레스</td><td>3×10</td><td>어깨 안정화</td></tr>
-        </table>
-      </div>
-      <div class="alt-label">🟡 대체 (초기 2주 적응용)</div>
-      <div class="ex-sub">레그프레스 → 시티드 로우 → 레그컬 → 체스트프레스 → 복근 머신 서킷</div>
-      <div class="warn">통풍 주의: 세트 사이 수분 보충 필수. 무게보다 자세·가동범위 우선.</div>
-    </div>
-
-    <!-- 인조잔디 -->
-    <div id="place-field" style="display:none">
-      <div class="ex-block">
-        <div class="ex-title">🔵 주 추천: 코프볼·축구 기능성 드릴 (50분)</div>
-        <div class="ex-sub">
-          <strong>워밍업 10분</strong>: 조깅 400m → 레그스윙·횡이동 → 동적 스트레칭<br><br>
-          <strong>민첩성 드릴 15분</strong>: 4방향 셔틀런 (10m×4, 5세트) / 라인 이용 지그재그<br><br>
-          <strong>방향전환·점프 15분</strong>: 5m 폭발 스타트 6회 / 점프 착지 자세 집중<br><br>
-          <strong>볼 드릴 10분</strong>: 패스&amp;런 2인 드릴 / 코프볼 슛 동작 반복
-        </div>
-      </div>
-      <div class="alt-label">🟡 대체: 인터벌 런 + 코어</div>
-      <div class="ex-sub">조깅 10분 → 100m 인터벌 (75% 강도, 8회, 휴식 90초) → 플랭크·사이드플랭크 → 쿨다운</div>
-    </div>
-
-    <!-- 실내체육관 -->
-    <div id="place-indoor" style="display:none">
-      <div class="ex-block">
-        <div class="ex-title">🔵 주 추천: 플라이오 + 코어 서킷 (50분)</div>
-        <div class="ex-sub">
-          <strong>워밍업</strong>: 트랙 400m 조깅 + 동적 워밍업<br><br>
-          <strong>플라이오 서킷 3라운드</strong>: 수직 점프 8회 → 박스 스텝업 10회 → 측면 런지 10회 → 버피 5회 → 휴식 90초<br><br>
-          <strong>코어 집중 3세트</strong>: 데드버그 12회 + 러시안 트위스트 15회 + 바이시클 크런치 20회
-        </div>
-      </div>
-      <div class="alt-label">🟡 대체: 밴드 저항 운동 + 스트레칭</div>
-      <div class="ex-sub">저항밴드 클램쉘·사이드스텝·몬스터워크 → 고관절 유연성 집중 → 폼롤러 근막이완</div>
-    </div>
-
-    <!-- 집·공터 -->
-    <div id="place-home" style="display:none">
-      <div class="ex-block">
-        <div class="ex-title">🔵 주 추천: 맨몸 복합 서킷 (45분)</div>
-        <div class="ex-sub">
-          <strong>서킷 4라운드 (휴식 60초)</strong><br>
-          스쿼트 점프 10회 / 푸시업 12회 / 싱글레그 힙힌지 8회(각발) / 마운틴클라이머 20회 / 측면 도약 스텝 10회<br><br>
-          <strong>마무리</strong>: 플랭크 1분 × 3세트 / 정적 스트레칭 10분
-        </div>
-      </div>
-      <div class="alt-label">🟡 대체: 빠르게 걷기 + 밴드 운동</div>
-      <div class="ex-sub">빠른 걷기 20분 + 밴드 저항운동 20분 + 스트레칭 — 피로·컨디션 저하일 때</div>
-    </div>
+    <div class="card-title">📅 주간 스케줄</div>
+    <table class="tbl">
+      <tr><th>요일</th><th>내용</th><th>장소</th></tr>
+      <tr><td><strong>월</strong></td><td>기능성 근력</td><td>헬스장</td></tr>
+      <tr><td><strong>화</strong></td><td>민첩성·드릴</td><td>잔디·공터</td></tr>
+      <tr><td><strong>수</strong></td><td>완전 회복 (산책·스트레칭)</td><td>—</td></tr>
+      <tr><td><strong>목</strong></td><td>기능성 근력</td><td>헬스장</td></tr>
+      <tr><td><strong>금</strong></td><td>민첩성·드릴 / 코어</td><td>잔디·공터</td></tr>
+      <tr><td><strong>토</strong></td><td>가족 시간 (휴식)</td><td>—</td></tr>
+      <tr><td><strong>일</strong></td><td><strong>코프볼 단체훈련</strong></td><td>코트 (3시간)</td></tr>
+    </table>
+    <div class="tip">💡 점심 후 시간대 권장 (혈압 안정) / 토요일 휴식이 일요일 훈련 퍼포먼스 결정</div>
   </div>
 
   <div class="card">
-    <div class="card-title">🎯 운동 핵심 원칙</div>
-    <div style="font-size:13px;color:var(--c-text);line-height:1.7">
-      처음 <strong>2~3주는 강도보다 패턴</strong>을 잡는 데 집중하세요. 갑작스런 고강도가 가장 큰 부상 위험입니다.<br><br>
-      고립형 운동(팔·가슴만) 보다 <strong>복합 기능성 동작</strong> — 실제 코프볼·축구에서 쓰이는 고관절 회전, 편측 하체, 코어 회전력 위주.
-    </div>
-    <div class="tip">일요일 코프볼 3시간이 메인 훈련. 토요일은 반드시 완전 휴식.</div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════════════
-     패널 3: 멘탈
-══════════════════════════════ -->
-<div id="panel-mental" class="panel">
-
-  <div class="card" style="border-color:var(--c-purple)">
-    <div style="font-size:13px;font-weight:700;color:var(--c-purple);margin-bottom:8px">핵심 원칙</div>
-    <div style="font-size:13px;color:var(--c-text);line-height:1.6">38세의 경험·전술 이해·예측 능력은 20대를 훨씬 앞섭니다. 압박감은 "잘하고 싶다"는 동기의 다른 얼굴 — 방향을 바꾸면 자신감이 됩니다.</div>
+    <div class="card-title">🏋️ 헬스장 — 기능성 근력 (월·목, 약 55분)</div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">고블릿 스쿼트<div class="set-tip">하체+코어, 무릎 부담↓</div></div><div class="set-rep">4×12</div></li>
+      <li class="set-item"><div class="set-name">루마니안 데드리프트<div class="set-tip">슬굴곡근·둔근, 달리기 파워</div></div><div class="set-rep">3×10</div></li>
+      <li class="set-item"><div class="set-name">덤벨 스텝업<div class="set-tip">편측 하체, 균형감각</div></div><div class="set-rep">3×10/발</div></li>
+      <li class="set-item"><div class="set-name">케이블 로테이션<div class="set-tip">코어 회전력, 슛·킥 파워</div></div><div class="set-rep">3×12</div></li>
+      <li class="set-item"><div class="set-name">TRX 인버티드 로우<div class="set-tip">등 근력, 자세 교정</div></div><div class="set-rep">3×12</div></li>
+      <li class="set-item"><div class="set-name">덤벨 숄더프레스<div class="set-tip">어깨 안정화</div></div><div class="set-rep">3×10</div></li>
+    </ul>
+    <div class="tip tip-coral">⚠️ 통풍 주의: 세트 사이 수분 보충 / 무게보다 자세·가동범위 우선</div>
   </div>
 
   <div class="card">
-    <div class="card-title">🕐 하루 멘탈 루틴</div>
-    <ul class="routine-list">
-      <li class="routine-item">
-        <div class="r-time">기상 직후</div>
-        <div>
-          <div class="r-content">의도 설정 (2분)</div>
-          <div class="r-sub">"오늘 나는 ___에 집중한다" — 추상적 목표가 아닌 행동 단위로. 예: "오늘 수비 위치선정에 집중한다"</div>
-        </div>
-      </li>
-      <li class="routine-item">
-        <div class="r-time">운동 전</div>
-        <div>
-          <div class="r-content">활성화 루틴 (5분)</div>
-          <div class="r-sub">좋아하는 음악 1~2곡 + 파워포즈 2분(양손 허리) → 박스 호흡: 4초 흡입→4초 정지→4초 호기→4초 정지, 3회 반복</div>
-        </div>
-      </li>
-      <li class="routine-item">
-        <div class="r-time">경기 중</div>
-        <div>
-          <div class="r-content">현재 집중 키워드</div>
-          <div class="r-sub">미리 정해둔 한 단어를 반복: "지금", "연결", "가볍게" — 실수 후 즉시 리셋 신호로 활용</div>
-        </div>
-      </li>
-      <li class="routine-item">
-        <div class="r-time">운동 직후</div>
-        <div>
-          <div class="r-content">3가지 긍정 리뷰 (3분)</div>
-          <div class="r-sub">잘한 것 3가지만 기록. 부족한 점은 "다음에 ___을 해보자" 형태로만. 비판 금지.</div>
-        </div>
-      </li>
-      <li class="routine-item">
-        <div class="r-time">취침 전</div>
-        <div>
-          <div class="r-content">이미지 트레이닝 (5~10분)</div>
-          <div class="r-sub">눈 감고 성공적인 플레이 장면 상상 — 코프볼 슛, 패스 타이밍, 수비 전환. 감각까지 생생하게.</div>
-        </div>
-      </li>
+    <div class="card-title">🏃 잔디·공터 — 민첩성 드릴 (화·금, 약 50분)</div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">워밍업<div class="set-tip">조깅 400m → 레그스윙 → 동적 스트레칭</div></div><div class="set-rep">10분</div></li>
+      <li class="set-item"><div class="set-name">민첩성 드릴<div class="set-tip">4방향 셔틀런 10m×4 (5세트) / 지그재그</div></div><div class="set-rep">15분</div></li>
+      <li class="set-item"><div class="set-name">방향전환·점프<div class="set-tip">5m 폭발 스타트 6회 / 점프 착지 자세</div></div><div class="set-rep">15분</div></li>
+      <li class="set-item"><div class="set-name">볼 드릴<div class="set-tip">패스&런 / 코프볼 슛 동작</div></div><div class="set-rep">10분</div></li>
     </ul>
   </div>
 
   <div class="card">
-    <div class="card-title">🔄 자기대화 재구성</div>
-    <div class="reframe-row" style="grid-template-columns:1fr;margin-bottom:6px">
-      <div style="font-size:11px;font-weight:700;color:var(--c-muted);display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center">
-        <div>❌ 지금 하는 말</div><div>✅ 바꿀 말</div>
-      </div>
-    </div>
+    <div class="card-title">🤸 맨몸 서킷 — 보조용 (집·공터)</div>
+    <div class="card-sub">4라운드, 라운드 사이 휴식 60초</div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">스쿼트 점프</div><div class="set-rep">10회</div></li>
+      <li class="set-item"><div class="set-name">푸시업</div><div class="set-rep">12회</div></li>
+      <li class="set-item"><div class="set-name">싱글레그 힙힌지</div><div class="set-rep">8/발</div></li>
+      <li class="set-item"><div class="set-name">마운틴 클라이머</div><div class="set-rep">20회</div></li>
+      <li class="set-item"><div class="set-name">측면 도약 스텝</div><div class="set-rep">10회</div></li>
+    </ul>
+    <div class="tip">🧘 마무리: 플랭크 1분×3 / 정적 스트레칭 10분</div>
+  </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-      <div class="reframe-bad">"예전처럼 못하면 어쩌지"</div>
-      <div class="reframe-good">"나는 16년 경험을 가진 선수다"</div>
+  <!-- 페이즈별 가이드 -->
+  <div class="card" style="border-color:var(--c-amber)">
+    <div class="card-title">📈 시즌 페이즈 가이드</div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-accent);font-weight:700">기초기</div>
+      <div class="row-content"><strong>5~7월</strong> · 근력·체력 기초 다지기 / 무게보다 횟수와 자세 / 일요훈련 강도 70%</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-      <div class="reframe-bad">"실수하면 안 돼"</div>
-      <div class="reframe-good">"실수는 정보다. 다음 플레이에 반영한다"</div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">발전기</div>
+      <div class="row-content"><strong>8~10월</strong> · 강도 점진 ↑ / 민첩성·폭발력 비중 ↑ / 일요훈련 강도 80~90%</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-      <div class="reframe-bad">"마지막 대회인데 잘해야 해"</div>
-      <div class="reframe-good">"16년을 마무리하는 축하의 무대"</div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-coral);font-weight:700">시합기</div>
+      <div class="row-content"><strong>11월</strong> · 실전 시뮬레이션 / 부상 예방 우선 / 일요훈련 100% (전술 정합도)</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-      <div class="reframe-bad">"이 경기 꼭 이겨야 해"</div>
-      <div class="reframe-good">"오늘은 첫 터치를 정확하게 하는 데 집중한다"</div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-amber);font-weight:700">테이퍼링</div>
+      <div class="row-content"><strong>D-10 ~ D-1</strong> · 볼륨 50~60% 감소, 강도는 유지 / D-3부터 가벼운 동작만 / 충분한 수면</div>
+    </div>
+    <div class="tip">💡 테이퍼링은 "쉬는 것"이 아닌 "신선도 회복기" — 부하만 줄이고 빠른 동작은 유지</div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════
+     패널 3: 멘탈
+════════════════════════════════════ -->
+<div id="panel-mental" class="panel">
+
+  <div class="card">
+    <div class="card-title">🎯 핵심 원칙</div>
+    <div style="font-size:13px;line-height:1.6;color:var(--c-text)">
+      "과거와 비교"를 <strong style="color:var(--c-accent)">"지금 최선"</strong>으로 전환.<br><br>
+      이 대회는 마침표가 아닌 <strong style="color:var(--c-accent)">16년 여정의 축하 무대</strong>. 대회 이후 코치·취미 선수로 인생은 더 길게 이어집니다.
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">🎯 은퇴 프레이밍 전환</div>
-    <div style="font-size:13px;color:var(--c-text);line-height:1.7">"마지막이라 잘해야 해"가 가장 큰 적입니다.<br><br>2008년 코프볼을 처음 시작했을 때의 <strong>설렘</strong>을 떠올리세요. 그 마음이 가장 강력한 앵커입니다.<br><br>대회 이후 코치·취미 선수로 더 긴 인생이 남아 있어요. 이 경기는 마침표가 아닌 <strong>쉼표</strong>입니다.</div>
+    <div class="card-title">⏰ 하루 멘탈 루틴</div>
+    <div class="mental-row">
+      <div class="mental-time">기상직후</div>
+      <div class="mental-name">의도 설정 (2분)<span class="sub">"오늘 나는 ___에 집중한다" — 행동 단위로</span></div>
+    </div>
+    <div class="mental-row">
+      <div class="mental-time">운동전</div>
+      <div class="mental-name">활성화 루틴 (5분)<span class="sub">음악 1~2곡 + 파워포즈 2분 + 박스호흡 3회</span></div>
+    </div>
+    <div class="mental-row">
+      <div class="mental-time">훈련중</div>
+      <div class="mental-name">집중 키워드<span class="sub">한 단어 반복 (예: "지금", "연결", "가볍게")</span></div>
+    </div>
+    <div class="mental-row">
+      <div class="mental-time">운동후</div>
+      <div class="mental-name">3가지 긍정 리뷰<span class="sub">잘한 것 3가지만 기록 / 개선점은 "다음에 ___을 해보자"</span></div>
+    </div>
+    <div class="mental-row">
+      <div class="mental-time">취침전</div>
+      <div class="mental-name">이미지 트레이닝 (5~10분)<span class="sub">성공 플레이 장면 — 감각까지 생생하게</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 자기대화 재구성</div>
+    <div class="reframe">
+      <div class="reframe-cell r-bad">"예전처럼 못하면 어쩌지"</div>
+      <div class="reframe-cell r-good">"나는 16년 경험을 가진 선수다"</div>
+    </div>
+    <div class="reframe">
+      <div class="reframe-cell r-bad">"실수하면 안 돼"</div>
+      <div class="reframe-cell r-good">"실수는 정보다. 다음 플레이에 반영"</div>
+    </div>
+    <div class="reframe">
+      <div class="reframe-cell r-bad">"마지막 대회인데 잘해야 해"</div>
+      <div class="reframe-cell r-good">"16년을 마무리하는 축하의 무대"</div>
+    </div>
+    <div class="reframe">
+      <div class="reframe-cell r-bad">"이 경기 꼭 이겨야 해"</div>
+      <div class="reframe-cell r-good">"오늘은 첫 터치를 정확하게 하는 데 집중"</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 대회 임박 멘탈 (D-7 ~ D-Day)</div>
+    <div class="row">
+      <div class="row-label">D-7~3</div>
+      <div class="row-content">평소 루틴 유지 / 자료·영상 정리 (덜어내기) / 새로운 시도 X</div>
+    </div>
+    <div class="row">
+      <div class="row-label">D-2,1</div>
+      <div class="row-content">시합 시뮬레이션 이미지 트레이닝 매일 10분 / 익숙한 음악·자기대화</div>
+    </div>
+    <div class="row">
+      <div class="row-label">경기당일</div>
+      <div class="row-content">정해둔 루틴만 / 다른 선수와 비교 X / "지금 이 한 플레이"</div>
+    </div>
+    <div class="row">
+      <div class="row-label">경기후</div>
+      <div class="row-content">결과와 무관하게 동료들에게 "고마웠다" 한마디 / 16년 마무리 의식</div>
+    </div>
+  </div>
+
+  <div class="card" style="background:-webkit-linear-gradient(135deg,#FFF7E1,#F8EBCF);background:linear-gradient(135deg,#FFF7E1,#F8EBCF);border-color:#E8D4A0">
+    <div class="card-title" style="color:#6B5510">✨ 마음에 새길 한 문장</div>
+    <div style="font-size:14px;font-weight:600;color:#6B5510;line-height:1.6;font-style:italic">
+      "2008년에 처음 코프볼 코트에 섰을 때의 그 설렘. 그 마음이 가장 강력한 앵커다."
+    </div>
   </div>
 
 </div>
 
-<!-- ══════════════════════════════
+<!-- ════════════════════════════════════
      패널 4: 체크리스트
-══════════════════════════════ -->
+════════════════════════════════════ -->
 <div id="panel-check" class="panel">
 
-  <div class="stat-row">
-    <div class="stat-box">
-      <div class="stat-num" id="done-count">0</div>
-      <div class="stat-lbl">완료</div>
+  <!-- 날짜 컨트롤 -->
+  <div class="date-bar">
+    <button class="date-btn" onclick="changeDate(-1)">‹</button>
+    <div class="date-text" id="check-date-text">오늘
+      <span class="sub" id="check-date-sub"></span>
     </div>
-    <div class="stat-box">
-      <div class="stat-num" id="total-count">0</div>
-      <div class="stat-lbl">전체</div>
-    </div>
+    <button class="date-btn" onclick="changeDate(1)">›</button>
   </div>
-  <div class="progress-wrap">
-    <div class="progress-fill" id="prog-bar"></div>
-  </div>
-  <div class="progress-text" id="prog-text">0% 달성</div>
 
+  <!-- 진행 -->
+  <div class="progress-wrap">
+    <div class="progress-fill" id="prog-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-text" id="prog-text">0% 달성 (0/24)</div>
+
+  <!-- 체크리스트 -->
   <div id="checklist-area"></div>
 
-  <button class="reset-btn" onclick="resetAll()">체크 모두 초기화</button>
+  <button class="reset-btn" onclick="resetToday()">오늘 체크 초기화</button>
 
 </div>
 
-<!-- ══ 하단 탭바 ══ -->
+</div><!-- /.content -->
+
+<!-- ════ 하단 탭바 ════ -->
 <div class="tabbar">
-  <button class="tab-btn active" onclick="showTab('diet', this)">
-    <span class="tab-icon">🥗</span>
-    <span class="tab-label">식단</span>
-  </button>
-  <button class="tab-btn" onclick="showTab('exercise', this)">
-    <span class="tab-icon">🏋️</span>
-    <span class="tab-label">운동</span>
-  </button>
-  <button class="tab-btn" onclick="showTab('mental', this)">
-    <span class="tab-icon">🧠</span>
-    <span class="tab-label">멘탈</span>
-  </button>
-  <button class="tab-btn" onclick="showTab('check', this)">
-    <span class="tab-icon">✅</span>
-    <span class="tab-label">체크</span>
-  </button>
+  <button class="tab-btn on" onclick="showTab('progress', this)"><span class="tab-icon">📊</span>진행률</button>
+  <button class="tab-btn" onclick="showTab('diet', this)"><span class="tab-icon">🥗</span>식단</button>
+  <button class="tab-btn" onclick="showTab('exercise', this)"><span class="tab-icon">🏋️</span>운동</button>
+  <button class="tab-btn" onclick="showTab('mental', this)"><span class="tab-icon">🧠</span>멘탈</button>
+  <button class="tab-btn" onclick="showTab('check', this)"><span class="tab-icon">✅</span>체크</button>
 </div>
 
 <script>
-// ── 탭 전환 ──
-function showTab(name, btn) {
-  var panels = document.querySelectorAll('.panel');
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].classList.remove('active');
-  }
-  var btns = document.querySelectorAll('.tab-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('active');
-  }
-  document.getElementById('panel-' + name).classList.add('active');
-  btn.classList.add('active');
-  window.scrollTo(0, 0);
-}
+// ═══════════════════════════════════════════
+// 데이터 정의
+// ═══════════════════════════════════════════
+var COMP_START = new Date(2026, 11, 6); // 12/6
+var COMP_END = new Date(2026, 11, 13);  // 12/13
+var PLAN_START = new Date(2026, 4, 1);  // 5/1
 
-// ── 주차 토글 ──
-function toggleWeek(week, btn) {
-  document.getElementById('week-A').style.display = week === 'A' ? '' : 'none';
-  document.getElementById('week-B').style.display = week === 'B' ? '' : 'none';
-  var btns = document.querySelectorAll('.week-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('active');
-  }
-  btn.classList.add('active');
-}
+var checklistDef = [
+  { cat: 'diet', label: '🥗 식단', items: [
+    { k: 'd1', t: '아침 식단 계획대로 섭취' },
+    { k: 'd2', t: '저녁 단백질 식품 섭취' },
+    { k: 'd3', t: '채소 반찬 1가지 이상' },
+    { k: 'd4', t: '국·찌개 나트륨 줄이기 (건더기 위주)' },
+    { k: 'd5', t: '하루 물 2L 이상' },
+    { k: 'd6', t: '튀김·가공육·맥주 안 먹음' },
+    { k: 'd7', t: '야식·과자 없음' }
+  ]},
+  { cat: 'exercise', label: '🏋️ 운동', items: [
+    { k: 'e1', t: '예정된 운동 완료' },
+    { k: 'e2', t: '워밍업 10분 이상' },
+    { k: 'e3', t: '운동 중 수분 보충 500ml+' },
+    { k: 'e4', t: '쿨다운·스트레칭 10분' },
+    { k: 'e5', t: '운동 후 30분 내 단백질 섭취' },
+    { k: 'e6', t: '무리한 강도 없이 조절' }
+  ]},
+  { cat: 'mental', label: '🧠 멘탈·회복', items: [
+    { k: 'm1', t: '아침 의도 설정 (오늘의 집중 1가지)' },
+    { k: 'm2', t: '운동 전 활성화 루틴' },
+    { k: 'm3', t: '오늘 잘한 것 3가지 기록' },
+    { k: 'm4', t: '취침 전 이미지 트레이닝 5분' },
+    { k: 'm5', t: '자기비판 없이 하루 마무리' },
+    { k: 'm6', t: '과정 목표에 집중 (결과 집착 X)' }
+  ]},
+  { cat: 'health', label: '🩺 건강 관리', items: [
+    { k: 'h1', t: '통풍 약 복용' },
+    { k: 'h2', t: '고지혈증·혈압 약 복용' },
+    { k: 'h3', t: '7시간 이상 수면' },
+    { k: 'h4', t: '음주 없음' },
+    { k: 'h5', t: '피로·통증 신호 무시 안 함' }
+  ]}
+];
 
-// ── 장소 전환 ──
-function showPlace(name, btn) {
-  var places = ['gym', 'field', 'indoor', 'home'];
-  for (var i = 0; i < places.length; i++) {
-    var el = document.getElementById('place-' + places[i]);
-    if (el) el.style.display = places[i] === name ? '' : 'none';
-  }
-  var btns = document.querySelectorAll('.place-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('active');
-  }
-  btn.classList.add('active');
-}
-
-// ── 체크리스트 ──
-var ITEMS = {
-  '🥗 식단': [
-    '아침 식단 계획대로 섭취',
-    '저녁 단백질 식품 준비·섭취',
-    '채소 반찬 1가지 이상 포함',
-    '국·찌개 건더기 위주 (나트륨 절제)',
-    '하루 물 2L 이상 마시기',
-    '튀김·가공육·맥주 피하기',
-    '야식·과자 섭취 없음'
-  ],
-  '🏃 운동': [
-    '예정된 운동 완료',
-    '워밍업 10분 이상 실시',
-    '운동 중 수분 보충 (500ml 이상)',
-    '쿨다운·스트레칭 10분 실시',
-    '운동 후 단백질 섭취 (30분 이내)',
-    '무리한 강도 없이 조절함'
-  ],
-  '🧠 멘탈·회복': [
-    '아침 의도 설정 (집중 포인트 1가지)',
-    '운동 전 활성화 루틴 실시',
-    '오늘 잘한 것 3가지 기록',
-    '취침 전 이미지 트레이닝 5분',
-    '자기비판 없이 하루 마무리',
-    '과정 목표에 집중 (결과 집착 없음)'
-  ],
-  '🩺 건강 관리': [
-    '통풍 약 복용',
-    '고지혈증·혈압 약 복용',
-    '7시간 이상 수면',
-    '음주 없음',
-    '피로·통증 신호 무시하지 않음'
-  ]
-};
-
-var state = {};
 var allKeys = [];
+for (var i = 0; i < checklistDef.length; i++) {
+  for (var j = 0; j < checklistDef[i].items.length; j++) {
+    allKeys.push(checklistDef[i].items[j].k);
+  }
+}
 
-function buildChecklist() {
-  var area = document.getElementById('checklist-area');
-  area.innerHTML = '';
-  allKeys = [];
+// ═══════════════════════════════════════════
+// 저장소 (localStorage)
+// ═══════════════════════════════════════════
+var STORAGE_KEY = 'aokc2026_v2';
 
-  var sections = Object.keys(ITEMS);
-  for (var s = 0; s < sections.length; s++) {
-    var secName = sections[s];
-    var items = ITEMS[secName];
+function loadStore() {
+  try {
+    var raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { dates: {} }; // dates: { '2026-05-06': { d1: true, ... } }
+}
+function saveStore(s) {
+  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+var store = loadStore();
 
-    var title = document.createElement('div');
-    title.className = 'check-section-title';
-    title.textContent = secName;
-    area.appendChild(title);
+// ═══════════════════════════════════════════
+// 날짜 헬퍼
+// ═══════════════════════════════════════════
+function dateKey(d) {
+  var y = d.getFullYear();
+  var m = ('0' + (d.getMonth() + 1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
+}
+function todayDate() {
+  var t = new Date();
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+function daysBetween(a, b) {
+  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+}
+function isInPlan(d) {
+  return d >= PLAN_START && d <= COMP_END;
+}
+function isCompetitionDay(d) {
+  return d >= COMP_START && d <= COMP_END;
+}
 
-    for (var i = 0; i < items.length; i++) {
-      var key = s + '-' + i;
-      allKeys.push(key);
-      state[key] = false;
-
-      var item = document.createElement('div');
-      item.className = 'check-item';
-      item.setAttribute('data-key', key);
-      item.innerHTML =
-        '<div class="check-box" id="box-' + key + '"></div>' +
-        '<span class="check-text" id="txt-' + key + '">' + items[i] + '</span>';
-      item.addEventListener('click', (function(k) {
-        return function() { toggleCheck(k); };
-      })(key));
-      area.appendChild(item);
+// ═══════════════════════════════════════════
+// 통계 계산
+// ═══════════════════════════════════════════
+function getDateData(d) {
+  return store.dates[dateKey(d)] || {};
+}
+function getDayPct(d) {
+  var data = getDateData(d);
+  var done = 0;
+  for (var i = 0; i < allKeys.length; i++) {
+    if (data[allKeys[i]]) done++;
+  }
+  return Math.round(done / allKeys.length * 100);
+}
+function getDayLevel(pct) {
+  if (pct === 0) return 0;
+  if (pct < 30) return 1;
+  if (pct < 60) return 2;
+  if (pct < 85) return 3;
+  return 4;
+}
+function getCategoryStats() {
+  var stats = {};
+  for (var c = 0; c < checklistDef.length; c++) {
+    var cat = checklistDef[c].cat;
+    var keys = checklistDef[c].items.map(function(x) { return x.k; });
+    var done = 0;
+    var total = 0;
+    for (var dk in store.dates) {
+      if (store.dates.hasOwnProperty(dk)) {
+        for (var k = 0; k < keys.length; k++) {
+          total++;
+          if (store.dates[dk][keys[k]]) done++;
+        }
+      }
+    }
+    stats[cat] = { done: done, total: total, pct: total ? Math.round(done / total * 100) : 0 };
+  }
+  return stats;
+}
+function getOverallStats() {
+  var trackedDates = Object.keys(store.dates);
+  var totalDone = 0;
+  var totalSlots = 0;
+  for (var i = 0; i < trackedDates.length; i++) {
+    var data = store.dates[trackedDates[i]];
+    for (var j = 0; j < allKeys.length; j++) {
+      totalSlots++;
+      if (data[allKeys[j]]) totalDone++;
     }
   }
-  updateProgress();
-  document.getElementById('total-count').textContent = allKeys.length;
+  // 연속 일수 (오늘부터 거꾸로 — 50%+ 달성한 날만 인정)
+  var streak = 0;
+  var d = todayDate();
+  while (true) {
+    var pct = getDayPct(d);
+    if (pct >= 50) {
+      streak++;
+      d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+      if (d < PLAN_START) break;
+    } else {
+      break;
+    }
+  }
+  return {
+    pct: totalSlots ? Math.round(totalDone / totalSlots * 100) : 0,
+    daysTracked: trackedDates.length,
+    streak: streak
+  };
 }
 
-function toggleCheck(key) {
-  state[key] = !state[key];
-  var box = document.getElementById('box-' + key);
-  var txt = document.getElementById('txt-' + key);
-  if (state[key]) {
+// ═══════════════════════════════════════════
+// 페이즈 결정
+// ═══════════════════════════════════════════
+function getCurrentPhase() {
+  var t = todayDate();
+  var d_to_comp = daysBetween(t, COMP_START);
+  if (t < new Date(2026, 4, 1)) return { idx: -1, name: '준비전', tip: '5월부터 시작' };
+  if (t < new Date(2026, 7, 1)) return { idx: 0, name: '기초기', tip: '🌱 <strong>기초기</strong> · 근력과 체력의 토대를 쌓는 시기예요. 무게보다 자세, 강도보다 일관성에 집중하세요. 일요훈련은 70% 강도로.' };
+  if (t < new Date(2026, 10, 1)) return { idx: 1, name: '발전기', tip: '⚡ <strong>발전기</strong> · 강도를 점진적으로 올리는 시기. 민첩성·폭발력 비중을 늘리고, 일요훈련은 80~90% 강도까지 끌어올리세요.' };
+  if (d_to_comp > 10) return { idx: 2, name: '시합기', tip: '🎯 <strong>시합기</strong> · 실전 시뮬레이션 중심. 부상 예방을 최우선으로 하고, 전술 정합도를 마무리합니다. 일요훈련 100% 강도.' };
+  if (d_to_comp > 0) return { idx: 3, name: '테이퍼링', tip: '🪶 <strong>테이퍼링</strong> · 볼륨은 50~60%로 줄이되 강도는 유지. 신선도 회복기예요. D-3부터는 가벼운 동작만, 충분한 수면 우선.' };
+  if (t <= COMP_END) return { idx: 4, name: '대회', tip: '🏆 <strong>대회기간</strong> · 16년 여정의 축하 무대! 정해둔 루틴만 따르세요. "지금 이 한 플레이"에만 집중.' };
+  return { idx: 5, name: '대회후', tip: '✨ <strong>고생하셨습니다</strong> · 16년의 마지막 무대를 마쳤어요. 충분히 쉬고, 다음 챕터(코치)를 준비하세요.' };
+}
+
+function renderPhaseBar() {
+  var phase = getCurrentPhase();
+  var phases = [
+    { name: '기초기', sub: '5~7월' },
+    { name: '발전기', sub: '8~10월' },
+    { name: '시합기', sub: '11월' },
+    { name: '테이퍼', sub: 'D-10' },
+    { name: '대회', sub: '12/6-13' }
+  ];
+  var html = '';
+  for (var i = 0; i < phases.length; i++) {
+    var cls = 'phase-seg' + (i === phase.idx ? ' active' : '');
+    html += '<div class="' + cls + '">' + phases[i].name + '<br>' + phases[i].sub + '</div>';
+  }
+  document.getElementById('phase-bar').innerHTML = html;
+
+  document.getElementById('phase-tip').innerHTML = phase.tip;
+
+  // D-Day
+  var t = todayDate();
+  var dday = daysBetween(t, COMP_START);
+  var ddNum = document.getElementById('dday-num');
+  if (dday > 0) ddNum.textContent = 'D-' + dday;
+  else if (dday === 0) ddNum.textContent = 'D-DAY';
+  else if (dday >= -7) ddNum.textContent = 'DAY+' + Math.abs(dday);
+  else ddNum.textContent = '종료';
+}
+
+// ═══════════════════════════════════════════
+// 탭 전환
+// ═══════════════════════════════════════════
+function showTab(name, btn) {
+  var panels = document.querySelectorAll('.panel');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+  document.getElementById('panel-' + name).classList.add('active');
+
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+
+  window.scrollTo(0, 0);
+
+  // 진행률 탭이면 다시 그리기
+  if (name === 'progress') {
+    renderProgress();
+  }
+  if (name === 'check') {
+    renderChecklist();
+  }
+}
+
+function showWeek(w) {
+  document.getElementById('wk-A').style.display = w === 'A' ? '' : 'none';
+  document.getElementById('wk-B').style.display = w === 'B' ? '' : 'none';
+  document.getElementById('wk-A-btn').classList.toggle('on', w === 'A');
+  document.getElementById('wk-B-btn').classList.toggle('on', w === 'B');
+}
+
+// ═══════════════════════════════════════════
+// 체크리스트 렌더
+// ═══════════════════════════════════════════
+var currentCheckDate = todayDate();
+
+function changeDate(delta) {
+  var d = new Date(currentCheckDate.getFullYear(), currentCheckDate.getMonth(), currentCheckDate.getDate() + delta);
+  // 미래는 30일 후까지 허용 (테이퍼링 사전 계획용)
+  var maxDate = new Date(todayDate().getFullYear(), todayDate().getMonth(), todayDate().getDate() + 30);
+  if (d > maxDate) return;
+  if (d < PLAN_START) return;
+  currentCheckDate = d;
+  renderChecklist();
+}
+
+function renderChecklist() {
+  var d = currentCheckDate;
+  var t = todayDate();
+  var dayKey = dateKey(d);
+  var data = store.dates[dayKey] || {};
+
+  // 날짜 텍스트
+  var weekDays = ['일','월','화','수','목','금','토'];
+  var dayText = '';
+  if (dateKey(d) === dateKey(t)) dayText = '오늘';
+  else if (dateKey(d) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()-1))) dayText = '어제';
+  else if (dateKey(d) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()+1))) dayText = '내일';
+  else dayText = (d.getMonth()+1) + '월 ' + d.getDate() + '일';
+  document.getElementById('check-date-text').firstChild.nodeValue = dayText;
+  document.getElementById('check-date-sub').textContent = (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + weekDays[d.getDay()] + ')';
+
+  // 리스트
+  var html = '';
+  for (var c = 0; c < checklistDef.length; c++) {
+    var section = checklistDef[c];
+    var sectDone = 0;
+    for (var i = 0; i < section.items.length; i++) {
+      if (data[section.items[i].k]) sectDone++;
+    }
+    var sectPct = Math.round(sectDone / section.items.length * 100);
+    html += '<div class="check-section">' + section.label + '<span class="section-pct">' + sectDone + '/' + section.items.length + ' · ' + sectPct + '%</span></div>';
+    for (var i = 0; i < section.items.length; i++) {
+      var item = section.items[i];
+      var done = !!data[item.k];
+      html += '<div class="check-row" onclick="toggleCheck(\'' + item.k + '\')">';
+      html += '<div class="checkbox' + (done ? ' done' : '') + '" id="box-' + item.k + '"></div>';
+      html += '<div class="check-text' + (done ? ' done' : '') + '" id="txt-' + item.k + '">' + item.t + '</div>';
+      html += '</div>';
+    }
+  }
+  document.getElementById('checklist-area').innerHTML = html;
+
+  updateProgress();
+}
+
+function toggleCheck(k) {
+  var dayKey = dateKey(currentCheckDate);
+  if (!store.dates[dayKey]) store.dates[dayKey] = {};
+  store.dates[dayKey][k] = !store.dates[dayKey][k];
+  saveStore(store);
+
+  var box = document.getElementById('box-' + k);
+  var txt = document.getElementById('txt-' + k);
+  if (store.dates[dayKey][k]) {
     box.classList.add('done');
     txt.classList.add('done');
   } else {
     box.classList.remove('done');
     txt.classList.remove('done');
   }
+  // 섹션별 % 와 전체 바만 업데이트
+  updateSectionPcts();
   updateProgress();
+}
+
+function updateSectionPcts() {
+  var data = store.dates[dateKey(currentCheckDate)] || {};
+  var sectionEls = document.querySelectorAll('.check-section .section-pct');
+  for (var i = 0; i < checklistDef.length; i++) {
+    var section = checklistDef[i];
+    var done = 0;
+    for (var j = 0; j < section.items.length; j++) {
+      if (data[section.items[j].k]) done++;
+    }
+    var pct = Math.round(done / section.items.length * 100);
+    if (sectionEls[i]) sectionEls[i].textContent = done + '/' + section.items.length + ' · ' + pct + '%';
+  }
+}
+
+function resetToday() {
+  if (!window.confirm(dateKey(currentCheckDate) + ' 의 체크를 모두 초기화할까요?')) return;
+  delete store.dates[dateKey(currentCheckDate)];
+  saveStore(store);
+  renderChecklist();
 }
 
 function updateProgress() {
+  var data = store.dates[dateKey(currentCheckDate)] || {};
   var done = 0;
-  for (var i = 0; i < allKeys.length; i++) {
-    if (state[allKeys[i]]) done++;
-  }
-  var total = allKeys.length;
-  var pct = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('done-count').textContent = done;
+  for (var i = 0; i < allKeys.length; i++) if (data[allKeys[i]]) done++;
+  var pct = Math.round(done / allKeys.length * 100);
   document.getElementById('prog-bar').style.width = pct + '%';
-  document.getElementById('prog-text').textContent = pct + '% 달성';
+  document.getElementById('prog-text').textContent = pct + '% 달성 (' + done + '/' + allKeys.length + ')';
 }
 
-function resetAll() {
-  for (var i = 0; i < allKeys.length; i++) {
-    state[allKeys[i]] = false;
-    var box = document.getElementById('box-' + allKeys[i]);
-    var txt = document.getElementById('txt-' + allKeys[i]);
-    if (box) box.classList.remove('done');
-    if (txt) txt.classList.remove('done');
+// ═══════════════════════════════════════════
+// 진행률 패널 렌더
+// ═══════════════════════════════════════════
+function renderProgress() {
+  // 핵심 통계
+  var s = getOverallStats();
+  document.getElementById('overall-pct').textContent = s.pct + '%';
+  document.getElementById('streak-cur').textContent = s.streak;
+  document.getElementById('days-tracked').textContent = s.daysTracked;
+
+  // 카테고리별
+  var cats = getCategoryStats();
+  var catLabels = { diet: '🥗 식단', exercise: '🏋️ 운동', mental: '🧠 멘탈', health: '🩺 건강' };
+  var html = '';
+  var order = ['diet', 'exercise', 'mental', 'health'];
+  for (var i = 0; i < order.length; i++) {
+    var c = order[i];
+    var st = cats[c];
+    html += '<div class="cat-bar">';
+    html += '<div class="cat-row"><span class="cat-name">' + catLabels[c] + '</span><span class="cat-pct">' + st.pct + '% (' + st.done + '/' + st.total + ')</span></div>';
+    html += '<div class="cat-track"><div class="cat-fill ' + c + '" style="width:' + st.pct + '%"></div></div>';
+    html += '</div>';
   }
-  updateProgress();
+  document.getElementById('cat-bars').innerHTML = html;
+
+  renderCalendar();
+  renderHeatmap();
 }
 
-buildChecklist();
+// ═══════════════════════════════════════════
+// 월별 달력
+// ═══════════════════════════════════════════
+var calMonth = new Date(todayDate().getFullYear(), todayDate().getMonth(), 1);
+
+function changeMonth(delta) {
+  var newM = new Date(calMonth.getFullYear(), calMonth.getMonth() + delta, 1);
+  if (newM < new Date(2026, 4, 1)) return;
+  if (newM > new Date(2026, 11, 1)) return;
+  calMonth = newM;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  var year = calMonth.getFullYear();
+  var month = calMonth.getMonth();
+  document.getElementById('cal-title').textContent = year + '년 ' + (month + 1) + '월';
+
+  var firstDay = new Date(year, month, 1).getDay();
+  var lastDate = new Date(year, month + 1, 0).getDate();
+  var todayKey = dateKey(todayDate());
+
+  var html = '';
+  for (var i = 0; i < firstDay; i++) {
+    html += '<div class="cal-cell empty"></div>';
+  }
+  for (var d = 1; d <= lastDate; d++) {
+    var thisDate = new Date(year, month, d);
+    var thisKey = dateKey(thisDate);
+    var pct = getDayPct(thisDate);
+    var lvl = getDayLevel(pct);
+    var classes = ['cal-cell'];
+
+    var isComp = isCompetitionDay(thisDate);
+    var isFuture = thisDate > todayDate();
+
+    if (isComp) {
+      classes.push('dday');
+    } else if (lvl > 0) {
+      classes.push('lvl-' + lvl);
+    } else if (isFuture) {
+      classes.push('future');
+    }
+    if (thisKey === todayKey) classes.push('today');
+
+    html += '<div class="' + classes.join(' ') + '">';
+    html += '<div class="cal-day">' + d + '</div>';
+    if (isComp) {
+      html += '<div class="cal-pct">대회</div>';
+    } else if (pct > 0) {
+      html += '<div class="cal-pct">' + pct + '%</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('cal-body').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// 7개월 히트맵 (5/1 - 12/13)
+// ═══════════════════════════════════════════
+function renderHeatmap() {
+  var start = new Date(2026, 4, 1); // 5/1
+  var end = new Date(2026, 11, 13); // 12/13
+  var todayKey = dateKey(todayDate());
+
+  // 5/1 이전 빈 셀로 일요일 정렬
+  var startDay = start.getDay();
+  var html = '';
+  // 첫 주 빈 셀
+  for (var i = 0; i < startDay; i++) {
+    html += '<div class="hm-cell empty"></div>';
+  }
+
+  var monthLabels = []; // {col: x, label: '5월'}
+  var col = 0;
+  var prevMonth = -1;
+  var d = new Date(start.getTime());
+
+  while (d <= end) {
+    var k = dateKey(d);
+    var pct = getDayPct(d);
+    var lvl = getDayLevel(pct);
+    var classes = ['hm-cell'];
+
+    if (isCompetitionDay(d)) {
+      classes.push('dday');
+    } else if (lvl > 0) {
+      classes.push('lvl-' + lvl);
+    }
+    if (k === todayKey) classes.push('today');
+
+    var title = (d.getMonth()+1) + '/' + d.getDate() + ' · ' + pct + '%';
+    if (isCompetitionDay(d)) title += ' · 대회';
+
+    html += '<div class="' + classes.join(' ') + '" title="' + title + '"></div>';
+
+    // 월 시작 컬럼 추적
+    if (d.getDate() === 1 || (d.getMonth() !== prevMonth && d.getDay() === 0)) {
+      var thisCol = Math.floor((daysBetween(start, d) + startDay) / 7);
+      monthLabels.push({ col: thisCol, label: (d.getMonth()+1) + '월' });
+      prevMonth = d.getMonth();
+    }
+
+    d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+  }
+
+  document.getElementById('heatmap').innerHTML = html;
+
+  // 월 라벨 (간이로 5/6/7/8/9/10/11/12 균등 배치)
+  var labels = ['5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+  var labelHtml = '';
+  for (var i = 0; i < labels.length; i++) {
+    labelHtml += '<span>' + labels[i] + '</span>';
+  }
+  document.getElementById('month-strip').innerHTML = labelHtml;
+}
+
+// ═══════════════════════════════════════════
+// 백업·복원
+// ═══════════════════════════════════════════
+function exportData() {
+  var area = document.getElementById('data-area');
+  var msg = document.getElementById('data-msg');
+  var json = JSON.stringify(store);
+  area.style.display = 'block';
+  area.value = json;
+  area.select();
+  // 클립보드 복사 시도 (사파리에서도 동작)
+  try {
+    document.execCommand('copy');
+    msg.innerHTML = '✓ 클립보드에 복사됨 — 메모장이나 카톡 나에게 보내기로 저장하세요';
+    msg.style.color = 'var(--c-accent)';
+  } catch (e) {
+    msg.innerHTML = '아래 텍스트를 길게 눌러 모두 선택 후 복사하세요';
+    msg.style.color = 'var(--c-muted)';
+  }
+}
+
+function importData() {
+  var area = document.getElementById('data-area');
+  var msg = document.getElementById('data-msg');
+  if (area.style.display === 'none' || !area.value) {
+    area.style.display = 'block';
+    area.value = '';
+    msg.innerHTML = '백업해둔 텍스트를 위에 붙여넣고, 다시 가져오기 버튼을 누르세요';
+    msg.style.color = 'var(--c-muted)';
+    area.focus();
+    return;
+  }
+  try {
+    var parsed = JSON.parse(area.value);
+    if (!parsed.dates) throw new Error('형식 오류');
+    if (!window.confirm('현재 데이터를 덮어쓰고 백업을 복원할까요?')) return;
+    store = parsed;
+    saveStore(store);
+    area.value = '';
+    area.style.display = 'none';
+    msg.innerHTML = '✓ 복원 완료';
+    msg.style.color = 'var(--c-accent)';
+    renderProgress();
+    renderChecklist();
+  } catch (e) {
+    msg.innerHTML = '✗ 잘못된 백업 데이터입니다';
+    msg.style.color = 'var(--c-coral)';
+  }
+}
+
+// ═══════════════════════════════════════════
+// 초기화
+// ═══════════════════════════════════════════
+renderPhaseBar();
+renderProgress();
+renderChecklist();
+
 </script>
 </body>
 </html>
