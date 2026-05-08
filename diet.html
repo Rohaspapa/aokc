@@ -299,12 +299,16 @@ body {
   width: 100%;
   max-width: 500px;
   max-height: 88vh;
+  /* 키보드 올라올 때 사용할 동적 높이 변수 */
+  max-height: var(--modal-h, 88vh);
   border-radius: 18px 18px 0 0;
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
   padding-bottom: var(--safe-bottom);
+  -webkit-transition: max-height 0.2s ease;
+  transition: max-height 0.2s ease;
 }
 .modal-head {
   padding: 14px 16px 10px;
@@ -948,6 +952,12 @@ var FOODS = [
   { c: '외식·기타', n: '뷔페·과식', t: ['fat', 'salt'] },
   { c: '외식·기타', n: '편의점 도시락', t: ['salt', 'proc'] },
   { c: '외식·기타', n: '편의점 김밥', t: ['salt', 'proc'] },
+  { c: '외식·기타', n: '편의점 샌드위치', t: ['salt', 'proc'] },
+  { c: '외식·기타', n: '샌드위치 (햄·치즈)', t: ['salt', 'fat', 'proc'] },
+  { c: '외식·기타', n: '샌드위치 (에그·참치)', t: ['protein'] },
+  { c: '외식·기타', n: '샌드위치 (베이컨·BLT)', t: ['salt', 'fat', 'proc'] },
+  { c: '외식·기타', n: '샌드위치 (채소·닭가슴살)', t: ['protein', 'good'] },
+  { c: '외식·기타', n: '클럽 샌드위치', t: ['salt', 'fat', 'proc'] },
   { c: '외식·기타', n: '컵라면', t: ['salt', 'proc', 'fat'] }
 ];
 
@@ -1301,13 +1311,46 @@ function openModal(meal) {
   renderFoodList();
   document.getElementById('modal-overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
+  enableKeyboardHandler();
 }
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('on');
   document.body.style.overflow = '';
+  disableKeyboardHandler();
+  // 검색 input blur 처리 (키보드 내리기)
+  var si = document.getElementById('search-input');
+  if (si) si.blur();
 }
 function closeModalIfOverlay(e) {
   if (e.target.id === 'modal-overlay') closeModal();
+}
+
+// 키보드 등장 감지 — 모달 높이 동적 조정
+function handleViewportResize() {
+  if (!window.visualViewport) return;
+  var vh = window.visualViewport.height;
+  var fullH = window.innerHeight;
+  var keyboardH = fullH - vh;
+  if (keyboardH > 100) {
+    // 키보드 떠 있음 — 모달을 visualViewport 높이의 95%로 제한
+    document.documentElement.style.setProperty('--modal-h', Math.floor(vh * 0.95) + 'px');
+  } else {
+    // 키보드 닫힘 — 원래대로
+    document.documentElement.style.setProperty('--modal-h', '88vh');
+  }
+}
+function enableKeyboardHandler() {
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', handleViewportResize);
+    window.visualViewport.addEventListener('scroll', handleViewportResize);
+  }
+}
+function disableKeyboardHandler() {
+  if (window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', handleViewportResize);
+    window.visualViewport.removeEventListener('scroll', handleViewportResize);
+  }
+  document.documentElement.style.setProperty('--modal-h', '88vh');
 }
 
 function renderCatTabs() {
@@ -1343,7 +1386,9 @@ function renderFoodList() {
     html += '</div>';
   }
   if (!html) html = '<div class="empty-state">검색 결과가 없어요</div>';
-  document.getElementById('food-list').innerHTML = html;
+  var listEl = document.getElementById('food-list');
+  listEl.innerHTML = html;
+  listEl.scrollTop = 0;
 }
 function filterFoods() { renderFoodList(); }
 
