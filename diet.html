@@ -349,16 +349,19 @@ body {
   display: flex;
   -webkit-flex-wrap: nowrap;
   flex-wrap: nowrap;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding: 8px 14px;
   border-bottom: 1px solid var(--c-border);
   gap: 6px;
+  background: var(--c-surface);
 }
 .cat-tab {
   background: var(--c-surface-2);
   border: 1px solid var(--c-border);
-  padding: 6px 11px;
+  padding: 7px 12px;
   border-radius: 14px;
   font-size: 11.5px;
   font-weight: 600;
@@ -366,6 +369,8 @@ body {
   cursor: pointer;
   font-family: inherit;
   color: var(--c-muted);
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 .cat-tab.on {
   background: var(--c-accent);
@@ -863,6 +868,8 @@ var FOODS = [
   // === 빵·간식 ===
   { c: '빵·간식', n: '통밀빵', t: ['good'] },
   { c: '빵·간식', n: '식빵', t: [] },
+  { c: '빵·간식', n: '어니언 베이글', t: [] },
+  { c: '빵·간식', n: '플레인 베이글', t: [] },
   { c: '빵·간식', n: '크루아상', t: ['fat'] },
   { c: '빵·간식', n: '단팥빵·크림빵', t: ['fat'] },
   { c: '빵·간식', n: '도넛', t: ['fat', 'proc'] },
@@ -874,15 +881,30 @@ var FOODS = [
   { c: '빵·간식', n: '떡볶이', t: ['salt'] },
   { c: '빵·간식', n: '순대', t: ['salt', 'gout'] },
   { c: '빵·간식', n: '튀김 (분식)', t: ['fat', 'proc'] },
+  { c: '빵·간식', n: '딸기잼·과일잼', t: ['proc'] },
+  { c: '빵·간식', n: '땅콩버터', t: ['protein', 'proc'] },
+  { c: '빵·간식', n: '꿀', t: [] },
 
   // === 과일·견과 ===
   { c: '과일·견과', n: '바나나', t: ['good'] },
   { c: '과일·견과', n: '사과', t: ['good'] },
-  { c: '과일·견과', n: '체리', t: ['good'] },
-  { c: '과일·견과', n: '블루베리', t: ['good'] },
-  { c: '과일·견과', n: '오렌지·귤', t: ['good'] },
-  { c: '과일·견과', n: '포도', t: [] },
+  { c: '과일·견과', n: '배', t: ['good'] },
+  { c: '과일·견과', n: '감', t: ['good'] },
+  { c: '과일·견과', n: '단감·홍시', t: ['good'] },
+  { c: '과일·견과', n: '귤·오렌지', t: ['good'] },
+  { c: '과일·견과', n: '한라봉·천혜향', t: ['good'] },
   { c: '과일·견과', n: '딸기', t: ['good'] },
+  { c: '과일·견과', n: '블루베리', t: ['good'] },
+  { c: '과일·견과', n: '체리', t: ['good'] },
+  { c: '과일·견과', n: '키위', t: ['good'] },
+  { c: '과일·견과', n: '복숭아', t: ['good'] },
+  { c: '과일·견과', n: '자두', t: ['good'] },
+  { c: '과일·견과', n: '참외', t: ['good'] },
+  { c: '과일·견과', n: '수박', t: ['good'] },
+  { c: '과일·견과', n: '멜론', t: [] },
+  { c: '과일·견과', n: '포도·청포도', t: [] },
+  { c: '과일·견과', n: '망고', t: [] },
+  { c: '과일·견과', n: '파인애플', t: [] },
   { c: '과일·견과', n: '아보카도', t: ['good'] },
   { c: '과일·견과', n: '아몬드', t: ['good'] },
   { c: '과일·견과', n: '호두', t: ['good'] },
