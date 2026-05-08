@@ -828,11 +828,19 @@ body {
     <!-- JS로 채워짐 -->
   </div>
 
+  <!-- 영역 토글 -->
+  <div class="subtabs" style="margin-bottom:14px">
+    <button class="subtab on" id="vt-total" onclick="setViewTarget('total')">통합</button>
+    <button class="subtab" id="vt-diet" onclick="setViewTarget('diet')">🥗 식단</button>
+    <button class="subtab" id="vt-workout" onclick="setViewTarget('workout')">🏋️ 운동</button>
+    <button class="subtab" id="vt-mental" onclick="setViewTarget('mental')">🧠 멘탈</button>
+  </div>
+
   <!-- 핵심 통계 -->
   <div class="stat-grid">
     <div class="stat-box">
       <div class="stat-num" id="overall-pct">0%</div>
-      <div class="stat-lbl">전체 달성</div>
+      <div class="stat-lbl" id="overall-lbl">통합 달성</div>
     </div>
     <div class="stat-box">
       <div class="stat-num gold" id="streak-cur">0</div>
@@ -844,11 +852,11 @@ body {
     </div>
   </div>
 
-  <!-- 카테고리별 누적 -->
-  <div class="card">
-    <div class="card-title">📊 카테고리별 누적 달성률</div>
-    <div class="card-sub">전체 기록 일수 기준</div>
-    <div id="cat-bars"></div>
+  <!-- 영역별 평균 (통합 뷰에서만) -->
+  <div class="card" id="area-bars-card">
+    <div class="card-title">📊 영역별 평균 달성률</div>
+    <div class="card-sub">전체 기록 일수 기준 — 가중치: 식단 40% · 운동 40% · 멘탈 20%</div>
+    <div id="area-bars"></div>
   </div>
 
   <!-- 월별 달력 -->
@@ -872,7 +880,7 @@ body {
 
   <!-- 연간 히트맵 -->
   <div class="card">
-    <div class="card-title">🌱 7개월 전체 히트맵</div>
+    <div class="card-title" id="hm-title">🌱 7개월 전체 히트맵</div>
     <div class="card-sub">5월 1일 ~ 12월 13일 (가로 스크롤)</div>
     <div class="heatmap-wrap">
       <div class="heatmap" id="heatmap"></div>
@@ -892,7 +900,7 @@ body {
   <!-- 데이터 백업/복원 -->
   <div class="card">
     <div class="card-title">💾 데이터 백업·복원</div>
-    <div class="card-sub">사파리 캐시 정리에 대비해 가끔 백업하세요</div>
+    <div class="card-sub">세 페이지(식단·운동·멘탈) 모든 데이터를 한꺼번에 백업</div>
     <div style="display:-webkit-flex;display:flex;gap:8px;margin-top:8px">
       <button class="nav-btn" style="flex:1;padding:10px" onclick="exportData()">📤 내보내기</button>
       <button class="nav-btn" style="flex:1;padding:10px" onclick="importData()">📥 가져오기</button>
@@ -1094,6 +1102,16 @@ body {
 ════════════════════════════════════ -->
 <div id="panel-exercise" class="panel">
 
+  <a href="workout.html" style="display:block;background:-webkit-linear-gradient(135deg,#0F4C36,#1D6B47);background:linear-gradient(135deg,#0F4C36,#1D6B47);color:#fff;text-decoration:none;padding:14px;border-radius:12px;margin-bottom:12px;-webkit-box-shadow:0 2px 6px rgba(15,76,54,0.2);box-shadow:0 2px 6px rgba(15,76,54,0.2)">
+    <div style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:700">🏋️ 오늘의 운동 기록</div>
+        <div style="font-size:11px;opacity:0.85;margin-top:2px">장소·유산소·스트레칭 빠른 체크</div>
+      </div>
+      <div style="font-size:20px;font-weight:300">›</div>
+    </div>
+  </a>
+
   <div class="card">
     <div class="card-title">📅 주간 스케줄</div>
     <table class="tbl">
@@ -1173,6 +1191,16 @@ body {
      패널 3: 멘탈
 ════════════════════════════════════ -->
 <div id="panel-mental" class="panel">
+
+  <a href="mental.html" style="display:block;background:-webkit-linear-gradient(135deg,#5C3DAF,#7A5BC4);background:linear-gradient(135deg,#5C3DAF,#7A5BC4);color:#fff;text-decoration:none;padding:14px;border-radius:12px;margin-bottom:12px;-webkit-box-shadow:0 2px 6px rgba(92,61,175,0.2);box-shadow:0 2px 6px rgba(92,61,175,0.2)">
+    <div style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:700">🧠 오늘의 멘탈 기록</div>
+        <div style="font-size:11px;opacity:0.85;margin-top:2px">루틴 체크 + 자기평가 + 메모</div>
+      </div>
+      <div style="font-size:20px;font-weight:300">›</div>
+    </div>
+  </a>
 
   <div class="card">
     <div class="card-title">🎯 핵심 원칙</div>
@@ -1255,33 +1283,6 @@ body {
 
 </div>
 
-<!-- ════════════════════════════════════
-     패널 4: 체크리스트
-════════════════════════════════════ -->
-<div id="panel-check" class="panel">
-
-  <!-- 날짜 컨트롤 -->
-  <div class="date-bar">
-    <button class="date-btn" onclick="changeDate(-1)">‹</button>
-    <div class="date-text" id="check-date-text">오늘
-      <span class="sub" id="check-date-sub"></span>
-    </div>
-    <button class="date-btn" onclick="changeDate(1)">›</button>
-  </div>
-
-  <!-- 진행 -->
-  <div class="progress-wrap">
-    <div class="progress-fill" id="prog-bar" style="width:0%"></div>
-  </div>
-  <div class="progress-text" id="prog-text">0% 달성 (0/24)</div>
-
-  <!-- 체크리스트 -->
-  <div id="checklist-area"></div>
-
-  <button class="reset-btn" onclick="resetToday()">오늘 체크 초기화</button>
-
-</div>
-
 </div><!-- /.content -->
 
 <!-- ════ 하단 탭바 ════ -->
@@ -1290,75 +1291,52 @@ body {
   <button class="tab-btn" onclick="showTab('diet', this)"><span class="tab-icon">🥗</span>식단</button>
   <button class="tab-btn" onclick="showTab('exercise', this)"><span class="tab-icon">🏋️</span>운동</button>
   <button class="tab-btn" onclick="showTab('mental', this)"><span class="tab-icon">🧠</span>멘탈</button>
-  <button class="tab-btn" onclick="showTab('check', this)"><span class="tab-icon">✅</span>체크</button>
 </div>
 
 <script>
 // ═══════════════════════════════════════════
 // 데이터 정의
 // ═══════════════════════════════════════════
-var COMP_START = new Date(2026, 11, 6); // 12/6
-var COMP_END = new Date(2026, 11, 13);  // 12/13
-var PLAN_START = new Date(2026, 4, 1);  // 5/1
+var COMP_START = new Date(2026, 11, 6);  // 12/6
+var COMP_END = new Date(2026, 11, 13);   // 12/13
+var PLAN_START = new Date(2026, 4, 1);   // 5/1
 
-var checklistDef = [
-  { cat: 'diet', label: '🥗 식단', items: [
-    { k: 'd1', t: '아침 식단 계획대로 섭취' },
-    { k: 'd2', t: '저녁 단백질 식품 섭취' },
-    { k: 'd3', t: '채소 반찬 1가지 이상' },
-    { k: 'd4', t: '국·찌개 나트륨 줄이기 (건더기 위주)' },
-    { k: 'd5', t: '하루 물 2L 이상' },
-    { k: 'd6', t: '튀김·가공육·맥주 안 먹음' },
-    { k: 'd7', t: '야식·과자 없음' }
-  ]},
-  { cat: 'exercise', label: '🏋️ 운동', items: [
-    { k: 'e1', t: '예정된 운동 완료' },
-    { k: 'e2', t: '워밍업 10분 이상' },
-    { k: 'e3', t: '운동 중 수분 보충 500ml+' },
-    { k: 'e4', t: '쿨다운·스트레칭 10분' },
-    { k: 'e5', t: '운동 후 30분 내 단백질 섭취' },
-    { k: 'e6', t: '무리한 강도 없이 조절' }
-  ]},
-  { cat: 'mental', label: '🧠 멘탈·회복', items: [
-    { k: 'm1', t: '아침 의도 설정 (오늘의 집중 1가지)' },
-    { k: 'm2', t: '운동 전 활성화 루틴' },
-    { k: 'm3', t: '오늘 잘한 것 3가지 기록' },
-    { k: 'm4', t: '취침 전 이미지 트레이닝 5분' },
-    { k: 'm5', t: '자기비판 없이 하루 마무리' },
-    { k: 'm6', t: '과정 목표에 집중 (결과 집착 X)' }
-  ]},
-  { cat: 'health', label: '🩺 건강 관리', items: [
-    { k: 'h1', t: '통풍 약 복용' },
-    { k: 'h2', t: '고지혈증·혈압 약 복용' },
-    { k: 'h3', t: '7시간 이상 수면' },
-    { k: 'h4', t: '음주 없음' },
-    { k: 'h5', t: '피로·통증 신호 무시 안 함' }
-  ]}
-];
+// 가중치
+var WEIGHTS = { diet: 0.4, workout: 0.4, mental: 0.2 };
 
-var allKeys = [];
-for (var i = 0; i < checklistDef.length; i++) {
-  for (var j = 0; j < checklistDef[i].items.length; j++) {
-    allKeys.push(checklistDef[i].items[j].k);
-  }
-}
+// 외부 페이지 저장소 키
+var STORAGE_KEYS = {
+  diet: 'aokc2026_diet',
+  workout: 'aokc2026_workout',
+  mental: 'aokc2026_mental'
+};
+
+// 영역 메타
+var AREAS = ['diet', 'workout', 'mental'];
+var AREA_LABELS = { diet: '🥗 식단', workout: '🏋️ 운동', mental: '🧠 멘탈', total: '통합' };
+var AREA_COLORS = { diet: '#0F4C36', workout: '#1A5CA0', mental: '#5C3DAF', total: '#0F4C36' };
+
+// 운동 활동 키 (휴식 제외)
+var WORKOUT_ACTIVE = ['gym', 'field', 'home', 'running', 'cycling', 'stretch', 'korfball'];
 
 // ═══════════════════════════════════════════
-// 저장소 (localStorage)
+// 외부 데이터 읽기
 // ═══════════════════════════════════════════
-var STORAGE_KEY = 'aokc2026_v2';
-
-function loadStore() {
+function loadExternal(key) {
   try {
-    var raw = window.localStorage.getItem(STORAGE_KEY);
+    var raw = window.localStorage.getItem(key);
     if (raw) return JSON.parse(raw);
   } catch (e) {}
-  return { dates: {} }; // dates: { '2026-05-06': { d1: true, ... } }
+  return { dates: {} };
 }
-function saveStore(s) {
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+
+function getStores() {
+  return {
+    diet: loadExternal(STORAGE_KEYS.diet),
+    workout: loadExternal(STORAGE_KEYS.workout),
+    mental: loadExternal(STORAGE_KEYS.mental)
+  };
 }
-var store = loadStore();
 
 // ═══════════════════════════════════════════
 // 날짜 헬퍼
@@ -1373,73 +1351,151 @@ function todayDate() {
   var t = new Date();
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
-function daysBetween(a, b) {
-  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+function isCompetitionDay(d) { return d >= COMP_START && d <= COMP_END; }
+
+// ═══════════════════════════════════════════
+// 영역별 일별 점수 계산 (0~100 또는 null = 기록 없음)
+// ═══════════════════════════════════════════
+function getDietScore(d, stores) {
+  // 식단 거울: 음식 입력 기반 등급(A~F) → 점수
+  // 등급 계산은 diet.html과 동일 로직 사용
+  var data = stores.diet.dates[dateKey(d)];
+  if (!data) return null;
+  var meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+  var total = 0;
+  for (var i = 0; i < meals.length; i++) {
+    if (data[meals[i]]) total += data[meals[i]].length;
+  }
+  if (total === 0) return null;
+
+  // 음식별 태그 → 카운트 (간이 버전 — diet.html의 등급 매핑과 일치)
+  // diet.html의 calcGrade 로직: net = good + protein*0.5 - (gout + salt*0.7 + fat*0.7 + proc*0.5 + alc*1.5)
+  // 등급: A>=4, B>=2, C>=0, D>=-3, F<-3 (또는 alc+gout 동시면 F)
+  // 여기선 간단히 점수화 — A=100, B=80, C=60, D=40, F=20
+  // 등급 정확히 계산하려면 음식 DB 필요한데, 여기선 외부에서 저장된 데이터를 단순 카운트만으로 평가
+  // 대신 diet.html이 이미 등급 점수화한 결과를 저장하면 좋겠지만, 현재 구조는 음식 이름만 저장
+  // → 간이로직: 음식 개수 기준 30%, "도움" 키워드 매칭 등 — 실제로는 부정확
+  // 더 정확한 방법: diet.html이 일별 점수도 저장하도록 수정 필요
+  // 임시 해법: 입력 자체가 있으면 60%, 4개 이상이면 70%, 특정 키워드 검색
+  var allFoods = [];
+  for (var i = 0; i < meals.length; i++) {
+    if (data[meals[i]]) allFoods = allFoods.concat(data[meals[i]]);
+  }
+  // 위험·도움 키워드로 간이 평가
+  var bad = 0, good = 0;
+  var BAD_KW = ['술','맥주','소주','라면','치킨 (튀김)','치킨 (양념)','피자','햄버거','감자튀김','순대','곱창','족발','베이컨','컵라면','삼겹살','단팥빵','케이크','아이스크림','과자 (스낵)'];
+  var GOOD_KW = ['현미밥','잡곡밥','닭가슴살','연어','두부','삶은 달걀','달걀 스크램블','시금치','브로콜리','양배추','파프리카','오이','방울토마토','사과','바나나','체리','블루베리','아몬드','호두','고구마 (찐·구운)','단호박','찐감자','통밀빵','플레인요거트','저지방우유','블랙커피','보리차','녹차','물'];
+  for (var i = 0; i < allFoods.length; i++) {
+    if (BAD_KW.indexOf(allFoods[i]) >= 0) bad++;
+    if (GOOD_KW.indexOf(allFoods[i]) >= 0) good++;
+  }
+  // 점수: 기본 50 + 좋은 음식 *7 - 나쁜 음식 *12, 0~100 클램프
+  var score = 50 + good * 7 - bad * 12;
+  if (score > 100) score = 100;
+  if (score < 0) score = 0;
+  return Math.round(score);
 }
-function isInPlan(d) {
-  return d >= PLAN_START && d <= COMP_END;
+
+function getWorkoutScore(d, stores) {
+  var data = stores.workout.dates[dateKey(d)];
+  if (!data) return null;
+  // 활동 한 가지라도 했으면 기본 70점, 코프볼이면 +20, 헬스장+드릴이면 +20
+  var activeCount = 0;
+  for (var i = 0; i < WORKOUT_ACTIVE.length; i++) {
+    if (data[WORKOUT_ACTIVE[i]]) activeCount++;
+  }
+  if (activeCount === 0 && !data.rest) return null; // 빈 데이터
+  if (activeCount === 0 && data.rest) return 70;    // 의도적 휴식 = 70점
+  // 활동 점수
+  var score = 60 + activeCount * 12;
+  if (data.korfball) score += 5;
+  if (score > 100) score = 100;
+  return score;
 }
-function isCompetitionDay(d) {
-  return d >= COMP_START && d <= COMP_END;
+
+function getMentalScore(d, stores) {
+  var data = stores.mental.dates[dateKey(d)];
+  if (!data) return null;
+  var routineKeys = ['r1','r2','r3','r4','r5','r6'];
+  var done = 0;
+  for (var i = 0; i < routineKeys.length; i++) {
+    if (data[routineKeys[i]]) done++;
+  }
+  // 자기평가가 있으면 약간 가산
+  var hasRating = !!data.rating;
+  var hasMemo = !!(data.memo && data.memo.trim().length > 0);
+  if (done === 0 && !hasRating && !hasMemo) return null;
+  // 기본: 루틴 비율 (0~83%) + 자기평가 보너스 (10) + 메모 보너스 (7)
+  var score = Math.round(done / routineKeys.length * 83);
+  if (hasRating) score += 10;
+  if (hasMemo) score += 7;
+  if (score > 100) score = 100;
+  return score;
+}
+
+function getAreaScore(area, d, stores) {
+  if (area === 'diet') return getDietScore(d, stores);
+  if (area === 'workout') return getWorkoutScore(d, stores);
+  if (area === 'mental') return getMentalScore(d, stores);
+  return null;
+}
+
+function getTotalScore(d, stores) {
+  // 가중치 적용 — 영역별 점수가 null이면 가중치 재분배
+  var diet = getDietScore(d, stores);
+  var workout = getWorkoutScore(d, stores);
+  var mental = getMentalScore(d, stores);
+  if (diet === null && workout === null && mental === null) return null;
+
+  var totalWeight = 0;
+  var sumScore = 0;
+  if (diet !== null) { sumScore += diet * WEIGHTS.diet; totalWeight += WEIGHTS.diet; }
+  if (workout !== null) { sumScore += workout * WEIGHTS.workout; totalWeight += WEIGHTS.workout; }
+  if (mental !== null) { sumScore += mental * WEIGHTS.mental; totalWeight += WEIGHTS.mental; }
+  if (totalWeight === 0) return null;
+  return Math.round(sumScore / totalWeight);
+}
+
+function getDayScore(area, d, stores) {
+  if (area === 'total') return getTotalScore(d, stores);
+  return getAreaScore(area, d, stores);
+}
+
+// 점수 → 5단계 레벨 (시각화용)
+function scoreLevel(score) {
+  if (score === null || score === 0) return 0;
+  if (score < 30) return 1;
+  if (score < 60) return 2;
+  if (score < 85) return 3;
+  return 4;
 }
 
 // ═══════════════════════════════════════════
-// 통계 계산
+// 누적 통계
 // ═══════════════════════════════════════════
-function getDateData(d) {
-  return store.dates[dateKey(d)] || {};
-}
-function getDayPct(d) {
-  var data = getDateData(d);
-  var done = 0;
-  for (var i = 0; i < allKeys.length; i++) {
-    if (data[allKeys[i]]) done++;
-  }
-  return Math.round(done / allKeys.length * 100);
-}
-function getDayLevel(pct) {
-  if (pct === 0) return 0;
-  if (pct < 30) return 1;
-  if (pct < 60) return 2;
-  if (pct < 85) return 3;
-  return 4;
-}
-function getCategoryStats() {
-  var stats = {};
-  for (var c = 0; c < checklistDef.length; c++) {
-    var cat = checklistDef[c].cat;
-    var keys = checklistDef[c].items.map(function(x) { return x.k; });
-    var done = 0;
-    var total = 0;
-    for (var dk in store.dates) {
-      if (store.dates.hasOwnProperty(dk)) {
-        for (var k = 0; k < keys.length; k++) {
-          total++;
-          if (store.dates[dk][keys[k]]) done++;
-        }
-      }
+function getStats(area, stores) {
+  // 전체 기간(5/1~오늘) 중 기록된 날들만 계산
+  var t = todayDate();
+  var trackedDays = 0;
+  var sumScore = 0;
+  var d = new Date(PLAN_START);
+  while (d <= t) {
+    var s = getDayScore(area, d, stores);
+    if (s !== null) {
+      trackedDays++;
+      sumScore += s;
     }
-    stats[cat] = { done: done, total: total, pct: total ? Math.round(done / total * 100) : 0 };
+    d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
   }
-  return stats;
-}
-function getOverallStats() {
-  var trackedDates = Object.keys(store.dates);
-  var totalDone = 0;
-  var totalSlots = 0;
-  for (var i = 0; i < trackedDates.length; i++) {
-    var data = store.dates[trackedDates[i]];
-    for (var j = 0; j < allKeys.length; j++) {
-      totalSlots++;
-      if (data[allKeys[j]]) totalDone++;
-    }
-  }
-  // 연속 일수 (오늘부터 거꾸로 — 50%+ 달성한 날만 인정)
+  var avgScore = trackedDays > 0 ? Math.round(sumScore / trackedDays) : 0;
+
+  // streak (점수 50% 이상 인 날)
   var streak = 0;
-  var d = todayDate();
+  d = todayDate();
   while (true) {
-    var pct = getDayPct(d);
-    if (pct >= 50) {
+    var s = getDayScore(area, d, stores);
+    if (s !== null && s >= 50) {
       streak++;
       d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
       if (d < PLAN_START) break;
@@ -1447,15 +1503,11 @@ function getOverallStats() {
       break;
     }
   }
-  return {
-    pct: totalSlots ? Math.round(totalDone / totalSlots * 100) : 0,
-    daysTracked: trackedDates.length,
-    streak: streak
-  };
+  return { avgScore: avgScore, daysTracked: trackedDays, streak: streak };
 }
 
 // ═══════════════════════════════════════════
-// 페이즈 결정
+// 페이즈
 // ═══════════════════════════════════════════
 function getCurrentPhase() {
   var t = todayDate();
@@ -1484,10 +1536,8 @@ function renderPhaseBar() {
     html += '<div class="' + cls + '">' + phases[i].name + '<br>' + phases[i].sub + '</div>';
   }
   document.getElementById('phase-bar').innerHTML = html;
-
   document.getElementById('phase-tip').innerHTML = phase.tip;
 
-  // D-Day
   var t = todayDate();
   var dday = daysBetween(t, COMP_START);
   var ddNum = document.getElementById('dday-num');
@@ -1511,13 +1561,7 @@ function showTab(name, btn) {
 
   window.scrollTo(0, 0);
 
-  // 진행률 탭이면 다시 그리기
-  if (name === 'progress') {
-    renderProgress();
-  }
-  if (name === 'check') {
-    renderChecklist();
-  }
+  if (name === 'progress') renderProgress();
 }
 
 function showWeek(w) {
@@ -1528,134 +1572,59 @@ function showWeek(w) {
 }
 
 // ═══════════════════════════════════════════
-// 체크리스트 렌더
+// 영역 토글
 // ═══════════════════════════════════════════
-var currentCheckDate = todayDate();
+var currentView = 'total';
 
-function changeDate(delta) {
-  var d = new Date(currentCheckDate.getFullYear(), currentCheckDate.getMonth(), currentCheckDate.getDate() + delta);
-  // 미래는 30일 후까지 허용 (테이퍼링 사전 계획용)
-  var maxDate = new Date(todayDate().getFullYear(), todayDate().getMonth(), todayDate().getDate() + 30);
-  if (d > maxDate) return;
-  if (d < PLAN_START) return;
-  currentCheckDate = d;
-  renderChecklist();
-}
-
-function renderChecklist() {
-  var d = currentCheckDate;
-  var t = todayDate();
-  var dayKey = dateKey(d);
-  var data = store.dates[dayKey] || {};
-
-  // 날짜 텍스트
-  var weekDays = ['일','월','화','수','목','금','토'];
-  var dayText = '';
-  if (dateKey(d) === dateKey(t)) dayText = '오늘';
-  else if (dateKey(d) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()-1))) dayText = '어제';
-  else if (dateKey(d) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()+1))) dayText = '내일';
-  else dayText = (d.getMonth()+1) + '월 ' + d.getDate() + '일';
-  document.getElementById('check-date-text').firstChild.nodeValue = dayText;
-  document.getElementById('check-date-sub').textContent = (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + weekDays[d.getDay()] + ')';
-
-  // 리스트
-  var html = '';
-  for (var c = 0; c < checklistDef.length; c++) {
-    var section = checklistDef[c];
-    var sectDone = 0;
-    for (var i = 0; i < section.items.length; i++) {
-      if (data[section.items[i].k]) sectDone++;
-    }
-    var sectPct = Math.round(sectDone / section.items.length * 100);
-    html += '<div class="check-section">' + section.label + '<span class="section-pct">' + sectDone + '/' + section.items.length + ' · ' + sectPct + '%</span></div>';
-    for (var i = 0; i < section.items.length; i++) {
-      var item = section.items[i];
-      var done = !!data[item.k];
-      html += '<div class="check-row" onclick="toggleCheck(\'' + item.k + '\')">';
-      html += '<div class="checkbox' + (done ? ' done' : '') + '" id="box-' + item.k + '"></div>';
-      html += '<div class="check-text' + (done ? ' done' : '') + '" id="txt-' + item.k + '">' + item.t + '</div>';
-      html += '</div>';
-    }
-  }
-  document.getElementById('checklist-area').innerHTML = html;
-
-  updateProgress();
-}
-
-function toggleCheck(k) {
-  var dayKey = dateKey(currentCheckDate);
-  if (!store.dates[dayKey]) store.dates[dayKey] = {};
-  store.dates[dayKey][k] = !store.dates[dayKey][k];
-  saveStore(store);
-
-  var box = document.getElementById('box-' + k);
-  var txt = document.getElementById('txt-' + k);
-  if (store.dates[dayKey][k]) {
-    box.classList.add('done');
-    txt.classList.add('done');
-  } else {
-    box.classList.remove('done');
-    txt.classList.remove('done');
-  }
-  // 섹션별 % 와 전체 바만 업데이트
-  updateSectionPcts();
-  updateProgress();
-}
-
-function updateSectionPcts() {
-  var data = store.dates[dateKey(currentCheckDate)] || {};
-  var sectionEls = document.querySelectorAll('.check-section .section-pct');
-  for (var i = 0; i < checklistDef.length; i++) {
-    var section = checklistDef[i];
-    var done = 0;
-    for (var j = 0; j < section.items.length; j++) {
-      if (data[section.items[j].k]) done++;
-    }
-    var pct = Math.round(done / section.items.length * 100);
-    if (sectionEls[i]) sectionEls[i].textContent = done + '/' + section.items.length + ' · ' + pct + '%';
-  }
-}
-
-function resetToday() {
-  if (!window.confirm(dateKey(currentCheckDate) + ' 의 체크를 모두 초기화할까요?')) return;
-  delete store.dates[dateKey(currentCheckDate)];
-  saveStore(store);
-  renderChecklist();
-}
-
-function updateProgress() {
-  var data = store.dates[dateKey(currentCheckDate)] || {};
-  var done = 0;
-  for (var i = 0; i < allKeys.length; i++) if (data[allKeys[i]]) done++;
-  var pct = Math.round(done / allKeys.length * 100);
-  document.getElementById('prog-bar').style.width = pct + '%';
-  document.getElementById('prog-text').textContent = pct + '% 달성 (' + done + '/' + allKeys.length + ')';
+function setViewTarget(v) {
+  currentView = v;
+  document.getElementById('vt-total').classList.toggle('on', v === 'total');
+  document.getElementById('vt-diet').classList.toggle('on', v === 'diet');
+  document.getElementById('vt-workout').classList.toggle('on', v === 'workout');
+  document.getElementById('vt-mental').classList.toggle('on', v === 'mental');
+  renderProgress();
 }
 
 // ═══════════════════════════════════════════
-// 진행률 패널 렌더
+// 진행률 패널
 // ═══════════════════════════════════════════
 function renderProgress() {
-  // 핵심 통계
-  var s = getOverallStats();
-  document.getElementById('overall-pct').textContent = s.pct + '%';
+  var stores = getStores();
+
+  // 핵심 통계 (현재 뷰 기준)
+  var s = getStats(currentView, stores);
+  document.getElementById('overall-pct').textContent = s.avgScore + '%';
+  document.getElementById('overall-lbl').textContent = AREA_LABELS[currentView] + ' 평균';
   document.getElementById('streak-cur').textContent = s.streak;
   document.getElementById('days-tracked').textContent = s.daysTracked;
 
-  // 카테고리별
-  var cats = getCategoryStats();
-  var catLabels = { diet: '🥗 식단', exercise: '🏋️ 운동', mental: '🧠 멘탈', health: '🩺 건강' };
-  var html = '';
-  var order = ['diet', 'exercise', 'mental', 'health'];
-  for (var i = 0; i < order.length; i++) {
-    var c = order[i];
-    var st = cats[c];
-    html += '<div class="cat-bar">';
-    html += '<div class="cat-row"><span class="cat-name">' + catLabels[c] + '</span><span class="cat-pct">' + st.pct + '% (' + st.done + '/' + st.total + ')</span></div>';
-    html += '<div class="cat-track"><div class="cat-fill ' + c + '" style="width:' + st.pct + '%"></div></div>';
-    html += '</div>';
+  // 영역별 평균 막대 — 통합 뷰에서만 보임
+  var barsCard = document.getElementById('area-bars-card');
+  if (currentView === 'total') {
+    barsCard.style.display = '';
+    var html = '';
+    for (var i = 0; i < AREAS.length; i++) {
+      var a = AREAS[i];
+      var as = getStats(a, stores);
+      var w = Math.round(WEIGHTS[a] * 100);
+      html += '<div class="cat-bar">';
+      html += '<div class="cat-row"><span class="cat-name">' + AREA_LABELS[a] + ' <span style="font-weight:500;color:var(--c-muted);font-size:11px">(가중치 ' + w + '%)</span></span><span class="cat-pct">' + as.avgScore + '% · ' + as.daysTracked + '일</span></div>';
+      html += '<div class="cat-track"><div class="cat-fill" style="width:' + as.avgScore + '%;background:' + AREA_COLORS[a] + '"></div></div>';
+      html += '</div>';
+    }
+    document.getElementById('area-bars').innerHTML = html;
+  } else {
+    barsCard.style.display = 'none';
   }
-  document.getElementById('cat-bars').innerHTML = html;
+
+  // 히트맵 제목
+  var hmTitleMap = {
+    total: '🌱 통합 — 7개월 전체 히트맵',
+    diet: '🥗 식단 — 7개월 전체 히트맵',
+    workout: '🏋️ 운동 — 7개월 전체 히트맵',
+    mental: '🧠 멘탈 — 7개월 전체 히트맵'
+  };
+  document.getElementById('hm-title').textContent = hmTitleMap[currentView];
 
   renderCalendar();
   renderHeatmap();
@@ -1675,6 +1644,7 @@ function changeMonth(delta) {
 }
 
 function renderCalendar() {
+  var stores = getStores();
   var year = calMonth.getFullYear();
   var month = calMonth.getMonth();
   document.getElementById('cal-title').textContent = year + '년 ' + (month + 1) + '월';
@@ -1690,8 +1660,8 @@ function renderCalendar() {
   for (var d = 1; d <= lastDate; d++) {
     var thisDate = new Date(year, month, d);
     var thisKey = dateKey(thisDate);
-    var pct = getDayPct(thisDate);
-    var lvl = getDayLevel(pct);
+    var score = getDayScore(currentView, thisDate, stores);
+    var lvl = score === null ? 0 : scoreLevel(score);
     var classes = ['cal-cell'];
 
     var isComp = isCompetitionDay(thisDate);
@@ -1710,8 +1680,8 @@ function renderCalendar() {
     html += '<div class="cal-day">' + d + '</div>';
     if (isComp) {
       html += '<div class="cal-pct">대회</div>';
-    } else if (pct > 0) {
-      html += '<div class="cal-pct">' + pct + '%</div>';
+    } else if (score !== null) {
+      html += '<div class="cal-pct">' + score + '%</div>';
     }
     html += '</div>';
   }
@@ -1719,30 +1689,25 @@ function renderCalendar() {
 }
 
 // ═══════════════════════════════════════════
-// 7개월 히트맵 (5/1 - 12/13)
+// 히트맵
 // ═══════════════════════════════════════════
 function renderHeatmap() {
-  var start = new Date(2026, 4, 1); // 5/1
-  var end = new Date(2026, 11, 13); // 12/13
+  var stores = getStores();
+  var start = new Date(2026, 4, 1);
+  var end = new Date(2026, 11, 13);
   var todayKey = dateKey(todayDate());
 
-  // 5/1 이전 빈 셀로 일요일 정렬
   var startDay = start.getDay();
   var html = '';
-  // 첫 주 빈 셀
   for (var i = 0; i < startDay; i++) {
     html += '<div class="hm-cell empty"></div>';
   }
 
-  var monthLabels = []; // {col: x, label: '5월'}
-  var col = 0;
-  var prevMonth = -1;
   var d = new Date(start.getTime());
-
   while (d <= end) {
     var k = dateKey(d);
-    var pct = getDayPct(d);
-    var lvl = getDayLevel(pct);
+    var score = getDayScore(currentView, d, stores);
+    var lvl = score === null ? 0 : scoreLevel(score);
     var classes = ['hm-cell'];
 
     if (isCompetitionDay(d)) {
@@ -1752,25 +1717,16 @@ function renderHeatmap() {
     }
     if (k === todayKey) classes.push('today');
 
-    var title = (d.getMonth()+1) + '/' + d.getDate() + ' · ' + pct + '%';
+    var title = (d.getMonth()+1) + '/' + d.getDate() + ' · ' + (score === null ? '기록 없음' : score + '%');
     if (isCompetitionDay(d)) title += ' · 대회';
 
     html += '<div class="' + classes.join(' ') + '" title="' + title + '"></div>';
-
-    // 월 시작 컬럼 추적
-    if (d.getDate() === 1 || (d.getMonth() !== prevMonth && d.getDay() === 0)) {
-      var thisCol = Math.floor((daysBetween(start, d) + startDay) / 7);
-      monthLabels.push({ col: thisCol, label: (d.getMonth()+1) + '월' });
-      prevMonth = d.getMonth();
-    }
-
     d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
   }
 
   document.getElementById('heatmap').innerHTML = html;
 
-  // 월 라벨 (간이로 5/6/7/8/9/10/11/12 균등 배치)
-  var labels = ['5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+  var labels = ['5월','6월','7월','8월','9월','10월','11월','12월'];
   var labelHtml = '';
   for (var i = 0; i < labels.length; i++) {
     labelHtml += '<span>' + labels[i] + '</span>';
@@ -1779,16 +1735,21 @@ function renderHeatmap() {
 }
 
 // ═══════════════════════════════════════════
-// 백업·복원
+// 백업·복원 (3개 키 모두)
 // ═══════════════════════════════════════════
 function exportData() {
   var area = document.getElementById('data-area');
   var msg = document.getElementById('data-msg');
-  var json = JSON.stringify(store);
+  var bundle = {
+    diet: localStorage.getItem(STORAGE_KEYS.diet) || null,
+    workout: localStorage.getItem(STORAGE_KEYS.workout) || null,
+    mental: localStorage.getItem(STORAGE_KEYS.mental) || null,
+    exportedAt: new Date().toISOString()
+  };
+  var json = JSON.stringify(bundle);
   area.style.display = 'block';
   area.value = json;
   area.select();
-  // 클립보드 복사 시도 (사파리에서도 동작)
   try {
     document.execCommand('copy');
     msg.innerHTML = '✓ 클립보드에 복사됨 — 메모장이나 카톡 나에게 보내기로 저장하세요';
@@ -1812,16 +1773,16 @@ function importData() {
   }
   try {
     var parsed = JSON.parse(area.value);
-    if (!parsed.dates) throw new Error('형식 오류');
-    if (!window.confirm('현재 데이터를 덮어쓰고 백업을 복원할까요?')) return;
-    store = parsed;
-    saveStore(store);
+    if (!parsed.diet && !parsed.workout && !parsed.mental) throw new Error('형식 오류');
+    if (!window.confirm('현재 데이터(식단·운동·멘탈)를 덮어쓰고 백업을 복원할까요?')) return;
+    if (parsed.diet) localStorage.setItem(STORAGE_KEYS.diet, parsed.diet);
+    if (parsed.workout) localStorage.setItem(STORAGE_KEYS.workout, parsed.workout);
+    if (parsed.mental) localStorage.setItem(STORAGE_KEYS.mental, parsed.mental);
     area.value = '';
     area.style.display = 'none';
     msg.innerHTML = '✓ 복원 완료';
     msg.style.color = 'var(--c-accent)';
     renderProgress();
-    renderChecklist();
   } catch (e) {
     msg.innerHTML = '✗ 잘못된 백업 데이터입니다';
     msg.style.color = 'var(--c-coral)';
@@ -1833,7 +1794,6 @@ function importData() {
 // ═══════════════════════════════════════════
 renderPhaseBar();
 renderProgress();
-renderChecklist();
 
 </script>
 </body>

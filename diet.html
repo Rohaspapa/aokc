@@ -298,17 +298,20 @@ body {
   background: var(--c-surface);
   width: 100%;
   max-width: 500px;
-  max-height: 88vh;
-  /* 키보드 올라올 때 사용할 동적 높이 변수 */
-  max-height: var(--modal-h, 88vh);
+  /* 기본 높이 — JS에서 visualViewport 기반으로 동적 설정 */
+  height: var(--modal-h, 75vh);
+  max-height: var(--modal-h, 75vh);
+  /* 키보드 위로 모달이 위치하도록 transform 사용 */
+  -webkit-transform: translateY(var(--modal-offset, 0px));
+  transform: translateY(var(--modal-offset, 0px));
   border-radius: 18px 18px 0 0;
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
-  padding-bottom: var(--safe-bottom);
-  -webkit-transition: max-height 0.2s ease;
-  transition: max-height 0.2s ease;
+  -webkit-transition: -webkit-transform 0.2s ease, height 0.2s ease;
+  transition: transform 0.2s ease, height 0.2s ease;
+  overflow: hidden;
 }
 .modal-head {
   padding: 14px 16px 10px;
@@ -319,6 +322,8 @@ body {
   justify-content: space-between;
   -webkit-align-items: center;
   align-items: center;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 .modal-title { font-size: 14px; font-weight: 700; }
 .modal-title small { color: var(--c-muted); font-weight: 500; }
@@ -334,6 +339,9 @@ body {
 .search-bar {
   padding: 10px 14px;
   border-bottom: 1px solid var(--c-border);
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  background: var(--c-surface);
 }
 .search-input {
   width: 100%;
@@ -748,7 +756,7 @@ body {
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="search-bar">
-      <input type="text" class="search-input" id="search-input" placeholder="음식 이름 검색 (예: 라면, 닭가슴살)" oninput="filterFoods()">
+      <input type="text" class="search-input" id="search-input" placeholder="음식 이름 검색 (예: 라면, 닭가슴살)" oninput="filterFoods()" onfocus="onSearchFocus()" onblur="onSearchBlur()">
     </div>
     <div class="cat-tabs" id="cat-tabs"></div>
     <div class="food-list" id="food-list"></div>
@@ -1325,18 +1333,26 @@ function closeModalIfOverlay(e) {
   if (e.target.id === 'modal-overlay') closeModal();
 }
 
-// 키보드 등장 감지 — 모달 높이 동적 조정
+// 키보드 등장 감지 — 모달을 키보드 위로 끌어올림
 function handleViewportResize() {
   if (!window.visualViewport) return;
-  var vh = window.visualViewport.height;
+  var vv = window.visualViewport;
+  var vh = vv.height;
   var fullH = window.innerHeight;
-  var keyboardH = fullH - vh;
+  var keyboardH = Math.max(0, fullH - vh);
+  var root = document.documentElement;
+
   if (keyboardH > 100) {
-    // 키보드 떠 있음 — 모달을 visualViewport 높이의 95%로 제한
-    document.documentElement.style.setProperty('--modal-h', Math.floor(vh * 0.95) + 'px');
+    // 키보드 떠 있음
+    // 모달 높이: 키보드 위에서 사용 가능한 공간의 약 90%
+    var modalH = Math.floor(vh * 0.9);
+    // 모달이 화면 바닥(align-end)에 붙어 있으므로 키보드 높이만큼 위로 끌어올림
+    root.style.setProperty('--modal-h', modalH + 'px');
+    root.style.setProperty('--modal-offset', '-' + keyboardH + 'px');
   } else {
     // 키보드 닫힘 — 원래대로
-    document.documentElement.style.setProperty('--modal-h', '88vh');
+    root.style.setProperty('--modal-h', '75vh');
+    root.style.setProperty('--modal-offset', '0px');
   }
 }
 function enableKeyboardHandler() {
@@ -1350,7 +1366,18 @@ function disableKeyboardHandler() {
     window.visualViewport.removeEventListener('resize', handleViewportResize);
     window.visualViewport.removeEventListener('scroll', handleViewportResize);
   }
-  document.documentElement.style.setProperty('--modal-h', '88vh');
+  document.documentElement.style.setProperty('--modal-h', '75vh');
+  document.documentElement.style.setProperty('--modal-offset', '0px');
+}
+
+// 검색 input 포커스 — visualViewport 이벤트가 늦게 발화하는 경우 보조 트리거
+function onSearchFocus() {
+  // 살짝 지연 후 viewport 재계산 (키보드 애니메이션 완료 대기)
+  setTimeout(handleViewportResize, 100);
+  setTimeout(handleViewportResize, 350);
+}
+function onSearchBlur() {
+  setTimeout(handleViewportResize, 100);
 }
 
 function renderCatTabs() {
