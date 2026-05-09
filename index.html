@@ -897,6 +897,17 @@ body {
     </div>
   </div>
 
+  <!-- 기록 일기 -->
+  <a href="journal.html" style="display:block;background:-webkit-linear-gradient(135deg,#1A5CA0,#2E76C0);background:linear-gradient(135deg,#1A5CA0,#2E76C0);color:#fff;text-decoration:none;padding:14px;border-radius:12px;margin-bottom:12px;-webkit-box-shadow:0 2px 6px rgba(26,92,160,0.2);box-shadow:0 2px 6px rgba(26,92,160,0.2)">
+    <div style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:700">📔 기록 일기 — 메모 돌아보기</div>
+        <div style="font-size:11px;opacity:0.85;margin-top:2px">운동·멘탈 메모를 달력·검색으로 탐색</div>
+      </div>
+      <div style="font-size:20px;font-weight:300">›</div>
+    </div>
+  </a>
+
   <!-- 데이터 백업/복원 -->
   <div class="card">
     <div class="card-title">💾 데이터 백업·복원</div>
@@ -1102,7 +1113,7 @@ body {
 ════════════════════════════════════ -->
 <div id="panel-exercise" class="panel">
 
-  <a href="workout.html" style="display:block;background:-webkit-linear-gradient(135deg,#0F4C36,#1D6B47);background:linear-gradient(135deg,#0F4C36,#1D6B47);color:#fff;text-decoration:none;padding:14px;border-radius:12px;margin-bottom:12px;-webkit-box-shadow:0 2px 6px rgba(15,76,54,0.2);box-shadow:0 2px 6px rgba(15,76,54,0.2)">
+  <a href="workout.html" style="display:block;background:-webkit-linear-gradient(135deg,#B8412A,#D45438);background:linear-gradient(135deg,#B8412A,#D45438);color:#fff;text-decoration:none;padding:14px;border-radius:12px;margin-bottom:12px;-webkit-box-shadow:0 2px 6px rgba(184,65,42,0.2);box-shadow:0 2px 6px rgba(184,65,42,0.2)">
     <div style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center">
       <div>
         <div style="font-size:13px;font-weight:700">🏋️ 오늘의 운동 기록</div>
@@ -1314,7 +1325,7 @@ var STORAGE_KEYS = {
 // 영역 메타
 var AREAS = ['diet', 'workout', 'mental'];
 var AREA_LABELS = { diet: '🥗 식단', workout: '🏋️ 운동', mental: '🧠 멘탈', total: '통합' };
-var AREA_COLORS = { diet: '#0F4C36', workout: '#1A5CA0', mental: '#5C3DAF', total: '#0F4C36' };
+var AREA_COLORS = { diet: '#0F4C36', workout: '#B8412A', mental: '#5C3DAF', total: '#0F4C36' };
 
 // 운동 활동 키 (휴식 제외)
 var WORKOUT_ACTIVE = ['gym', 'field', 'home', 'running', 'cycling', 'stretch', 'korfball'];

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="운동 기록">
-<meta name="theme-color" content="#0F4C36">
+<meta name="theme-color" content="#B8412A">
 <title>운동 기록 — AOKC 2026</title>
 <style>
 :root {
@@ -22,12 +22,17 @@
   --c-amber: #B57318;
   --c-amber-light: #F8EBCF;
   --c-coral: #B8412A;
+  --c-coral-2: #D45438;
   --c-coral-light: #F8E2DA;
   --c-blue: #1A5CA0;
   --c-blue-light: #DEEAF7;
   --c-purple: #5C3DAF;
   --c-purple-light: #E8E2F5;
   --c-good: #2D7A4E;
+  /* 운동 페이지 테마: 코랄 */
+  --c-theme: #B8412A;
+  --c-theme-2: #D45438;
+  --c-theme-light: #F8E2DA;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -45,8 +50,8 @@ body {
 
 /* 헤더 */
 .header {
-  background: -webkit-linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
-  background: linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
+  background: -webkit-linear-gradient(180deg, #B8412A 0%, #D45438 100%);
+  background: linear-gradient(180deg, #B8412A 0%, #D45438 100%);
   color: #fff;
   padding: 16px 18px 14px;
   position: sticky;
@@ -122,8 +127,8 @@ body {
   margin-bottom: 12px;
 }
 .date-btn {
-  background: var(--c-accent-light);
-  color: var(--c-accent);
+  background: var(--c-coral-light);
+  color: var(--c-coral);
   border: none;
   width: 32px;
   height: 32px;
@@ -229,8 +234,8 @@ body {
 }
 .option-btn:active { -webkit-transform: scale(0.97); transform: scale(0.97); }
 .option-btn.on {
-  background: var(--c-accent-light);
-  border-color: var(--c-accent);
+  background: var(--c-coral-light);
+  border-color: var(--c-coral);
 }
 .option-btn.on .opt-check { display: -webkit-inline-flex; display: inline-flex; }
 .option-icon {
@@ -252,7 +257,7 @@ body {
   display: none;
   width: 18px;
   height: 18px;
-  background: var(--c-accent);
+  background: var(--c-coral);
   color: #fff;
   border-radius: 50%;
   -webkit-align-items: center;
@@ -279,7 +284,26 @@ body {
   resize: vertical;
   min-height: 60px;
 }
-.memo-input:focus { outline: none; border-color: var(--c-accent); }
+.memo-input:focus { outline: none; border-color: var(--c-coral); }
+
+/* 저장 표시 */
+.save-indicator {
+  font-size: 11px;
+  font-weight: 600;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  white-space: nowrap;
+}
+.save-indicator.show {
+  opacity: 1;
+}
+.save-indicator.saving {
+  color: var(--c-muted);
+}
+.save-indicator.saved {
+  color: var(--c-good);
+}
 
 /* 요약 카드 */
 .summary-grid {
@@ -299,7 +323,7 @@ body {
   font-size: 22px;
   font-weight: 800;
   line-height: 1.1;
-  color: var(--c-accent);
+  color: var(--c-coral);
 }
 .summary-num.gold { color: #B8923A; }
 .summary-num.coral { color: var(--c-coral); }
@@ -330,7 +354,7 @@ body {
 .stat-count {
   font-weight: 800;
   font-size: 16px;
-  color: var(--c-accent);
+  color: var(--c-coral);
 }
 .stat-count .of { font-size: 11px; font-weight: 500; color: var(--c-muted); }
 
@@ -538,6 +562,7 @@ body {
     <div class="card">
       <div class="card-title">
         <div class="card-title-text">📝 메모 (선택)</div>
+        <div class="save-indicator" id="memo-saved"></div>
       </div>
       <textarea class="memo-input" id="memo-input" placeholder="컨디션·통증·특이사항 (예: 오른쪽 무릎 약간 뻣뻣함, 컨디션 좋음)" oninput="saveMemo()"></textarea>
     </div>
@@ -650,7 +675,37 @@ function saveMemo() {
   var data = getDayData();
   data.memo = document.getElementById('memo-input').value;
   saveStore(store);
-  // 메모 저장은 갱신할 필요 없음 (요약에 영향 없음)
+  showSavedIndicator('memo-saved', false);
+}
+
+// 저장 표시
+var saveTimers = {};
+function showSavedIndicator(elId, immediate) {
+  var ind = document.getElementById(elId);
+  if (!ind) return;
+  if (saveTimers[elId]) {
+    clearTimeout(saveTimers[elId].t1);
+    clearTimeout(saveTimers[elId].t2);
+  }
+  saveTimers[elId] = {};
+
+  if (immediate) {
+    ind.textContent = '✓ 저장됨';
+    ind.className = 'save-indicator saved show';
+    saveTimers[elId].t2 = setTimeout(function() {
+      ind.classList.remove('show');
+    }, 2000);
+  } else {
+    ind.textContent = '💾 저장 중...';
+    ind.className = 'save-indicator saving show';
+    saveTimers[elId].t1 = setTimeout(function() {
+      ind.textContent = '✓ 저장됨';
+      ind.className = 'save-indicator saved show';
+      saveTimers[elId].t2 = setTimeout(function() {
+        ind.classList.remove('show');
+      }, 2000);
+    }, 400);
+  }
 }
 
 function resetToday() {
