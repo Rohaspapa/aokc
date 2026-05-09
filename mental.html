@@ -275,6 +275,198 @@ body {
   line-height: 1.4;
 }
 
+/* 가이드 (?) 아이콘 */
+.guide-btn {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--c-purple-light);
+  color: var(--c-purple);
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+  margin-top: 1px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+  font-family: inherit;
+  line-height: 1;
+}
+.guide-btn:hover, .guide-btn:active {
+  background: var(--c-purple);
+  color: #fff;
+}
+
+/* 모달 */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-overlay.active {
+  display: -webkit-flex;
+  display: flex;
+}
+@media (min-width: 600px) {
+  .modal-overlay {
+    -webkit-align-items: center;
+    align-items: center;
+    padding: 20px;
+  }
+}
+.modal {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 540px;
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  position: relative;
+}
+@media (min-width: 600px) {
+  .modal {
+    border-radius: 16px;
+  }
+}
+.modal-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, var(--c-purple) 0%, var(--c-purple-dark) 100%);
+  color: #fff;
+  padding: 16px 50px 16px 18px;
+  border-radius: 16px 16px 0 0;
+  z-index: 2;
+}
+@media (min-width: 600px) {
+  .modal-header {
+    border-radius: 16px 16px 0 0;
+  }
+}
+.modal-time {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.22);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+}
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: inherit;
+  padding: 0;
+}
+.modal-close:hover, .modal-close:active {
+  background: rgba(255,255,255,0.35);
+}
+.modal-body {
+  padding: 16px 18px 22px;
+}
+.modal-section {
+  margin-bottom: 16px;
+}
+.modal-section:last-child { margin-bottom: 0; }
+.modal-section-label {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 7px;
+}
+.modal-section-icon {
+  margin-right: 5px;
+  font-size: 13px;
+}
+.modal-section-text {
+  font-size: 13px;
+  color: var(--c-text);
+  line-height: 1.6;
+}
+.modal-section-text b {
+  color: var(--c-purple-dark);
+  font-weight: 700;
+}
+.modal-quote {
+  background: var(--c-purple-light);
+  border-left: 3px solid var(--c-purple);
+  padding: 10px 12px;
+  border-radius: 0 6px 6px 0;
+  font-size: 12px;
+  color: var(--c-text);
+  line-height: 1.55;
+  font-style: italic;
+  margin-top: 6px;
+}
+.modal-tip-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--c-text);
+  line-height: 1.6;
+}
+.modal-tip-list li {
+  margin-bottom: 4px;
+}
+.modal-tip-list li:last-child { margin-bottom: 0; }
+.modal-tip-list li b {
+  color: var(--c-purple-dark);
+  font-weight: 700;
+}
+
 /* 자기평가 슬라이더 */
 .rating-row {
   display: -webkit-flex;
@@ -539,6 +731,7 @@ body {
           <div class="check-text">의도 설정 (2분)</div>
           <div class="check-detail">"오늘 나는 ___에 집중한다" — 행동 단위로</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r1')" aria-label="가이드">?</button>
       </div>
 
       <div class="check-row" id="row-r2" onclick="toggleRoutine('r2')">
@@ -548,6 +741,7 @@ body {
           <div class="check-text">활성화 루틴 (5분)</div>
           <div class="check-detail">음악 1~2곡 + 파워포즈 2분 + 박스호흡 3회</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r2')" aria-label="가이드">?</button>
       </div>
 
       <div class="check-row" id="row-r3" onclick="toggleRoutine('r3')">
@@ -557,6 +751,7 @@ body {
           <div class="check-text">집중 키워드 활용</div>
           <div class="check-detail">한 단어 반복 (예: "지금", "연결", "가볍게")</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r3')" aria-label="가이드">?</button>
       </div>
 
       <div class="check-row" id="row-r4" onclick="toggleRoutine('r4')">
@@ -566,6 +761,7 @@ body {
           <div class="check-text">잘한 것 3가지 리뷰</div>
           <div class="check-detail">개선점은 "다음에 ___을 해보자"로 변환</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r4')" aria-label="가이드">?</button>
       </div>
 
       <div class="check-row" id="row-r5" onclick="toggleRoutine('r5')">
@@ -575,6 +771,7 @@ body {
           <div class="check-text">자기비판 없이 마무리</div>
           <div class="check-detail">과정 목표에 집중 — 결과 집착 X</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r5')" aria-label="가이드">?</button>
       </div>
 
       <div class="check-row" id="row-r6" onclick="toggleRoutine('r6')">
@@ -584,6 +781,7 @@ body {
           <div class="check-text">이미지 트레이닝 (5~10분)</div>
           <div class="check-detail">성공 플레이 장면 — 감각까지 생생하게</div>
         </div>
+        <button class="guide-btn" onclick="event.stopPropagation();openGuide('r6')" aria-label="가이드">?</button>
       </div>
     </div>
 
@@ -652,6 +850,18 @@ body {
 
   </div>
 
+</div>
+
+<!-- 가이드 모달 -->
+<div class="modal-overlay" id="guide-modal" onclick="closeGuideOnOverlay(event)">
+  <div class="modal" id="guide-modal-inner">
+    <div class="modal-header">
+      <span class="modal-time" id="guide-time"></span>
+      <div class="modal-title" id="guide-title"></div>
+      <button class="modal-close" onclick="closeGuide()" aria-label="닫기">×</button>
+    </div>
+    <div class="modal-body" id="guide-body"></div>
+  </div>
 </div>
 
 <script>
@@ -962,6 +1172,224 @@ function goHome() {
 // 초기화
 // ═══════════════════════════════════════════
 render();
+
+// ═══════════════════════════════════════════
+// 가이드 모달
+// ═══════════════════════════════════════════
+var GUIDE_DATA = {
+  r1: {
+    time: '기상직후',
+    title: '의도 설정 (2분)',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '하루의 첫 5분은 그날 전체의 인지 프레임을 결정합니다. 인지심리학에서는 이를 <b>점화 효과(priming)</b>라 부릅니다. 명확한 의도 없이 시작하면 외부 자극(SNS·뉴스·타인의 기분)에 끌려다니게 되고, 통제감(perceived control)이 낮아져 스트레스 반응이 커집니다. 의도 설정은 자기결정성 이론에서 말하는 <b>자율성</b>을 회복하는 가장 단순한 도구입니다.'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: '핵심은 <b>"행동 단위"</b>로 적는 것. "잘하자", "건강하게" 같은 추상적 표현은 뇌가 실행으로 옮기지 못합니다. SMART 원칙 중 Specific·Actionable만 적용하면 충분합니다.'
+      },
+      {
+        label: '예시 문구',
+        icon: '💬',
+        text: ''
+      }
+    ],
+    quote: '❌ "오늘 잘하자"<br>✅ "오늘 슛 연습 30분, 폼 한 가지에만 집중한다"<br><br>❌ "긍정적으로 살자"<br>✅ "오늘 동료에게 잘한 점 한 가지를 말로 전달한다"'
+  },
+  r2: {
+    time: '운동전',
+    title: '활성화 루틴 (5분)',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '운동 수행은 <b>각성 수준(arousal)</b>이 적정 구간일 때 최대치가 나옵니다 (Yerkes-Dodson 법칙). 너무 낮으면 반응이 느리고, 너무 높으면 미세 운동 통제가 무너지죠. 활성화 루틴은 각성을 의도적으로 끌어올리는 동시에 <b>주의 초점을 외부 자극에서 신체 감각으로 전환</b>합니다. 코르프볼처럼 위치 변경과 페이크가 잦은 종목에서는 신체 감각 채널의 사전 활성화가 첫 1쿼터 퍼포먼스에 직접 영향을 줍니다.'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: '세 요소를 <b>고정 순서</b>로 반복하면 파블로프식 조건화로 5분 안에 "준비 상태"에 진입합니다.'
+      }
+    ],
+    tips: [
+      '<b>음악 1~2곡</b>: BPM 120~140의 동일한 곡을 매 훈련마다 반복. 다양성보다 일관성이 조건화를 강화함',
+      '<b>파워포즈 2분</b>: 가슴 펴고 어깨 뒤로, 시선은 위. Cuddy의 후속 연구는 호르몬 효과는 논쟁 중이지만 <b>주관적 자신감 상승은 일관되게 재현</b>됨',
+      '<b>박스 호흡 3회</b>: 4초 들이마시고 → 4초 멈추고 → 4초 내쉬고 → 4초 멈춤. 미주신경 자극으로 과각성을 적정 수준으로 조절'
+    ]
+  },
+  r3: {
+    time: '훈련중',
+    title: '집중 키워드 활용',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '훈련 중 잡념이 끼어드는 건 정상입니다. 문제는 잡념이 들었을 때 <b>"왜 또 딴생각을 하지"라며 자기비판으로 빠지는 것</b>. 이게 두 번째 화살(불교 비유)이고, 실제 퍼포먼스를 망가뜨리는 진짜 원인입니다. 집중 키워드는 <b>주의를 부드럽게 현재로 되돌리는 닻(anchor)</b> 역할을 합니다. 마음챙김(mindfulness) 기반 운동심리 연구에서 가장 일관되게 효과가 검증된 기법 중 하나입니다.'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: '키워드는 <b>한 단어, 동사 또는 부사</b>로. 명사("골", "승리")는 결과 지향이라 부담을 키웁니다. 한 시즌에 한 단어만 사용해 충분히 조건화한 다음, 다음 시즌에 바꾸세요. 자주 바꾸면 닻이 되지 않습니다.'
+      },
+      {
+        label: '키워드 예시',
+        icon: '💬',
+        text: ''
+      }
+    ],
+    tips: [
+      '<b>"지금"</b>: 과거 실수·미래 결과로 빠질 때 — 가장 범용적',
+      '<b>"연결"</b>: 동료 위치를 놓칠 때 — 팀 스포츠 핵심',
+      '<b>"가볍게"</b>: 어깨에 힘이 들어갈 때 — 정확도를 위한 이완',
+      '<b>"낮게"</b>: 수비 자세가 무너질 때 — 신체 단서',
+      '<b>"호흡"</b>: 모든 게 무너졌다고 느낄 때 — 가장 마지막 카드'
+    ]
+  },
+  r4: {
+    time: '운동후',
+    title: '잘한 것 3가지 리뷰',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '뇌는 <b>부정 편향(negativity bias)</b>이 강해서, 같은 운동에서도 잘못한 장면이 잘한 장면보다 훨씬 오래·강하게 기억에 박힙니다. 의도적으로 잘한 것을 끄집어내지 않으면 운동 후 자기 평가는 항상 실제보다 부정적으로 왜곡됩니다. 긍정심리학의 <b>"Three Good Things"</b> 개입은 우울 예방·자기효능감 향상 효과가 메타분석에서 일관되게 나타납니다. 운동 직후 이 작업을 하면 <b>학습 강화</b>(좋은 패턴이 기억에 더 잘 박힘) 효과까지 같이 얻습니다.'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: '<b>구체적 장면</b>으로 적습니다. "잘했다"가 아니라 "3쿼터 5분쯤 컷인 패스 한 번이 깔끔했다". 개선점은 <b>비판이 아니라 다음 행동</b>으로 변환합니다. 코칭에서 말하는 <b>"피드포워드(feedforward)"</b> 기법입니다.'
+      }
+    ],
+    quote: '❌ "오늘 슛 감이 없었다, 한심하다"<br>✅ "오늘 어시스트 타이밍이 좋았다 / 컷인 한 번 정확했다 / 동료 격려를 두 번 했다. 다음에 슛 전 호흡을 한 번 더 챙겨보자"'
+  },
+  r5: {
+    time: '하루중',
+    title: '자기비판 없이 마무리',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '운동심리학에서 <b>결과 목표(outcome goal)</b>·<b>수행 목표(performance goal)</b>·<b>과정 목표(process goal)</b>를 구분합니다. 결과 목표("이기기")는 통제 불가능 요소가 많아 불안을 키우고, 결과가 나쁘면 곧장 자기비판으로 이어집니다. 반면 <b>과정 목표</b>("매 슛 전 호흡 한 번")는 100% 본인 통제 안에 있어서, 결과와 무관하게 성취 가능. 일류 선수일수록 결과 목표 비율을 낮추고 과정 목표 비율을 높입니다 (Burton의 목표 설정 이론).'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: '하루를 닫을 때 <b>스스로에게 던지는 질문을 바꿉니다</b>. "오늘 잘했나?"가 아니라 "오늘 정한 과정 목표를 지켰나?". 이 작은 전환이 자기비판 회로를 차단합니다. <b>자기연민(self-compassion)</b> 연구의 Neff는 "친한 친구에게 하지 않을 말은 자신에게도 하지 말라"고 표현합니다.'
+      }
+    ],
+    quote: '하루 끝에 자신에게:<br>"오늘 결과는 어땠더라도, 내가 정한 한 가지 과정을 지켰다면 충분하다."'
+  },
+  r6: {
+    time: '취침전',
+    title: '이미지 트레이닝 (5~10분)',
+    sections: [
+      {
+        label: '왜 이걸 하는가',
+        icon: '🎯',
+        text: '심상 훈련(motor imagery)은 운동심리학에서 <b>실제 신체 훈련에 비해 약 60~70% 수준의 운동 학습 효과</b>가 메타분석으로 확인된 기법입니다. 핵심 메커니즘은 <b>기능적 등가성(functional equivalence)</b> — 생생하게 상상한 동작은 실제 동작과 동일한 운동피질·소뇌 영역을 활성화시킵니다. 취침 전이 효과적인 이유는 <b>수면 중 기억 공고화</b>(memory consolidation)와 결합되기 때문입니다. 자기 직전 떠올린 동작 패턴은 그날 밤 자는 동안 강화됩니다.'
+      },
+      {
+        label: '어떻게 하는가',
+        icon: '🛠️',
+        text: 'PETTLEP 모델(Holmes & Collins)을 따르면 효과가 극대화됩니다. 7가지 요소를 모두 채울수록 좋아요.'
+      }
+    ],
+    tips: [
+      '<b>P</b>hysical: 가능하면 실제 자세에 가깝게 (앉아서라도 손은 슛 자세)',
+      '<b>E</b>nvironment: 코트 환경을 구체적으로 (조명, 바닥 소리, 관중)',
+      '<b>T</b>ask: 본인 수준에 맞는 동작 — 너무 어려운 장면은 X',
+      '<b>T</b>iming: 실제 동작과 같은 속도로 (슬로우모션 X)',
+      '<b>L</b>earning: 현재 익히고 있는 기술 위주',
+      '<b>E</b>motion: 성공했을 때의 감정·자신감까지 포함',
+      '<b>P</b>erspective: 1인칭 시점이 3인칭보다 학습 효과 ↑'
+    ]
+  }
+};
+
+function openGuide(key) {
+  var data = GUIDE_DATA[key];
+  if (!data) return;
+
+  document.getElementById('guide-time').textContent = data.time;
+  document.getElementById('guide-title').textContent = data.title;
+
+  var bodyEl = document.getElementById('guide-body');
+  var html = '';
+
+  // "예시"·"키워드" 라벨이 있는 섹션은 quote/tips를 그 안에 붙임 (재료 컨테이너 역할)
+  // 그런 섹션이 없으면 quote/tips를 별도 섹션으로 맨 아래에 추가
+  var exampleSectionIdx = -1;
+  data.sections.forEach(function(sec, idx) {
+    if (sec.label.indexOf('예시') >= 0 || sec.label.indexOf('키워드') >= 0) {
+      exampleSectionIdx = idx;
+    }
+  });
+
+  data.sections.forEach(function(sec, idx) {
+    html += '<div class="modal-section">';
+    html += '<div class="modal-section-label"><span class="modal-section-icon">' + sec.icon + '</span>' + sec.label + '</div>';
+    if (sec.text) {
+      html += '<div class="modal-section-text">' + sec.text + '</div>';
+    }
+    if (idx === exampleSectionIdx) {
+      if (data.quote) {
+        html += '<div class="modal-quote">' + data.quote + '</div>';
+      }
+      if (data.tips) {
+        html += '<ul class="modal-tip-list">';
+        data.tips.forEach(function(tip) {
+          html += '<li>' + tip + '</li>';
+        });
+        html += '</ul>';
+      }
+    }
+    html += '</div>';
+  });
+
+  // 예시 섹션이 없을 때만 quote/tips를 별도 섹션으로 추가
+  if (exampleSectionIdx === -1) {
+    if (data.quote) {
+      html += '<div class="modal-section"><div class="modal-quote">' + data.quote + '</div></div>';
+    }
+    if (data.tips) {
+      html += '<div class="modal-section"><ul class="modal-tip-list">';
+      data.tips.forEach(function(tip) {
+        html += '<li>' + tip + '</li>';
+      });
+      html += '</ul></div>';
+    }
+  }
+
+  bodyEl.innerHTML = html;
+
+  var overlay = document.getElementById('guide-modal');
+  overlay.classList.add('active');
+  // 모달 내부 스크롤을 맨 위로
+  document.getElementById('guide-modal-inner').scrollTop = 0;
+  // body 스크롤 잠금
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGuide() {
+  document.getElementById('guide-modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeGuideOnOverlay(e) {
+  if (e.target.id === 'guide-modal') {
+    closeGuide();
+  }
+}
+
+// ESC 키로 닫기
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeGuide();
+  }
+});
 
 </script>
 </body>
