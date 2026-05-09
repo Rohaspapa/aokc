@@ -49,6 +49,26 @@ body {
   line-height: 1.5;
 }
 
+/* ── iPad·Mac 최적화: 큰 화면에서 540px 중앙 정렬 ── */
+@media (min-width: 600px) {
+  .header,
+  .content {
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tabbar {
+    max-width: 540px;
+    width: 100%;
+    left: 50% !important;
+    right: auto !important;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    border-left: 1px solid var(--c-border);
+    border-right: 1px solid var(--c-border);
+  }
+}
+
 /* ── 상단 헤더 ── */
 .header {
   background: linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
