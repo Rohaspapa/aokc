@@ -43,16 +43,6 @@ body {
   padding-bottom: calc(20px + var(--safe-bottom));
 }
 
-/* ── iPad·Mac 최적화: 큰 화면에서 540px 중앙 정렬 ── */
-@media (min-width: 600px) {
-  .header,
-  .content {
-    max-width: 540px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
 /* ── 헤더 ── */
 .header {
   background: -webkit-linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
@@ -796,9 +786,6 @@ var FOODS = [
   { c: '한식 주식', n: '김치볶음밥', t: ['salt'] },
   { c: '한식 주식', n: '제육덮밥', t: ['salt', 'fat'] },
   { c: '한식 주식', n: '돈까스 덮밥', t: ['salt', 'fat', 'proc'] },
-  { c: '한식 주식', n: '카레 (소고기)', t: ['salt', 'fat', 'gout'] },
-  { c: '한식 주식', n: '카레 (닭고기)', t: ['salt', 'fat', 'protein'] },
-  { c: '한식 주식', n: '카레 (돼지고기)', t: ['salt', 'fat'] },
 
   // === 국·찌개·탕 ===
   { c: '국·찌개', n: '미역국', t: [] },
@@ -842,7 +829,6 @@ var FOODS = [
   { c: '고기·구이', n: '삼겹살', t: ['fat'] },
   { c: '고기·구이', n: '목살', t: ['fat'] },
   { c: '고기·구이', n: '소불고기', t: ['salt'] },
-  { c: '고기·구이', n: '돼지불고기', t: ['salt', 'fat'] },
   { c: '고기·구이', n: '소갈비', t: ['salt', 'fat', 'gout'] },
   { c: '고기·구이', n: '곱창·막창', t: ['gout', 'fat'] },
   { c: '고기·구이', n: '간 (소·돼지)', t: ['gout'] },

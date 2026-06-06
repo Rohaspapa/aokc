@@ -29,10 +29,6 @@
   --c-purple: #5C3DAF;
   --c-purple-light: #E8E2F5;
   --c-good: #2D7A4E;
-  /* 운동 페이지 테마: 코랄 */
-  --c-theme: #B8412A;
-  --c-theme-2: #D45438;
-  --c-theme-light: #F8E2DA;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -147,33 +143,46 @@ body {
   margin-top: 2px;
 }
 
-/* 추천 배너 */
-.suggestion-banner {
-  background: -webkit-linear-gradient(135deg, var(--c-amber-light), #F8E0BA);
-  background: linear-gradient(135deg, var(--c-amber-light), #F8E0BA);
-  border: 1px solid #E8D4A0;
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
-}
-.suggestion-label {
-  font-size: 10px;
+/* 루틴 배지 (오늘의 루틴 라벨) */
+.routine-badge {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
   font-weight: 700;
-  color: #6B5510;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.2px;
+}
+.routine-badge.A { background: var(--c-coral-light); color: var(--c-coral); }
+.routine-badge.B { background: var(--c-blue-light); color: var(--c-blue); }
+.routine-badge.M { background: var(--c-accent-light); color: var(--c-accent); }
+.routine-badge.S { background: var(--c-amber-light); color: #6B5510; }
+
+/* 진행 바 */
+.progress-wrap {
+  background: var(--c-border);
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
   margin-bottom: 4px;
 }
-.suggestion-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #3D2F08;
-  line-height: 1.5;
+.progress-fill {
+  height: 100%;
+  background: -webkit-linear-gradient(left, var(--c-coral), var(--c-coral-2));
+  background: linear-gradient(90deg, var(--c-coral), var(--c-coral-2));
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
+  border-radius: 4px;
 }
-.suggestion-sub {
-  font-size: 11px;
-  color: #6B5510;
-  margin-top: 4px;
-  font-style: italic;
+.progress-text {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-coral);
+  margin-bottom: 14px;
 }
 
 /* 카드 */
@@ -187,7 +196,7 @@ body {
 .card-title {
   font-size: 13px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: -webkit-flex;
   display: flex;
   -webkit-align-items: center;
@@ -206,18 +215,110 @@ body {
 .card-sub {
   font-size: 11px;
   color: var(--c-muted);
-  margin-top: -6px;
+  margin-top: -4px;
   margin-bottom: 10px;
 }
 
-/* 운동 옵션 그리드 */
+/* 운동 체크 항목 */
+.workout-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--c-border);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.workout-row:last-child { border-bottom: none; }
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--c-muted);
+  border-radius: 6px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-right: 11px;
+  margin-top: 1px;
+  position: relative;
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  background: #fff;
+}
+.checkbox.done {
+  background: var(--c-coral);
+  border-color: var(--c-coral);
+}
+.checkbox.done:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.workout-content {
+  -webkit-flex: 1;
+  flex: 1;
+}
+.workout-num {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: var(--c-surface-2);
+  color: var(--c-muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 18px;
+  border-radius: 4px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.workout-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.4;
+  display: inline;
+}
+.workout-row.done .workout-name {
+  color: var(--c-muted);
+  text-decoration: line-through;
+}
+.workout-detail {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 3px;
+  margin-left: 24px;
+  line-height: 1.4;
+}
+.workout-target {
+  display: inline-block;
+  background: var(--c-coral-light);
+  color: var(--c-coral);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.workout-target.B { background: var(--c-blue-light); color: var(--c-blue); }
+.workout-target.M { background: var(--c-accent-light); color: var(--c-accent); }
+.workout-target.S { background: var(--c-amber-light); color: #6B5510; }
+.workout-target.C { background: var(--c-purple-light); color: var(--c-purple); }
+
+/* 단순 옵션 그리드 (유산소·스트레칭·휴식·코프볼) */
 .option-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-.option-grid.three {
-  grid-template-columns: repeat(3, 1fr);
 }
 .option-btn {
   background: var(--c-surface-2);
@@ -271,7 +372,7 @@ body {
   margin-right: auto;
 }
 
-/* 메모 입력 */
+/* 메모 */
 .memo-input {
   width: 100%;
   padding: 10px 12px;
@@ -282,7 +383,8 @@ body {
   -webkit-appearance: none;
   appearance: none;
   resize: vertical;
-  min-height: 60px;
+  min-height: 70px;
+  line-height: 1.5;
 }
 .memo-input:focus { outline: none; border-color: var(--c-coral); }
 
@@ -295,17 +397,11 @@ body {
   opacity: 0;
   white-space: nowrap;
 }
-.save-indicator.show {
-  opacity: 1;
-}
-.save-indicator.saving {
-  color: var(--c-muted);
-}
-.save-indicator.saved {
-  color: var(--c-good);
-}
+.save-indicator.show { opacity: 1; }
+.save-indicator.saving { color: var(--c-muted); }
+.save-indicator.saved { color: var(--c-good); }
 
-/* 요약 카드 */
+/* 요약 */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -326,7 +422,6 @@ body {
   color: var(--c-coral);
 }
 .summary-num.gold { color: #B8923A; }
-.summary-num.coral { color: var(--c-coral); }
 .summary-lbl {
   font-size: 10px;
   color: var(--c-muted);
@@ -334,67 +429,57 @@ body {
   font-weight: 600;
 }
 
-/* 통계 페이즈 페이지 */
-.stat-row {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--c-border);
-  font-size: 13px;
-}
-.stat-row:last-child { border-bottom: none; }
-.stat-label {
-  -webkit-flex: 1;
-  flex: 1;
-  font-weight: 500;
-}
-.stat-count {
-  font-weight: 800;
-  font-size: 16px;
-  color: var(--c-coral);
-}
-.stat-count .of { font-size: 11px; font-weight: 500; color: var(--c-muted); }
-
-/* 주간 요약 */
+/* 주간 뷰 */
 .weekly-row {
   display: -webkit-flex;
   display: flex;
   -webkit-align-items: center;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 12px;
 }
 .weekly-day {
-  width: 56px;
+  width: 60px;
   font-weight: 600;
   color: var(--c-muted);
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
+  font-size: 11px;
 }
-.weekly-icons {
+.weekly-bar-track {
   -webkit-flex: 1;
   flex: 1;
-  display: -webkit-flex;
-  display: flex;
-  gap: 6px;
-  -webkit-align-items: center;
-  align-items: center;
+  height: 18px;
+  background: var(--c-surface-2);
+  border-radius: 4px;
+  overflow: hidden;
 }
-.w-icon {
-  font-size: 14px;
+.weekly-bar-fill {
+  height: 100%;
+  background: -webkit-linear-gradient(left, var(--c-coral), var(--c-coral-2));
+  background: linear-gradient(90deg, var(--c-coral), var(--c-coral-2));
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
 }
-.w-icon.dim { opacity: 0.2; }
-.weekly-empty {
+.weekly-pct {
+  width: 36px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--c-coral);
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+.weekly-label {
+  font-size: 10px;
   color: var(--c-muted);
-  font-size: 11px;
-  font-style: italic;
+  width: 30px;
+  text-align: right;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 
-/* 빈 상태 */
 .empty-state {
   text-align: center;
   padding: 24px 16px;
@@ -417,6 +502,19 @@ body {
   font-family: inherit;
 }
 
+/* 정보 박스 */
+.info-box {
+  background: var(--c-coral-light);
+  border: 1px solid #E8B6A8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: #6B1E0E;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.info-box strong { font-weight: 700; }
+
 </style>
 </head>
 <body>
@@ -425,7 +523,7 @@ body {
   <div class="header-row">
     <div>
       <h1>🏋️ 운동 기록</h1>
-      <p>오늘 한 운동을 빠르게 체크</p>
+      <p>오늘의 홈 워크아웃을 체크</p>
     </div>
     <button class="back-btn" onclick="goHome()">← 메인</button>
   </div>
@@ -433,16 +531,14 @@ body {
 
 <div class="content">
 
-  <!-- 일/주간 토글 -->
   <div class="toggle-section">
     <button class="toggle-btn on" id="view-day-btn" onclick="switchView('day')">📅 오늘</button>
     <button class="toggle-btn" id="view-week-btn" onclick="switchView('week')">📊 주간</button>
   </div>
 
-  <!-- ════ 일별 뷰 ════ -->
+  <!-- 일별 -->
   <div id="view-day">
 
-    <!-- 날짜 바 -->
     <div class="date-bar">
       <button class="date-btn" onclick="changeDate(-1)">‹</button>
       <div class="date-text" id="date-text">오늘
@@ -451,18 +547,14 @@ body {
       <button class="date-btn" onclick="changeDate(1)">›</button>
     </div>
 
-    <!-- 추천 -->
-    <div class="suggestion-banner" id="suggestion-banner" style="display:none">
-      <div class="suggestion-label">💡 오늘의 계획</div>
-      <div class="suggestion-text" id="suggestion-text"></div>
-      <div class="suggestion-sub">참고용 — 실제 한 운동만 아래에서 체크하세요</div>
-    </div>
+    <!-- 오늘 루틴 안내 -->
+    <div class="info-box" id="today-info"></div>
 
-    <!-- 오늘 요약 -->
+    <!-- 요약 -->
     <div class="summary-grid">
       <div class="summary-box">
-        <div class="summary-num" id="sum-today">0</div>
-        <div class="summary-lbl">오늘 완료</div>
+        <div class="summary-num" id="sum-today">0%</div>
+        <div class="summary-lbl">루틴 달성</div>
       </div>
       <div class="summary-box">
         <div class="summary-num gold" id="sum-streak">0</div>
@@ -474,94 +566,70 @@ body {
       </div>
     </div>
 
-    <!-- 운동 장소 (복합 운동) -->
-    <div class="card">
+    <!-- 진행 -->
+    <div class="progress-wrap">
+      <div class="progress-fill" id="prog-bar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="prog-text">0/0 항목 완료</div>
+
+    <!-- 오늘의 루틴 카드 -->
+    <div class="card" id="routine-card">
       <div class="card-title">
-        <div class="card-title-text">🏟️ 장소별 운동</div>
+        <span class="card-title-text" id="routine-title">🏋️ 오늘의 루틴</span>
+        <span class="routine-badge" id="routine-badge"></span>
       </div>
-      <div class="card-sub">한 가지 또는 여러 개 선택 가능</div>
-      <div class="option-grid three">
-        <button class="option-btn" id="opt-gym" onclick="toggleOpt('gym')">
-          <span class="option-icon">🏋️</span>
-          <div class="option-label">헬스장</div>
-          <div class="option-sub">기능성 근력</div>
-          <div class="opt-check">✓</div>
-        </button>
-        <button class="option-btn" id="opt-field" onclick="toggleOpt('field')">
-          <span class="option-icon">🏃</span>
-          <div class="option-label">운동장</div>
-          <div class="option-sub">민첩성·드릴</div>
-          <div class="opt-check">✓</div>
-        </button>
-        <button class="option-btn" id="opt-home" onclick="toggleOpt('home')">
-          <span class="option-icon">🏠</span>
-          <div class="option-label">집</div>
-          <div class="option-sub">맨몸·서킷</div>
-          <div class="opt-check">✓</div>
-        </button>
-      </div>
+      <div class="card-sub" id="routine-sub"></div>
+      <div id="routine-items"></div>
     </div>
 
-    <!-- 단일 운동 -->
+    <!-- 쿨다운 카드 (A·B 루틴 일에만) -->
+    <div class="card" id="cooldown-card" style="display:none">
+      <div class="card-title">
+        <span class="card-title-text">🧘 운동 직후 쿨다운</span>
+        <span class="routine-badge S">필수</span>
+      </div>
+      <div class="card-sub">A·B 루틴 끝나고 바로 (월·화·목·금)</div>
+      <div id="cooldown-items"></div>
+    </div>
+
+    <!-- 추가 활동 -->
     <div class="card">
       <div class="card-title">
-        <div class="card-title-text">🚴 단일 운동</div>
+        <span class="card-title-text">➕ 추가 활동</span>
       </div>
-      <div class="card-sub">유산소나 스트레칭만 한 날에도 체크</div>
-      <div class="option-grid three">
-        <button class="option-btn" id="opt-running" onclick="toggleOpt('running')">
+      <div class="card-sub">홈 워크아웃 외 추가로 한 운동</div>
+      <div class="option-grid">
+        <button class="option-btn" id="opt-cardio" onclick="toggleOpt('cardio')">
           <span class="option-icon">🏃‍♂️</span>
-          <div class="option-label">러닝</div>
-          <div class="option-sub">유산소</div>
-          <div class="opt-check">✓</div>
-        </button>
-        <button class="option-btn" id="opt-cycling" onclick="toggleOpt('cycling')">
-          <span class="option-icon">🚴</span>
-          <div class="option-label">자전거</div>
-          <div class="option-sub">유산소</div>
+          <div class="option-label">유산소</div>
+          <div class="option-sub">러닝·자전거</div>
           <div class="opt-check">✓</div>
         </button>
         <button class="option-btn" id="opt-stretch" onclick="toggleOpt('stretch')">
           <span class="option-icon">🧘</span>
           <div class="option-label">스트레칭</div>
-          <div class="option-sub">회복·유연</div>
+          <div class="option-sub">추가 회복</div>
+          <div class="opt-check">✓</div>
+        </button>
+        <button class="option-btn" id="opt-korfball" onclick="toggleOpt('korfball')">
+          <span class="option-icon">🏆</span>
+          <div class="option-label">코프볼 훈련</div>
+          <div class="option-sub">단체훈련</div>
+          <div class="opt-check">✓</div>
+        </button>
+        <button class="option-btn" id="opt-rest" onclick="toggleOpt('rest')">
+          <span class="option-icon">🛌</span>
+          <div class="option-label">완전 휴식</div>
+          <div class="option-sub">의도적 회복</div>
           <div class="opt-check">✓</div>
         </button>
       </div>
     </div>
 
-    <!-- 코프볼 단체훈련 -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-title-text">⛹️ 코프볼 단체훈련</div>
-      </div>
-      <div class="card-sub">일요일 정기 훈련 또는 자체 연습</div>
-      <button class="option-btn" id="opt-korfball" onclick="toggleOpt('korfball')" style="width:100%">
-        <span class="option-icon">🏆</span>
-        <div class="option-label">코프볼 훈련 완료</div>
-        <div class="option-sub">실전 시뮬레이션</div>
-        <div class="opt-check">✓</div>
-      </button>
-    </div>
-
-    <!-- 휴식 -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-title-text">😴 의도적 휴식</div>
-      </div>
-      <div class="card-sub">오늘은 회복일이라면 (체크해도 연속 일수 유지)</div>
-      <button class="option-btn" id="opt-rest" onclick="toggleOpt('rest')" style="width:100%">
-        <span class="option-icon">🛌</span>
-        <div class="option-label">완전 휴식</div>
-        <div class="option-sub">근육 회복에 필수</div>
-        <div class="opt-check">✓</div>
-      </button>
-    </div>
-
     <!-- 메모 -->
     <div class="card">
       <div class="card-title">
-        <div class="card-title-text">📝 메모 (선택)</div>
+        <span class="card-title-text">📝 메모 (선택)</span>
         <div class="save-indicator" id="memo-saved"></div>
       </div>
       <textarea class="memo-input" id="memo-input" placeholder="컨디션·통증·특이사항 (예: 오른쪽 무릎 약간 뻣뻣함, 컨디션 좋음)" oninput="saveMemo()"></textarea>
@@ -571,53 +639,95 @@ body {
 
   </div>
 
-  <!-- ════ 주간 뷰 ════ -->
+  <!-- 주간 -->
   <div id="view-week" style="display:none">
-
     <div class="card">
-      <div class="card-title"><div class="card-title-text">📊 최근 7일</div></div>
+      <div class="card-title"><span class="card-title-text">📊 최근 7일</span></div>
       <div id="weekly-list"></div>
     </div>
-
     <div class="card">
-      <div class="card-title"><div class="card-title-text">📈 30일 통계</div></div>
+      <div class="card-title"><span class="card-title-text">📈 30일 통계</span></div>
       <div id="month-stats"></div>
     </div>
-
   </div>
 
 </div>
 
 <script>
 // ═══════════════════════════════════════════
-// 운동 옵션 정의
+// 루틴 정의 — PDF 기준
 // ═══════════════════════════════════════════
-var OPTS = [
-  { k: 'gym', icon: '🏋️', label: '헬스장' },
-  { k: 'field', icon: '🏃', label: '운동장' },
-  { k: 'home', icon: '🏠', label: '집' },
-  { k: 'running', icon: '🏃‍♂️', label: '러닝' },
-  { k: 'cycling', icon: '🚴', label: '자전거' },
-  { k: 'stretch', icon: '🧘', label: '스트레칭' },
-  { k: 'korfball', icon: '🏆', label: '코프볼' },
-  { k: 'rest', icon: '🛌', label: '휴식' }
-];
-
-// 운동 활동으로 인정 (휴식 제외)
-var ACTIVE_KEYS = ['gym', 'field', 'home', 'running', 'cycling', 'stretch', 'korfball'];
-
-// 주간 계획표 (메인 대시보드와 동일)
-var WEEKLY_PLAN = {
-  0: { text: '코프볼 단체훈련', sub: '실전 시뮬레이션 (3시간)' },           // 일
-  1: { text: '헬스장 — 기능성 근력', sub: '하체·코어·등 (약 55분)' },     // 월
-  2: { text: '운동장 — 민첩성 드릴', sub: '셔틀런·방향전환 (약 50분)' }, // 화
-  3: { text: '완전 회복 — 산책·스트레칭', sub: '회복일' },                 // 수
-  4: { text: '헬스장 — 기능성 근력', sub: '하체·코어·등 (약 55분)' },     // 목
-  5: { text: '운동장 — 민첩성 / 코어', sub: '드릴+코어 보조' },           // 금
-  6: { text: '가족 시간 (휴식)', sub: '일요훈련 컨디션 보존' }              // 토
+var ROUTINE_A = {
+  type: 'A',
+  name: 'A루틴 · 폭발력 / 심폐',
+  sub: '월·목 — 폭발적 동작과 심폐 자극',
+  items: [
+    { k: 'a1', name: '익스플로시브 스텝업', target: '양발 각 12회', detail: '최대한 빠르고 폭발적으로 도약, 무릎 정렬 주의' },
+    { k: 'a2', name: '폭발적 푸시업', target: '10~15회', detail: '상체가 살짝 뜨도록 강하게 밀고, 부드럽게 착지' },
+    { k: 'a3', name: '링 인버티드 로우', target: '10~15회', detail: '체조용 링 활용, 가슴 쪽으로 당기는 속도에 집중' },
+    { k: 'a4', name: '스케이터 점프', target: '좌우 왕복 10회', detail: '착지 후 1초간 완벽히 멈춰 하체 밸런스 잡기' },
+    { k: 'a5', name: '플랭크 숄더 탭', target: '좌우 왕복 16회', detail: '허리 위에 물잔이 있다고 상상하며 골반 고정' },
+    { k: 'a6', name: '버피 점프', target: '15회', detail: '코프볼 리바운드 하듯 만세하며 높이 점프' }
+  ]
 };
 
-var COMP_START = new Date(2026, 11, 6);
+var ROUTINE_B = {
+  type: 'B',
+  name: 'B루틴 · 감속 / 근력',
+  sub: '화·금 — 템포 조절과 근력 강화',
+  items: [
+    { k: 'b1', name: '싱글레그 힙힌지', target: '양발 각 12회', detail: '[3-1-X] 3초 천천히 다운, 1초 정지 후 폭발적 업' },
+    { k: 'b2', name: '파이크 푸시업', target: '10~15회', detail: '엉덩이 높게, 정수리와 양손이 삼각형(△) 이루게' },
+    { k: 'b3', name: '링 턱걸이 (풀업/친업)', target: '최대 횟수', detail: '할로우 바디 유지, 지치면 매달려 버티는 네거티브' },
+    { k: 'b4', name: '템포 리버스 런지', target: '양발 각 12회', detail: '[3-1-X] 3초 천천히 다운, 약한 다리 먼저 시작' },
+    { k: 'b5', name: '스탠딩 우드찹', target: '양방향 각 15회', detail: '4~5kg 메디신볼, 대각선 아래로 강하게 내리찍기' }
+  ]
+};
+
+var ROUTINE_MOBILITY = {
+  type: 'M',
+  name: '모빌리티 / 회복 스트레칭',
+  sub: '수·토 — 근막 이완과 가동성 회복',
+  items: [
+    { k: 'm1', name: '폼롤러 / 롤링바', target: '5~10분', detail: '흉추·대퇴사두·장경인대·햄스트링 근막 이완' },
+    { k: 'm2', name: '스레드 더 니들', target: '좌우 각 10회', detail: '네발기기에서 팔 뻗어 흉추(등 상부) 회전 열기' },
+    { k: 'm3', name: '월드 그레이티스트', target: '좌우 각 5회', detail: '깊은 런지 후 몸통 회전 (고관절·전신 유연성)' },
+    { k: 'm4', name: '90/90 스트레칭', target: '좌우 각 2분', detail: '다리 만곡자 모양 후 숙이기 (고관절 회전 범위 확장)' },
+    { k: 'm5', name: '문틀 펙 스트레칭', target: '좌우 각 1분', detail: '문틀에 팔 대고 가슴 내밀기 (흉근·어깨 정렬)' }
+  ]
+};
+
+var ROUTINE_SUNDAY = {
+  type: 'S',
+  name: '가벼운 스트레칭',
+  sub: '일 — 컨디션에 따라 가볍게 또는 완전 휴식',
+  items: [
+    { k: 's1', name: '전신 스트레칭', target: '10~15분', detail: '편안한 정적 스트레칭, 호흡과 함께' },
+    { k: 's2', name: '폼롤러 가볍게', target: '5분', detail: '뭉친 부위 위주로 부드럽게' },
+    { k: 's3', name: '산책', target: '20~30분', detail: '가벼운 활동, 회복 촉진' }
+  ]
+};
+
+var COOLDOWN_ITEMS = [
+  { k: 'c1', name: '다운독 자세', target: '30초 유지', detail: '엉덩이 치켜들고 종아리·아킬레스건·햄스트링 이완' },
+  { k: 'c2', name: '링 매달려 등 늘리기', target: '30초 유지', detail: '엉덩이 뒤로 빼며 광배근·어깨 주변 부드럽게 이완' },
+  { k: 'c3', name: '누워서 둔근 늘리기', target: '좌우 각 30초', detail: '다리를 4자로 만들어 가슴으로 당기기 (엉덩이)' }
+];
+
+// 요일별 루틴 매핑 (0=일, 1=월, ...)
+var DAY_ROUTINE = {
+  0: ROUTINE_SUNDAY,    // 일
+  1: ROUTINE_A,         // 월
+  2: ROUTINE_B,         // 화
+  3: ROUTINE_MOBILITY,  // 수
+  4: ROUTINE_A,         // 목
+  5: ROUTINE_B,         // 금
+  6: ROUTINE_MOBILITY   // 토
+};
+
+// 추가 활동 키
+var ADDON_KEYS = ['cardio', 'stretch', 'korfball', 'rest'];
+
 var PLAN_START = new Date(2026, 4, 1);
 
 // ═══════════════════════════════════════════
@@ -631,7 +741,6 @@ function loadStore() {
     if (raw) return JSON.parse(raw);
   } catch (e) {}
   return { dates: {} };
-  // dates: { '2026-05-08': { gym: true, stretch: true, memo: '...' } }
 }
 function saveStore(s) {
   try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
@@ -639,7 +748,7 @@ function saveStore(s) {
 var store = loadStore();
 
 // ═══════════════════════════════════════════
-// 날짜 헬퍼
+// 헬퍼
 // ═══════════════════════════════════════════
 function dateKey(d) {
   var y = d.getFullYear();
@@ -651,7 +760,6 @@ function todayDate() {
   var t = new Date();
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
-function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
 
 var currentDate = todayDate();
 
@@ -661,14 +769,93 @@ function getDayData() {
   return store.dates[k];
 }
 
+function getRoutineForDate(d) {
+  return DAY_ROUTINE[d.getDay()];
+}
+
+function hasCooldown(d) {
+  var r = getRoutineForDate(d);
+  return r.type === 'A' || r.type === 'B';
+}
+
+// 그날의 핵심 루틴 항목 완료 수 (쿨다운 제외)
+function getRoutineDone(data, routine) {
+  var done = 0;
+  for (var i = 0; i < routine.items.length; i++) {
+    if (data[routine.items[i].k]) done++;
+  }
+  return done;
+}
+
+// 쿨다운 완료 수
+function getCooldownDone(data) {
+  var done = 0;
+  for (var i = 0; i < COOLDOWN_ITEMS.length; i++) {
+    if (data[COOLDOWN_ITEMS[i].k]) done++;
+  }
+  return done;
+}
+
+// 추가 활동 수
+function getAddonCount(data) {
+  var c = 0;
+  for (var i = 0; i < ADDON_KEYS.length; i++) {
+    if (data[ADDON_KEYS[i]]) c++;
+  }
+  return c;
+}
+
+// 전체 그날 달성률 (루틴 + 쿨다운 + 추가활동 인정 여부)
+function getDayPct(d) {
+  var data = store.dates[dateKey(d)] || {};
+  var routine = getRoutineForDate(d);
+  var routineDone = getRoutineDone(data, routine);
+  var routineTotal = routine.items.length;
+  var pct = Math.round(routineDone / routineTotal * 100);
+
+  // 쿨다운이 있는 날: 쿨다운 완료 시 추가 점수
+  if (hasCooldown(d)) {
+    var cdDone = getCooldownDone(data);
+    var totalDone = routineDone + cdDone;
+    var totalSlots = routineTotal + COOLDOWN_ITEMS.length;
+    pct = Math.round(totalDone / totalSlots * 100);
+  }
+  return pct;
+}
+
+// 활동이 있는 날인지 (루틴 1개 이상 OR 추가활동 1개 이상)
+function hasActivity(d) {
+  var data = store.dates[dateKey(d)] || {};
+  var routine = getRoutineForDate(d);
+  if (getRoutineDone(data, routine) > 0) return true;
+  if (hasCooldown(d) && getCooldownDone(data) > 0) return true;
+  for (var i = 0; i < ADDON_KEYS.length; i++) {
+    if (data[ADDON_KEYS[i]]) return true;
+  }
+  return false;
+}
+
 // ═══════════════════════════════════════════
 // 토글
 // ═══════════════════════════════════════════
-function toggleOpt(key) {
+function toggleItem(k) {
   var data = getDayData();
-  data[key] = !data[key];
+  data[k] = !data[k];
   saveStore(store);
-  render();
+  renderRoutine();
+  renderCooldown();
+  updateProgress();
+  updateSummary();
+}
+
+function toggleOpt(k) {
+  var data = getDayData();
+  data[k] = !data[k];
+  saveStore(store);
+  var btn = document.getElementById('opt-' + k);
+  if (data[k]) btn.classList.add('on');
+  else btn.classList.remove('on');
+  updateSummary();
 }
 
 function saveMemo() {
@@ -678,7 +865,6 @@ function saveMemo() {
   showSavedIndicator('memo-saved', false);
 }
 
-// 저장 표시
 var saveTimers = {};
 function showSavedIndicator(elId, immediate) {
   var ind = document.getElementById(elId);
@@ -688,7 +874,6 @@ function showSavedIndicator(elId, immediate) {
     clearTimeout(saveTimers[elId].t2);
   }
   saveTimers[elId] = {};
-
   if (immediate) {
     ind.textContent = '✓ 저장됨';
     ind.className = 'save-indicator saved show';
@@ -719,7 +904,7 @@ function resetToday() {
 // 렌더
 // ═══════════════════════════════════════════
 function render() {
-  // 날짜 텍스트
+  // 날짜
   var t = todayDate();
   var weekDays = ['일','월','화','수','목','금','토'];
   var dayText = '';
@@ -730,24 +915,23 @@ function render() {
   document.getElementById('date-text').firstChild.nodeValue = dayText;
   document.getElementById('date-sub').textContent = (currentDate.getMonth()+1) + '월 ' + currentDate.getDate() + '일 (' + weekDays[currentDate.getDay()] + ')';
 
-  // 추천 배너
-  var dow = currentDate.getDay();
-  var plan = WEEKLY_PLAN[dow];
-  var banner = document.getElementById('suggestion-banner');
-  if (plan) {
-    banner.style.display = '';
-    document.getElementById('suggestion-text').textContent = plan.text;
-  } else {
-    banner.style.display = 'none';
-  }
+  // 오늘 루틴 안내
+  var routine = getRoutineForDate(currentDate);
+  var infoEl = document.getElementById('today-info');
+  var routineDesc = {
+    A: '<strong>월·목 폭발력 루틴</strong>입니다. 빠르고 강하게 동작, 6개 운동을 모두 체크하세요.',
+    B: '<strong>화·금 근력 루틴</strong>입니다. 템포 조절([3-1-X])이 핵심, 5개 운동.',
+    M: '<strong>수·토 모빌리티 회복일</strong>입니다. 근막 이완과 가동성 회복, 5개 항목.',
+    S: '<strong>일요일 회복일</strong>입니다. 컨디션에 따라 가볍게 또는 완전 휴식.'
+  };
+  infoEl.innerHTML = routineDesc[routine.type] || '';
 
-  // 옵션 상태
+  // 추가 활동 상태
   var data = store.dates[dateKey(currentDate)] || {};
-  for (var i = 0; i < OPTS.length; i++) {
-    var k = OPTS[i].k;
-    var btn = document.getElementById('opt-' + k);
+  for (var i = 0; i < ADDON_KEYS.length; i++) {
+    var btn = document.getElementById('opt-' + ADDON_KEYS[i]);
     if (btn) {
-      if (data[k]) btn.classList.add('on');
+      if (data[ADDON_KEYS[i]]) btn.classList.add('on');
       else btn.classList.remove('on');
     }
   }
@@ -755,37 +939,99 @@ function render() {
   // 메모
   document.getElementById('memo-input').value = data.memo || '';
 
-  // 요약
-  var todayCount = 0;
-  for (var i = 0; i < ACTIVE_KEYS.length; i++) {
-    if (data[ACTIVE_KEYS[i]]) todayCount++;
-  }
-  document.getElementById('sum-today').textContent = todayCount;
+  renderRoutine();
+  renderCooldown();
+  updateProgress();
+  updateSummary();
+}
 
-  // 7일 운동 횟수
+function renderRoutine() {
+  var routine = getRoutineForDate(currentDate);
+  var data = store.dates[dateKey(currentDate)] || {};
+  document.getElementById('routine-title').textContent = '🏋️ ' + routine.name.split('·')[0].trim();
+  document.getElementById('routine-sub').textContent = routine.sub;
+  var badge = document.getElementById('routine-badge');
+  var badgeText = { A: 'A루틴', B: 'B루틴', M: '회복일', S: '일요일' };
+  badge.textContent = badgeText[routine.type];
+  badge.className = 'routine-badge ' + routine.type;
+
+  var html = '';
+  for (var i = 0; i < routine.items.length; i++) {
+    var item = routine.items[i];
+    var done = !!data[item.k];
+    html += '<div class="workout-row' + (done ? ' done' : '') + '" onclick="toggleItem(\'' + item.k + '\')">';
+    html += '<div class="checkbox' + (done ? ' done' : '') + '"></div>';
+    html += '<div class="workout-content">';
+    html += '<div><span class="workout-num">' + (i+1) + '</span>';
+    html += '<span class="workout-name">' + item.name + '</span>';
+    html += '<span class="workout-target ' + routine.type + '">' + item.target + '</span></div>';
+    html += '<div class="workout-detail">' + item.detail + '</div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  document.getElementById('routine-items').innerHTML = html;
+}
+
+function renderCooldown() {
+  var card = document.getElementById('cooldown-card');
+  if (!hasCooldown(currentDate)) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  var data = store.dates[dateKey(currentDate)] || {};
+  var html = '';
+  for (var i = 0; i < COOLDOWN_ITEMS.length; i++) {
+    var item = COOLDOWN_ITEMS[i];
+    var done = !!data[item.k];
+    html += '<div class="workout-row' + (done ? ' done' : '') + '" onclick="toggleItem(\'' + item.k + '\')">';
+    html += '<div class="checkbox' + (done ? ' done' : '') + '"></div>';
+    html += '<div class="workout-content">';
+    html += '<div><span class="workout-num">' + (i+1) + '</span>';
+    html += '<span class="workout-name">' + item.name + '</span>';
+    html += '<span class="workout-target C">' + item.target + '</span></div>';
+    html += '<div class="workout-detail">' + item.detail + '</div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  document.getElementById('cooldown-items').innerHTML = html;
+}
+
+function updateProgress() {
+  var data = store.dates[dateKey(currentDate)] || {};
+  var routine = getRoutineForDate(currentDate);
+  var routineDone = getRoutineDone(data, routine);
+  var routineTotal = routine.items.length;
+  var totalDone = routineDone;
+  var totalSlots = routineTotal;
+  if (hasCooldown(currentDate)) {
+    totalDone += getCooldownDone(data);
+    totalSlots += COOLDOWN_ITEMS.length;
+  }
+  var pct = Math.round(totalDone / totalSlots * 100);
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = totalDone + '/' + totalSlots + ' 항목 완료';
+}
+
+function updateSummary() {
+  // 오늘 달성률
+  var pct = getDayPct(currentDate);
+  document.getElementById('sum-today').textContent = pct + '%';
+
+  // 7일 운동한 날
+  var t = todayDate();
   var weekCount = 0;
   for (var i = 0; i < 7; i++) {
     var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
-    var dd = store.dates[dateKey(d)] || {};
-    var hasActivity = false;
-    for (var j = 0; j < ACTIVE_KEYS.length; j++) {
-      if (dd[ACTIVE_KEYS[j]]) { hasActivity = true; break; }
-    }
-    if (hasActivity) weekCount++;
+    if (hasActivity(d)) weekCount++;
   }
   document.getElementById('sum-week').textContent = weekCount;
 
-  // 연속 일수 (운동 또는 의도적 휴식)
+  // 연속 일수
   var streak = 0;
   var d = todayDate();
   while (true) {
-    var dd = store.dates[dateKey(d)] || {};
-    var hasActivity = false;
-    for (var j = 0; j < ACTIVE_KEYS.length; j++) {
-      if (dd[ACTIVE_KEYS[j]]) { hasActivity = true; break; }
-    }
-    var hasRest = !!dd.rest;
-    if (hasActivity || hasRest) {
+    if (hasActivity(d)) {
       streak++;
       d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
       if (d < PLAN_START) break;
@@ -832,66 +1078,68 @@ function switchView(v) {
 function renderWeekly() {
   var t = todayDate();
   var weekDays = ['일','월','화','수','목','금','토'];
+  var typeLabel = { A: 'A루틴', B: 'B루틴', M: '회복', S: '일요' };
 
-  // 7일 (오늘부터 6일 전까지, 최신이 위)
   var html = '';
   for (var i = 0; i < 7; i++) {
     var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
-    var data = store.dates[dateKey(d)] || {};
+    var pct = getDayPct(d);
+    var routine = getRoutineForDate(d);
     var label = '';
     if (i === 0) label = '오늘';
     else if (i === 1) label = '어제';
     else label = (d.getMonth()+1) + '/' + d.getDate() + ' ' + weekDays[d.getDay()];
 
-    var iconsHtml = '';
-    var doneAny = false;
-    for (var j = 0; j < OPTS.length; j++) {
-      var k = OPTS[j].k;
-      if (data[k]) {
-        iconsHtml += '<span class="w-icon" title="' + OPTS[j].label + '">' + OPTS[j].icon + '</span>';
-        doneAny = true;
-      }
-    }
-    if (!doneAny) {
-      iconsHtml = '<span class="weekly-empty">기록 없음</span>';
-    }
-
     html += '<div class="weekly-row">';
     html += '<div class="weekly-day">' + label + '</div>';
-    html += '<div class="weekly-icons">' + iconsHtml + '</div>';
+    html += '<div class="weekly-bar-track">';
+    if (pct > 0) html += '<div class="weekly-bar-fill" style="width:' + pct + '%"></div>';
+    html += '</div>';
+    html += '<div class="weekly-label">' + typeLabel[routine.type] + '</div>';
+    html += '<div class="weekly-pct">' + pct + '%</div>';
     html += '</div>';
   }
   document.getElementById('weekly-list').innerHTML = html;
 
   // 30일 통계
-  var stats = {};
-  for (var i = 0; i < OPTS.length; i++) stats[OPTS[i].k] = 0;
   var trackedDays = 0;
   var activeDays = 0;
+  var typeCounts = { A: 0, B: 0, M: 0, S: 0 };
+  var addonCounts = { cardio: 0, stretch: 0, korfball: 0, rest: 0 };
+  var totalPct = 0;
+
   for (var i = 0; i < 30; i++) {
     var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
     if (d < PLAN_START) break;
     var data = store.dates[dateKey(d)];
     if (!data) continue;
     trackedDays++;
-    var hasActivity = false;
-    for (var j = 0; j < OPTS.length; j++) {
-      if (data[OPTS[j].k]) {
-        stats[OPTS[j].k]++;
-        if (ACTIVE_KEYS.indexOf(OPTS[j].k) >= 0) hasActivity = true;
-      }
+    if (hasActivity(d)) {
+      activeDays++;
+      var routine = getRoutineForDate(d);
+      var routineDone = getRoutineDone(data, routine);
+      if (routineDone > 0) typeCounts[routine.type]++;
     }
-    if (hasActivity) activeDays++;
+    for (var j = 0; j < ADDON_KEYS.length; j++) {
+      if (data[ADDON_KEYS[j]]) addonCounts[ADDON_KEYS[j]]++;
+    }
+    totalPct += getDayPct(d);
   }
+  var avgPct = trackedDays ? Math.round(totalPct / trackedDays) : 0;
 
-  var statsHtml = '<div class="stat-row"><div class="stat-label">📅 운동한 날</div><div class="stat-count">' + activeDays + '<span class="of"> / ' + Math.min(30, trackedDays || 1) + '일</span></div></div>';
-  for (var i = 0; i < OPTS.length; i++) {
-    var o = OPTS[i];
-    if (stats[o.k] === 0) continue;
-    statsHtml += '<div class="stat-row"><div class="stat-label">' + o.icon + ' ' + o.label + '</div><div class="stat-count">' + stats[o.k] + '<span class="of">회</span></div></div>';
-  }
+  var statsHtml = '';
   if (trackedDays === 0) {
     statsHtml = '<div class="empty-state">아직 기록이 없어요</div>';
+  } else {
+    statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">운동한 날</div><div class="weekly-pct" style="width:auto;font-size:14px">' + activeDays + '/' + trackedDays + '일</div></div>';
+    statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">평균 달성률</div><div class="weekly-pct" style="width:auto;font-size:14px">' + avgPct + '%</div></div>';
+    if (typeCounts.A) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">A루틴 (폭발력)</div><div class="weekly-pct" style="width:auto;font-size:14px">' + typeCounts.A + '회</div></div>';
+    if (typeCounts.B) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">B루틴 (근력)</div><div class="weekly-pct" style="width:auto;font-size:14px">' + typeCounts.B + '회</div></div>';
+    if (typeCounts.M) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">모빌리티 (수·토)</div><div class="weekly-pct" style="width:auto;font-size:14px">' + typeCounts.M + '회</div></div>';
+    if (addonCounts.korfball) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🏆 코프볼 훈련</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.korfball + '회</div></div>';
+    if (addonCounts.cardio) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🏃‍♂️ 유산소</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.cardio + '회</div></div>';
+    if (addonCounts.stretch) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🧘 스트레칭</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.stretch + '회</div></div>';
+    if (addonCounts.rest) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🛌 휴식</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.rest + '회</div></div>';
   }
   document.getElementById('month-stats').innerHTML = statsHtml;
 }

@@ -49,26 +49,6 @@ body {
   line-height: 1.5;
 }
 
-/* ── iPad·Mac 최적화: 큰 화면에서 540px 중앙 정렬 ── */
-@media (min-width: 600px) {
-  .header,
-  .content {
-    max-width: 540px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .tabbar {
-    max-width: 540px;
-    width: 100%;
-    left: 50% !important;
-    right: auto !important;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    border-left: 1px solid var(--c-border);
-    border-right: 1px solid var(--c-border);
-  }
-}
-
 /* ── 상단 헤더 ── */
 .header {
   background: linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
@@ -306,35 +286,6 @@ body {
   white-space: nowrap;
 }
 .set-tip { font-size: 11px; color: var(--c-muted); margin-top: 2px; font-weight: 400; }
-.set-extra {
-  margin-top: 6px;
-  font-size: 11px;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 6px 10px;
-}
-.set-vid {
-  display: -webkit-inline-flex;
-  display: inline-flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 3px;
-  background: #FEF2EE;
-  color: #B8412A;
-  padding: 2px 8px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 10.5px;
-  -webkit-tap-highlight-color: rgba(184,65,42,0.15);
-}
-.set-vid:active { background: #FCE2DA; }
-.set-alt { color: var(--c-muted); font-size: 10.5px; line-height: 1.4; }
-.set-alt strong { color: var(--c-text); font-weight: 600; }
 
 /* 멘탈 재구성 */
 .reframe {
@@ -1166,14 +1117,85 @@ body {
     <div style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center">
       <div>
         <div style="font-size:13px;font-weight:700">🏋️ 오늘의 운동 기록</div>
-        <div style="font-size:11px;opacity:0.85;margin-top:2px">장소·유산소·스트레칭 빠른 체크</div>
+        <div style="font-size:11px;opacity:0.85;margin-top:2px">홈 워크아웃 체크리스트 + 추가 활동</div>
       </div>
       <div style="font-size:20px;font-weight:300">›</div>
     </div>
   </a>
 
+  <!-- 홈 워크아웃 루틴 (PDF 기준) -->
+  <div class="card" style="border-color:var(--c-coral)">
+    <div class="card-title">🔥 주간 홈 워크아웃 루틴</div>
+    <div class="card-sub">주 4회 운동 + 3일 모빌리티/회복 · A·B 루틴 교대 (A–B–A–B)</div>
+
+    <table class="tbl" style="margin-bottom:12px">
+      <tr><th>요일</th><th>루틴</th><th>유형</th></tr>
+      <tr><td><strong>월</strong></td><td>A루틴 · 폭발력 / 심폐</td><td><span class="badge b-coral">A</span></td></tr>
+      <tr><td><strong>화</strong></td><td>B루틴 · 감속 / 근력</td><td><span class="badge b-blue">B</span></td></tr>
+      <tr><td><strong>수</strong></td><td>모빌리티 회복</td><td><span class="badge b-teal">M</span></td></tr>
+      <tr><td><strong>목</strong></td><td>A루틴 · 폭발력 / 심폐</td><td><span class="badge b-coral">A</span></td></tr>
+      <tr><td><strong>금</strong></td><td>B루틴 · 감속 / 근력</td><td><span class="badge b-blue">B</span></td></tr>
+      <tr><td><strong>토</strong></td><td>모빌리티 회복</td><td><span class="badge b-teal">M</span></td></tr>
+      <tr><td><strong>일</strong></td><td>가벼운 스트레칭</td><td><span class="badge b-amber">S</span></td></tr>
+    </table>
+
+    <div class="tip">💡 폭발력(A)과 근력(B)을 격일로 교대해 같은 근육 회복 시간을 확보. 운동일 사이엔 모빌리티로 가동성 유지 + 누적 피로 풀기. 일요일은 컨디션에 따라 가볍게 또는 완전 휴식.</div>
+    <div class="tip tip-blue" style="margin-top:8px"><strong>템포 표기 [3-1-X]</strong> = 내릴 때 3초 / 정지 1초 / 올릴 때 폭발적(eXplosive)</div>
+  </div>
+
+  <!-- A루틴 -->
+  <div class="card" style="border-color:var(--c-coral)">
+    <div class="card-title">⚡ A루틴 — 폭발력 / 심폐 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(월·목)</span></div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">익스플로시브 스텝업<div class="set-tip">최대한 빠르고 폭발적으로 도약, 무릎 정렬 주의</div></div><div class="set-rep">양발 12회</div></li>
+      <li class="set-item"><div class="set-name">폭발적 푸시업<div class="set-tip">상체가 살짝 뜨도록 강하게 밀고, 부드럽게 착지</div></div><div class="set-rep">10~15회</div></li>
+      <li class="set-item"><div class="set-name">링 인버티드 로우<div class="set-tip">체조용 링 활용, 가슴 쪽으로 당기는 속도에 집중</div></div><div class="set-rep">10~15회</div></li>
+      <li class="set-item"><div class="set-name">스케이터 점프<div class="set-tip">착지 후 1초간 완벽히 멈춰 하체 밸런스 잡기</div></div><div class="set-rep">왕복 10회</div></li>
+      <li class="set-item"><div class="set-name">플랭크 숄더 탭<div class="set-tip">허리 위에 물잔이 있다고 상상하며 골반 고정</div></div><div class="set-rep">왕복 16회</div></li>
+      <li class="set-item"><div class="set-name">버피 점프<div class="set-tip">코프볼 리바운드 하듯 만세하며 높이 점프</div></div><div class="set-rep">15회</div></li>
+    </ul>
+  </div>
+
+  <!-- B루틴 -->
+  <div class="card" style="border-color:var(--c-blue)">
+    <div class="card-title">💪 B루틴 — 감속 / 근력 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(화·금)</span></div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">싱글레그 힙힌지<div class="set-tip">[3-1-X] 3초 천천히 다운, 1초 정지 후 폭발적 업</div></div><div class="set-rep">양발 12회</div></li>
+      <li class="set-item"><div class="set-name">파이크 푸시업<div class="set-tip">엉덩이 높게, 정수리와 양손이 삼각형(△) 이루게</div></div><div class="set-rep">10~15회</div></li>
+      <li class="set-item"><div class="set-name">링 턱걸이 (풀업/친업)<div class="set-tip">할로우 바디 유지, 지치면 매달려 버티는 네거티브</div></div><div class="set-rep">최대 횟수</div></li>
+      <li class="set-item"><div class="set-name">템포 리버스 런지<div class="set-tip">[3-1-X] 3초 천천히 다운, 약한 다리 먼저 시작</div></div><div class="set-rep">양발 12회</div></li>
+      <li class="set-item"><div class="set-name">스탠딩 우드찹<div class="set-tip">4~5kg 메디신볼, 대각선 아래로 강하게 내리찍기</div></div><div class="set-rep">양방향 15회</div></li>
+    </ul>
+  </div>
+
+  <!-- 쿨다운 -->
+  <div class="card" style="border-color:var(--c-amber)">
+    <div class="card-title">🧘 운동 직후 쿨다운 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(월·화·목·금 공통)</span></div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">다운독 자세<div class="set-tip">엉덩이 치켜들고 종아리·아킬레스건·햄스트링 이완</div></div><div class="set-rep">30초</div></li>
+      <li class="set-item"><div class="set-name">링 매달려 등 늘리기<div class="set-tip">엉덩이 뒤로 빼며 광배근·어깨 주변 부드럽게 이완</div></div><div class="set-rep">30초</div></li>
+      <li class="set-item"><div class="set-name">누워서 둔근 늘리기<div class="set-tip">다리를 4자로 만들어 가슴으로 당기기 (엉덩이)</div></div><div class="set-rep">좌우 30초</div></li>
+    </ul>
+    <div class="tip">A·B 루틴 끝나고 바로 — 회복과 가동성 유지에 필수</div>
+  </div>
+
+  <!-- 모빌리티 -->
+  <div class="card" style="border-color:var(--c-accent)">
+    <div class="card-title">🌿 모빌리티 / 회복 스트레칭 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(수·토)</span></div>
+    <div class="card-sub">근막 이완 + 가동성 회복 (운동 없는 날)</div>
+    <ul class="set-list">
+      <li class="set-item"><div class="set-name">폼롤러 / 롤링바<div class="set-tip">흉추·대퇴사두·장경인대·햄스트링 근막 이완</div></div><div class="set-rep">5~10분</div></li>
+      <li class="set-item"><div class="set-name">스레드 더 니들<div class="set-tip">네발기기에서 팔 뻗어 흉추(등 상부) 회전 열기</div></div><div class="set-rep">좌우 10회</div></li>
+      <li class="set-item"><div class="set-name">월드 그레이티스트<div class="set-tip">깊은 런지 후 몸통 회전 (고관절·전신 유연성)</div></div><div class="set-rep">좌우 5회</div></li>
+      <li class="set-item"><div class="set-name">90/90 스트레칭<div class="set-tip">다리 만곡자 모양 후 숙이기 (고관절 회전 범위 확장)</div></div><div class="set-rep">좌우 2분</div></li>
+      <li class="set-item"><div class="set-name">문틀 펙 스트레칭<div class="set-tip">문틀에 팔 대고 가슴 내밀기 (흉근·어깨 정렬)</div></div><div class="set-rep">좌우 1분</div></li>
+    </ul>
+  </div>
+
+  <!-- 기존 참고용 운동 정보 -->
   <div class="card">
-    <div class="card-title">📅 주간 스케줄</div>
+    <div class="card-title">📅 (참고) 이전 주간 스케줄</div>
+    <div class="card-sub">대안 — 헬스장·잔디·코트 기반 워크아웃</div>
     <table class="tbl">
       <tr><th>요일</th><th>내용</th><th>장소</th></tr>
       <tr><td><strong>월</strong></td><td>기능성 근력</td><td>헬스장</td></tr>
@@ -1190,66 +1212,12 @@ body {
   <div class="card">
     <div class="card-title">🏋️ 헬스장 — 기능성 근력 (월·목, 약 55분)</div>
     <ul class="set-list">
-      <li class="set-item">
-        <div class="set-name">고블릿 스쿼트
-          <div class="set-tip">하체+코어, 무릎 부담↓</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EA%B3%A0%EB%B8%94%EB%A6%BF+%EC%8A%A4%EC%BF%BC%ED%8A%B8+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>박스 스쿼트</strong> · <strong>바벨 백 스쿼트</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">4×12</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">루마니안 데드리프트
-          <div class="set-tip">슬굴곡근·둔근, 달리기 파워</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EB%A3%A8%EB%A7%88%EB%8B%88%EC%95%88+%EB%8D%B0%EB%93%9C%EB%A6%AC%ED%94%84%ED%8A%B8+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>케틀벨 스윙</strong> · <strong>굿모닝</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">3×10</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">덤벨 스텝업
-          <div class="set-tip">편측 하체, 균형감각</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EB%8D%A4%EB%B2%A8+%EC%8A%A4%ED%85%9D%EC%97%85+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>불가리안 스플릿 스쿼트</strong> · <strong>워킹 런지</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">3×10/발</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">케이블 로테이션
-          <div class="set-tip">코어 회전력, 슛·킥 파워</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EC%BC%80%EC%9D%B4%EB%B8%94+%EB%A1%9C%ED%85%8C%EC%9D%B4%EC%85%98+%EC%BD%94%EC%96%B4+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>메디신볼 로테이션 슬램</strong> · <strong>우드 찹</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">3×12</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">밴드 벤트오버 로우
-          <div class="set-tip">등 근력, 자세 교정 (휴대 가능)</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EB%B0%B4%EB%93%9C+%EB%B2%A4%ED%8A%B8%EC%98%A4%EB%B2%84+%EB%A1%9C%EC%9A%B0+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>TRX 인버티드 로우</strong> · <strong>덤벨 원암 로우</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">3×12</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">덤벨 숄더프레스
-          <div class="set-tip">어깨 안정화</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EB%8D%A4%EB%B2%A8+%EC%88%84%EB%8D%94%ED%94%84%EB%A0%88%EC%8A%A4+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>아놀드 프레스</strong> · <strong>케틀벨 오버헤드 프레스</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">3×10</div>
-      </li>
+      <li class="set-item"><div class="set-name">고블릿 스쿼트<div class="set-tip">하체+코어, 무릎 부담↓</div></div><div class="set-rep">4×12</div></li>
+      <li class="set-item"><div class="set-name">루마니안 데드리프트<div class="set-tip">슬굴곡근·둔근, 달리기 파워</div></div><div class="set-rep">3×10</div></li>
+      <li class="set-item"><div class="set-name">덤벨 스텝업<div class="set-tip">편측 하체, 균형감각</div></div><div class="set-rep">3×10/발</div></li>
+      <li class="set-item"><div class="set-name">케이블 로테이션<div class="set-tip">코어 회전력, 슛·킥 파워</div></div><div class="set-rep">3×12</div></li>
+      <li class="set-item"><div class="set-name">TRX 인버티드 로우<div class="set-tip">등 근력, 자세 교정</div></div><div class="set-rep">3×12</div></li>
+      <li class="set-item"><div class="set-name">덤벨 숄더프레스<div class="set-tip">어깨 안정화</div></div><div class="set-rep">3×10</div></li>
     </ul>
     <div class="tip tip-coral">⚠️ 통풍 주의: 세트 사이 수분 보충 / 무게보다 자세·가동범위 우선</div>
   </div>
@@ -1257,47 +1225,10 @@ body {
   <div class="card">
     <div class="card-title">🏃 잔디·공터 — 민첩성 드릴 (화·금, 약 50분)</div>
     <ul class="set-list">
-      <li class="set-item">
-        <div class="set-name">워밍업
-          <div class="set-tip">조깅 400m → 레그스윙 → 동적 스트레칭</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=dynamic+warm+up+sprint+drill+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>자전거 에르고 5분+동적</strong> · <strong>줄넘기 3분+A스킵</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">10분</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">민첩성 드릴
-          <div class="set-tip">4방향 셔틀런 10m×4 (5세트) / 지그재그</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=4+corner+agility+drill+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>T-드릴</strong> · <strong>5-10-5 프로 어질리티</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">15분</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">방향전환·점프
-          <div class="set-tip">5m 폭발 스타트 6회 / 점프 착지 자세</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=acceleration+drill+first+step+shorts" target="_blank" rel="noopener">🎬 스타트</a>
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=landing+mechanics+drop+jump+shorts" target="_blank" rel="noopener">🎬 점프 착지</a>
-            <span class="set-alt">대체: <strong>박스 점프+스프린트</strong> · <strong>드롭 점프</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">15분</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">볼 드릴
-          <div class="set-tip">패스&런 / 코프볼 슛 동작</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=korfball+shooting+drill+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>1대1 컷팅 드릴</strong> · <strong>360° 슛 무브</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">10분</div>
-      </li>
+      <li class="set-item"><div class="set-name">워밍업<div class="set-tip">조깅 400m → 레그스윙 → 동적 스트레칭</div></div><div class="set-rep">10분</div></li>
+      <li class="set-item"><div class="set-name">민첩성 드릴<div class="set-tip">4방향 셔틀런 10m×4 (5세트) / 지그재그</div></div><div class="set-rep">15분</div></li>
+      <li class="set-item"><div class="set-name">방향전환·점프<div class="set-tip">5m 폭발 스타트 6회 / 점프 착지 자세</div></div><div class="set-rep">15분</div></li>
+      <li class="set-item"><div class="set-name">볼 드릴<div class="set-tip">패스&런 / 코프볼 슛 동작</div></div><div class="set-rep">10분</div></li>
     </ul>
   </div>
 
@@ -1305,52 +1236,11 @@ body {
     <div class="card-title">🤸 맨몸 서킷 — 보조용 (집·공터)</div>
     <div class="card-sub">4라운드, 라운드 사이 휴식 60초</div>
     <ul class="set-list">
-      <li class="set-item">
-        <div class="set-name">스쿼트 점프
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EC%8A%A4%EC%BF%BC%ED%8A%B8+%EC%A0%90%ED%94%84+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>점프 런지</strong> · <strong>투포드 점프</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">10회</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">푸시업
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%ED%91%B8%EC%8B%9C%EC%97%85+%EC%A0%95%ED%99%95%ED%95%9C+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>무릎 푸시업(강도↓)</strong> · <strong>다이아몬드 푸시업(강도↑)</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">12회</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">싱글레그 힙힌지
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EC%8B%B1%EA%B8%80%EB%A0%88%EA%B7%B8+%ED%9E%99%ED%9E%8C%EC%A7%80+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>글루트 브릿지</strong> · <strong>싱글레그 글루트 브릿지</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">8/발</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">마운틴 클라이머
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=%EB%A7%88%EC%9A%B4%ED%8B%B4+%ED%81%B4%EB%9D%BC%EC%9D%B4%EB%A8%B8+%EC%9E%90%EC%84%B8+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>버피</strong> · <strong>플랭크 잭(저강도)</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">20회</div>
-      </li>
-      <li class="set-item">
-        <div class="set-name">스케이터 점프
-          <div class="set-tip">한 발 좌우 폭발 점프 (= Lateral bound)</div>
-          <div class="set-extra">
-            <a class="set-vid" href="https://www.youtube.com/results?search_query=skater+hop+lateral+bound+drill+shorts" target="_blank" rel="noopener">🎬 영상</a>
-            <span class="set-alt">대체: <strong>측면 런지</strong> · <strong>사이드 셔플</strong></span>
-          </div>
-        </div>
-        <div class="set-rep">10회</div>
-      </li>
+      <li class="set-item"><div class="set-name">스쿼트 점프</div><div class="set-rep">10회</div></li>
+      <li class="set-item"><div class="set-name">푸시업</div><div class="set-rep">12회</div></li>
+      <li class="set-item"><div class="set-name">싱글레그 힙힌지</div><div class="set-rep">8/발</div></li>
+      <li class="set-item"><div class="set-name">마운틴 클라이머</div><div class="set-rep">20회</div></li>
+      <li class="set-item"><div class="set-name">측면 도약 스텝</div><div class="set-rep">10회</div></li>
     </ul>
     <div class="tip">🧘 마무리: 플랭크 1분×3 / 정적 스트레칭 10분</div>
   </div>
