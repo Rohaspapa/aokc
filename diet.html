@@ -215,6 +215,77 @@ body {
   font-weight: 600;
 }
 
+/* 약 복용 체크 */
+.med-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  padding: 4px 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.med-checkbox {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--c-muted);
+  border-radius: 8px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-right: 13px;
+  position: relative;
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+  background: #fff;
+}
+.med-checkbox.done {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+.med-checkbox.done:after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 2px;
+  width: 8px;
+  height: 14px;
+  border: solid #fff;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.med-text {
+  -webkit-flex: 1;
+  flex: 1;
+}
+.med-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.med-row.done .med-label {
+  color: var(--c-accent);
+}
+.med-sub {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 2px;
+}
+
+/* 저장 표시 */
+.save-indicator {
+  font-size: 11px;
+  font-weight: 600;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  white-space: nowrap;
+}
+.save-indicator.show { opacity: 1; }
+.save-indicator.saving { color: var(--c-muted); }
+.save-indicator.saved { color: var(--c-good); }
+
 /* 입력된 음식 칩 */
 .chip-area {
   display: -webkit-flex;
@@ -699,6 +770,21 @@ body {
       </div>
       <div class="chip-area empty" id="chips-snack"></div>
       <button class="add-food-btn" onclick="openModal('snack')">+ 음식 추가</button>
+    </div>
+
+    <!-- 약 복용 체크 -->
+    <div class="meal-section">
+      <div class="meal-head">
+        <div class="meal-title">💊 오늘의 약 복용</div>
+        <div class="save-indicator" id="med-saved"></div>
+      </div>
+      <div class="med-row" onclick="toggleMed()">
+        <div class="med-checkbox" id="med-box"></div>
+        <div class="med-text">
+          <div class="med-label" id="med-label">먹지 않음</div>
+          <div class="med-sub">통풍·고지혈증·혈압 약</div>
+        </div>
+      </div>
     </div>
 
     <!-- 인사이트 -->
@@ -1264,6 +1350,48 @@ function removeFood(meal, idx) {
   render();
 }
 
+// 약 복용 토글
+function toggleMed() {
+  var data = getDayData();
+  data.med = !data.med;
+  saveStore(store);
+  renderMed();
+  showSavedIndicator('med-saved');
+}
+
+function renderMed() {
+  var data = store.dates[dateKey(currentDate)] || {};
+  var box = document.getElementById('med-box');
+  var row = box.parentNode;
+  var label = document.getElementById('med-label');
+  if (data.med) {
+    box.classList.add('done');
+    row.classList.add('done');
+    label.textContent = '✓ 복용 완료';
+  } else {
+    box.classList.remove('done');
+    row.classList.remove('done');
+    label.textContent = '먹지 않음';
+  }
+}
+
+// 저장 표시
+var saveTimers = {};
+function showSavedIndicator(elId) {
+  var ind = document.getElementById(elId);
+  if (!ind) return;
+  if (saveTimers[elId]) {
+    clearTimeout(saveTimers[elId].t1);
+    clearTimeout(saveTimers[elId].t2);
+  }
+  saveTimers[elId] = {};
+  ind.textContent = '✓ 저장됨';
+  ind.className = 'save-indicator saved show';
+  saveTimers[elId].t2 = setTimeout(function() {
+    ind.classList.remove('show');
+  }, 2000);
+}
+
 // ═══════════════════════════════════════════
 // 분석 로직
 // ═══════════════════════════════════════════
@@ -1483,6 +1611,9 @@ function render() {
     }
     document.getElementById('insight-list').innerHTML = html;
   }
+
+  // 약 복용 상태
+  renderMed();
 }
 
 function setRiskBox(key, value, thresholds) {
