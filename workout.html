@@ -165,6 +165,49 @@ body {
 .routine-badge.M { background: var(--c-accent-light); color: var(--c-accent); }
 .routine-badge.S { background: var(--c-amber-light); color: #6B5510; }
 
+/* 루틴 선택기 */
+.routine-picker {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+.routine-picker-label {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.routine-picker-label strong { color: var(--c-coral); font-weight: 700; }
+.routine-picker-btns {
+  display: -webkit-flex;
+  display: flex;
+  gap: 6px;
+}
+.rp-btn {
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 9px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: 8px;
+  color: var(--c-muted);
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+}
+.rp-btn:active { -webkit-transform: scale(0.96); transform: scale(0.96); }
+.rp-btn.on {
+  background: var(--c-coral);
+  border-color: var(--c-coral);
+  color: #fff;
+}
+
 /* 진행 바 */
 .progress-wrap {
   background: var(--c-border);
@@ -583,6 +626,18 @@ body {
         <span class="routine-badge" id="routine-badge"></span>
       </div>
       <div class="card-sub" id="routine-sub"></div>
+
+      <!-- 루틴 선택 -->
+      <div class="routine-picker">
+        <div class="routine-picker-label" id="routine-picker-label">오늘 추천: <strong id="rec-routine"></strong> · 다른 루틴으로 바꿀 수 있어요</div>
+        <div class="routine-picker-btns">
+          <button class="rp-btn" id="rp-A" onclick="pickRoutine('A')">A · 폭발력</button>
+          <button class="rp-btn" id="rp-B" onclick="pickRoutine('B')">B · 근력</button>
+          <button class="rp-btn" id="rp-M" onclick="pickRoutine('M')">모빌리티</button>
+          <button class="rp-btn" id="rp-S" onclick="pickRoutine('S')">가벼운<br>스트레칭</button>
+        </div>
+      </div>
+
       <div id="routine-items"></div>
     </div>
 
@@ -774,8 +829,26 @@ function getDayData() {
 }
 
 function getRoutineForDate(d) {
+  // 사용자가 그날 직접 선택한 루틴이 있으면 우선
+  var data = store.dates[dateKey(d)];
+  if (data && data.routineType && ROUTINE_BY_TYPE[data.routineType]) {
+    return ROUTINE_BY_TYPE[data.routineType];
+  }
   return DAY_ROUTINE[d.getDay()];
 }
+
+// 그날의 요일 기본 추천 루틴 (선택과 무관)
+function getRecommendedRoutine(d) {
+  return DAY_ROUTINE[d.getDay()];
+}
+
+// 타입 → 루틴 객체
+var ROUTINE_BY_TYPE = {
+  A: ROUTINE_A,
+  B: ROUTINE_B,
+  M: ROUTINE_MOBILITY,
+  S: ROUTINE_SUNDAY
+};
 
 function hasCooldown(d) {
   var r = getRoutineForDate(d);
@@ -860,6 +933,20 @@ function toggleOpt(k) {
   if (data[k]) btn.classList.add('on');
   else btn.classList.remove('on');
   updateSummary();
+}
+
+// 루틴 직접 선택
+function pickRoutine(type) {
+  var data = getDayData();
+  var rec = getRecommendedRoutine(currentDate);
+  if (rec.type === type) {
+    // 추천과 같은 걸 고르면 선택 해제 (기본값으로 복귀)
+    delete data.routineType;
+  } else {
+    data.routineType = type;
+  }
+  saveStore(store);
+  render();
 }
 
 function saveMemo() {
@@ -958,6 +1045,26 @@ function renderRoutine() {
   var badgeText = { A: 'A루틴', B: 'B루틴', M: '회복일', S: '일요일' };
   badge.textContent = badgeText[routine.type];
   badge.className = 'routine-badge ' + routine.type;
+
+  // 루틴 선택 버튼 상태
+  var rec = getRecommendedRoutine(currentDate);
+  var recName = { A: 'A루틴(폭발력)', B: 'B루틴(근력)', M: '모빌리티', S: '가벼운 스트레칭' };
+  var recEl = document.getElementById('rec-routine');
+  if (recEl) recEl.textContent = recName[rec.type];
+  var labelEl = document.getElementById('routine-picker-label');
+  if (data.routineType && data.routineType !== rec.type) {
+    labelEl.innerHTML = '오늘 추천: <strong>' + recName[rec.type] + '</strong> · 직접 <strong>' + recName[routine.type] + '</strong> 선택함';
+  } else {
+    labelEl.innerHTML = '오늘 추천: <strong>' + recName[rec.type] + '</strong> · 다른 루틴으로 바꿀 수 있어요';
+  }
+  var types = ['A', 'B', 'M', 'S'];
+  for (var ti = 0; ti < types.length; ti++) {
+    var rb = document.getElementById('rp-' + types[ti]);
+    if (rb) {
+      if (routine.type === types[ti]) rb.classList.add('on');
+      else rb.classList.remove('on');
+    }
+  }
 
   var html = '';
   for (var i = 0; i < routine.items.length; i++) {
