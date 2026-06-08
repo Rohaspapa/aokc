@@ -419,6 +419,139 @@ body {
   letter-spacing: -0.1px;
 }
 
+/* ── 주간 신호 카드 ── */
+.signal-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--c-border);
+}
+.signal-card.workout { border-left-color: var(--c-coral); }
+.signal-card.diet { border-left-color: var(--c-accent); }
+.signal-card.mental { border-left-color: var(--c-purple); }
+.signal-head {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: baseline;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.signal-title {
+  font-size: 13px;
+  font-weight: 700;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 5px;
+}
+.signal-period {
+  font-size: 10px;
+  color: var(--c-muted);
+  font-weight: 600;
+}
+.signal-main {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 4px 0 2px;
+}
+.signal-main.workout { color: var(--c-coral); }
+.signal-main.diet { color: var(--c-accent); }
+.signal-main.mental { color: var(--c-purple); }
+.signal-main .unit { font-size: 14px; font-weight: 700; }
+.signal-badge {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 10px;
+  margin-left: 7px;
+  vertical-align: middle;
+}
+.signal-badge.lv-start { background: #EFEDE6; color: var(--c-muted); }
+.signal-badge.lv-ok { background: var(--c-accent-light); color: var(--c-accent); }
+.signal-badge.lv-best { background: var(--c-coral-light); color: var(--c-coral); }
+.signal-badge.lv-warn { background: var(--c-amber-light); color: var(--c-amber); }
+.signal-sub {
+  font-size: 11.5px;
+  color: var(--c-muted);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+.signal-dots {
+  display: -webkit-flex;
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+.signal-day {
+  -webkit-flex: 1;
+  flex: 1;
+  text-align: center;
+}
+.signal-day-lbl {
+  font-size: 9px;
+  color: var(--c-muted);
+  margin-bottom: 3px;
+}
+.signal-day-mark {
+  font-size: 13px;
+  font-weight: 700;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 6px;
+  background: var(--c-surface-2);
+  color: var(--c-muted);
+}
+.signal-day-mark.done-workout { background: var(--c-coral-light); color: var(--c-coral); }
+.signal-day-mark.grade-A { background: #DCF0E2; color: #1B7A43; }
+.signal-day-mark.grade-B { background: #E4F0DA; color: #4A7A1B; }
+.signal-day-mark.grade-C { background: #F8EBCF; color: var(--c-amber); }
+.signal-day-mark.grade-D { background: #F8E2DA; color: var(--c-coral); }
+.signal-day-mark.grade-F { background: #F5D5CD; color: #9A2A14; }
+.signal-day-mark.today-mark { outline: 2px solid var(--c-purple); outline-offset: -2px; }
+.mood-trend {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  gap: 2px;
+  margin-top: 8px;
+  overflow-x: auto;
+}
+.mood-emoji {
+  font-size: 15px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+.mood-empty { font-size: 15px; opacity: 0.25; -webkit-flex-shrink: 0; flex-shrink: 0; }
+.memo-preview {
+  background: var(--c-purple-light);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 9px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #3D2E6B;
+}
+.memo-preview .pv-label { font-weight: 700; font-size: 10px; opacity: 0.7; }
+.signal-monthly {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--c-border);
+}
+.signal-monthly strong { color: var(--c-text); font-weight: 700; }
+
 /* 진행 바 */
 .progress-wrap {
   background: var(--c-border);
@@ -828,35 +961,46 @@ body {
     <!-- JS로 채워짐 -->
   </div>
 
-  <!-- 영역 토글 -->
-  <div class="subtabs" style="margin-bottom:14px">
+  <!-- 주간 신호 카드 3개 -->
+  <div class="signal-card workout">
+    <div class="signal-head">
+      <div class="signal-title">🔥 이번 주 운동</div>
+      <div class="signal-period" id="wk-range">—</div>
+    </div>
+    <div class="signal-main workout"><span id="wk-workout-count">0</span><span class="unit">회</span><span class="signal-badge lv-start" id="wk-workout-badge">시작</span></div>
+    <div class="signal-sub" id="wk-workout-sub">핵심 운동일(월·화·목·금) 0/4 완료</div>
+    <div class="signal-dots" id="wk-workout-dots"></div>
+    <div class="signal-monthly" id="wk-workout-month">이번 달 누적 <strong>0회</strong></div>
+  </div>
+
+  <div class="signal-card diet">
+    <div class="signal-head">
+      <div class="signal-title">🥗 이번 주 식단</div>
+      <div class="signal-period">최근 7일</div>
+    </div>
+    <div class="signal-main diet" id="wk-diet-avg">—</div>
+    <div class="signal-sub" id="wk-diet-sub">아직 기록이 없어요</div>
+    <div class="signal-dots" id="wk-diet-dots"></div>
+    <div class="signal-monthly" id="wk-diet-month">이번 달 평균 <strong>—</strong></div>
+  </div>
+
+  <div class="signal-card mental">
+    <div class="signal-head">
+      <div class="signal-title">🧠 이번 주 멘탈</div>
+      <div class="signal-period">최근 14일 추세</div>
+    </div>
+    <div class="mood-trend" id="wk-mental-trend"></div>
+    <div class="signal-sub" id="wk-mental-sub" style="margin-top:9px">취침 전 이미지 트레이닝 0/14일</div>
+    <div class="memo-preview" id="wk-mental-memo" style="display:none"></div>
+    <div class="signal-monthly" id="wk-mental-month">지금까지 메모 <strong>0개</strong> 작성</div>
+  </div>
+
+  <!-- 영역별 상세 보기 토글 -->
+  <div class="subtabs" style="margin-bottom:14px;margin-top:18px">
     <button class="subtab on" id="vt-total" onclick="setViewTarget('total')">통합</button>
     <button class="subtab" id="vt-diet" onclick="setViewTarget('diet')">🥗 식단</button>
     <button class="subtab" id="vt-workout" onclick="setViewTarget('workout')">🏋️ 운동</button>
     <button class="subtab" id="vt-mental" onclick="setViewTarget('mental')">🧠 멘탈</button>
-  </div>
-
-  <!-- 핵심 통계 -->
-  <div class="stat-grid">
-    <div class="stat-box">
-      <div class="stat-num" id="overall-pct">0%</div>
-      <div class="stat-lbl" id="overall-lbl">통합 달성</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num gold" id="streak-cur">0</div>
-      <div class="stat-lbl">연속 일수</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num coral" id="days-tracked">0</div>
-      <div class="stat-lbl">기록 일수</div>
-    </div>
-  </div>
-
-  <!-- 영역별 평균 (통합 뷰에서만) -->
-  <div class="card" id="area-bars-card">
-    <div class="card-title">📊 영역별 평균 달성률</div>
-    <div class="card-sub">전체 기록 일수 기준 — 가중치: 식단 40% · 운동 40% · 멘탈 20%</div>
-    <div id="area-bars"></div>
   </div>
 
   <!-- 월별 달력 -->
@@ -1433,6 +1577,10 @@ function todayDate() {
   var t = new Date();
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
+function parseKey(k) {
+  var p = k.split('-');
+  return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+}
 function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
 function isCompetitionDay(d) { return d >= COMP_START && d <= COMP_END; }
 
@@ -1671,33 +1819,7 @@ function setViewTarget(v) {
 // 진행률 패널
 // ═══════════════════════════════════════════
 function renderProgress() {
-  var stores = getStores();
-
-  // 핵심 통계 (현재 뷰 기준)
-  var s = getStats(currentView, stores);
-  document.getElementById('overall-pct').textContent = s.avgScore + '%';
-  document.getElementById('overall-lbl').textContent = AREA_LABELS[currentView] + ' 평균';
-  document.getElementById('streak-cur').textContent = s.streak;
-  document.getElementById('days-tracked').textContent = s.daysTracked;
-
-  // 영역별 평균 막대 — 통합 뷰에서만 보임
-  var barsCard = document.getElementById('area-bars-card');
-  if (currentView === 'total') {
-    barsCard.style.display = '';
-    var html = '';
-    for (var i = 0; i < AREAS.length; i++) {
-      var a = AREAS[i];
-      var as = getStats(a, stores);
-      var w = Math.round(WEIGHTS[a] * 100);
-      html += '<div class="cat-bar">';
-      html += '<div class="cat-row"><span class="cat-name">' + AREA_LABELS[a] + ' <span style="font-weight:500;color:var(--c-muted);font-size:11px">(가중치 ' + w + '%)</span></span><span class="cat-pct">' + as.avgScore + '% · ' + as.daysTracked + '일</span></div>';
-      html += '<div class="cat-track"><div class="cat-fill" style="width:' + as.avgScore + '%;background:' + AREA_COLORS[a] + '"></div></div>';
-      html += '</div>';
-    }
-    document.getElementById('area-bars').innerHTML = html;
-  } else {
-    barsCard.style.display = 'none';
-  }
+  renderWeeklySignals();
 
   // 히트맵 제목
   var hmTitleMap = {
@@ -1710,6 +1832,216 @@ function renderProgress() {
 
   renderCalendar();
   renderHeatmap();
+}
+
+// ═══════════════════════════════════════════
+// 주간 신호 카드
+// ═══════════════════════════════════════════
+var WEEK_DAY_LABELS = ['일','월','화','수','목','금','토'];
+var WORKOUT_CORE_DAYS = [1, 2, 4, 5]; // 월화목금
+
+// 최근 7일 (오늘 포함, 과거→오늘 순)
+function last7Days() {
+  var t = todayDate();
+  var arr = [];
+  for (var i = 6; i >= 0; i--) {
+    arr.push(new Date(t.getFullYear(), t.getMonth(), t.getDate() - i));
+  }
+  return arr;
+}
+
+// 이번 주(월요일 시작) 날짜 배열
+function thisWeekDays() {
+  var t = todayDate();
+  var dow = t.getDay(); // 0=일
+  var mondayOffset = (dow === 0) ? -6 : (1 - dow);
+  var monday = new Date(t.getFullYear(), t.getMonth(), t.getDate() + mondayOffset);
+  var arr = [];
+  for (var i = 0; i < 7; i++) {
+    arr.push(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+  }
+  return arr;
+}
+
+function isWorkoutActiveDay(d, stores) {
+  var data = stores.workout.dates[dateKey(d)];
+  if (!data) return false;
+  // 루틴 항목 체크 or 추가활동(휴식 제외) 체크
+  for (var k in data) {
+    if (k === 'memo' || k === 'rest') continue;
+    if (data[k] === true) return true;
+  }
+  return false;
+}
+
+function renderWeeklySignals() {
+  var stores = getStores();
+  var t = todayDate();
+
+  // ── 운동 ──
+  var week = thisWeekDays();
+  var workoutCount = 0;
+  var coreCount = 0;
+  var dotsHtml = '';
+  for (var i = 0; i < 7; i++) {
+    var d = week[i];
+    var future = d > t;
+    var active = isWorkoutActiveDay(d, stores);
+    if (active) workoutCount++;
+    if (active && WORKOUT_CORE_DAYS.indexOf(d.getDay()) >= 0) coreCount++;
+    var mark = active ? '✓' : (future ? '·' : '–');
+    var cls = 'signal-day-mark' + (active ? ' done-workout' : '') + (dateKey(d) === dateKey(t) ? ' today-mark' : '');
+    dotsHtml += '<div class="signal-day"><div class="signal-day-lbl">' + WEEK_DAY_LABELS[d.getDay()] + '</div><div class="' + cls + '">' + mark + '</div></div>';
+  }
+  document.getElementById('wk-workout-count').textContent = workoutCount;
+  document.getElementById('wk-workout-dots').innerHTML = dotsHtml;
+
+  var badge = document.getElementById('wk-workout-badge');
+  var bcls, btxt;
+  if (workoutCount >= 5) { bcls = 'lv-warn'; btxt = '과훈련 주의'; }
+  else if (workoutCount >= 4) { bcls = 'lv-best'; btxt = '최고'; }
+  else if (workoutCount >= 3) { bcls = 'lv-ok'; btxt = '적정'; }
+  else { bcls = 'lv-start'; btxt = '시작'; }
+  badge.className = 'signal-badge ' + bcls;
+  badge.textContent = btxt;
+
+  var wsub = '핵심 운동일(월·화·목·금) ' + coreCount + '/4 완료';
+  if (workoutCount >= 5) wsub += ' · 회복도 챙기세요';
+  document.getElementById('wk-workout-sub').textContent = wsub;
+
+  // 이번 주 범위 표시
+  document.getElementById('wk-range').textContent = (week[0].getMonth()+1) + '/' + week[0].getDate() + '~' + (week[6].getMonth()+1) + '/' + week[6].getDate();
+
+  // 운동 월 누적
+  var monthCount = 0;
+  var mStart = new Date(t.getFullYear(), t.getMonth(), 1);
+  var dd = new Date(mStart);
+  while (dd <= t) {
+    if (isWorkoutActiveDay(dd, stores)) monthCount++;
+    dd = new Date(dd.getFullYear(), dd.getMonth(), dd.getDate() + 1);
+  }
+  var monthLabel = (t.getMonth()+1) + '월';
+  var monthEval = monthCount >= 17 ? ' (최고 수준)' : (monthCount >= 15 ? ' (적정)' : '');
+  document.getElementById('wk-workout-month').innerHTML = monthLabel + ' 누적 <strong>' + monthCount + '회</strong>' + monthEval;
+
+  // ── 식단 ──
+  var days7 = last7Days();
+  var gradeSum = 0, gradeDays = 0;
+  var dietDotsHtml = '';
+  for (var i = 0; i < 7; i++) {
+    var d = days7[i];
+    var future = d > t;
+    var a = analyzeDayExternal(d, stores);
+    var g = a ? gradeFromScore(a) : null;
+    if (g) { gradeSum += gradeToNum(g); gradeDays++; }
+    var mk = g ? g : (future ? '·' : '–');
+    var gcls = 'signal-day-mark' + (g ? ' grade-' + g : '') + (dateKey(d) === dateKey(t) ? ' today-mark' : '');
+    dietDotsHtml += '<div class="signal-day"><div class="signal-day-lbl">' + WEEK_DAY_LABELS[d.getDay()] + '</div><div class="' + gcls + '">' + mk + '</div></div>';
+  }
+  document.getElementById('wk-diet-dots').innerHTML = dietDotsHtml;
+  var avgEl = document.getElementById('wk-diet-avg');
+  var dsubEl = document.getElementById('wk-diet-sub');
+  if (gradeDays > 0) {
+    var avgNum = gradeSum / gradeDays;
+    avgEl.textContent = '평균 ' + numToGrade(avgNum);
+    dsubEl.textContent = '7일 중 ' + gradeDays + '일 기록 (입력 일관성 ' + Math.round(gradeDays/7*100) + '%)';
+  } else {
+    avgEl.textContent = '—';
+    dsubEl.textContent = '아직 기록이 없어요';
+  }
+
+  // 식단 월 평균
+  var mGradeSum = 0, mGradeDays = 0;
+  dd = new Date(mStart);
+  while (dd <= t) {
+    var a2 = analyzeDayExternal(dd, stores);
+    var g2 = a2 ? gradeFromScore(a2) : null;
+    if (g2) { mGradeSum += gradeToNum(g2); mGradeDays++; }
+    dd = new Date(dd.getFullYear(), dd.getMonth(), dd.getDate() + 1);
+  }
+  document.getElementById('wk-diet-month').innerHTML = monthLabel + ' 평균 <strong>' + (mGradeDays > 0 ? numToGrade(mGradeSum/mGradeDays) : '—') + '</strong>';
+
+  // ── 멘탈 ──
+  var trendHtml = '';
+  var imgTrainCount = 0;
+  var imgTrainDays = 0;
+  var RATING_EMOJI2 = ['', '😣', '😕', '😐', '🙂', '😄'];
+  for (var i = 13; i >= 0; i--) {
+    var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
+    if (d > t) continue;
+    imgTrainDays++;
+    var md = stores.mental.dates[dateKey(d)];
+    if (md && md.rating) {
+      trendHtml += '<span class="mood-emoji">' + RATING_EMOJI2[md.rating] + '</span>';
+    } else if (md && md.word) {
+      // 자기평가 없지만 단어 있으면 점으로
+      trendHtml += '<span class="mood-empty">·</span>';
+    } else {
+      trendHtml += '<span class="mood-empty">·</span>';
+    }
+    if (md && md.r6) imgTrainCount++; // r6 = 취침전 이미지 트레이닝
+  }
+  document.getElementById('wk-mental-trend').innerHTML = trendHtml || '<span class="signal-sub">아직 기록이 없어요</span>';
+  document.getElementById('wk-mental-sub').textContent = '취침 전 이미지 트레이닝 ' + imgTrainCount + '/14일';
+
+  // 멘탈 메모 누적 + 최근 메모
+  var memoCount = 0;
+  var recentMemo = null, recentMemoDate = null;
+  for (var k in stores.mental.dates) {
+    var mm = stores.mental.dates[k];
+    if (mm.memo && mm.memo.trim()) {
+      memoCount++;
+      if (!recentMemoDate || k > recentMemoDate) {
+        recentMemoDate = k;
+        recentMemo = mm.memo.trim();
+      }
+    }
+  }
+  document.getElementById('wk-mental-month').innerHTML = '지금까지 메모 <strong>' + memoCount + '개</strong> 작성';
+  var memoPv = document.getElementById('wk-mental-memo');
+  if (recentMemo) {
+    var preview = recentMemo.length > 50 ? recentMemo.substring(0, 50) + '...' : recentMemo;
+    var pd = parseKey(recentMemoDate);
+    var dayLabel = (dateKey(pd) === dateKey(t)) ? '오늘' : ((pd.getMonth()+1) + '/' + pd.getDate());
+    memoPv.style.display = '';
+    memoPv.innerHTML = '<span class="pv-label">' + dayLabel + ' 메모</span><br>' + escapeHtmlIdx(preview);
+  } else {
+    memoPv.style.display = 'none';
+  }
+}
+
+// 식단 등급 헬퍼 (외부 데이터 기반)
+function analyzeDayExternal(d, stores) {
+  var data = stores.diet.dates[dateKey(d)];
+  if (!data) return null;
+  var meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+  var total = 0;
+  for (var i = 0; i < meals.length; i++) {
+    if (data[meals[i]]) total += data[meals[i]].length;
+  }
+  if (total === 0) return null;
+  return getDietScore(d, stores);
+}
+function gradeFromScore(score) {
+  if (score === null) return null;
+  if (score >= 85) return 'A';
+  if (score >= 68) return 'B';
+  if (score >= 50) return 'C';
+  if (score >= 30) return 'D';
+  return 'F';
+}
+function gradeToNum(g) { return { A:5, B:4, C:3, D:2, F:1 }[g] || 0; }
+function numToGrade(n) {
+  if (n >= 4.6) return 'A';
+  if (n >= 4.2) return 'B+';
+  if (n >= 3.6) return 'B';
+  if (n >= 3.2) return 'C+';
+  if (n >= 2.6) return 'C';
+  if (n >= 2.0) return 'D';
+  return 'F';
+}
+function escapeHtmlIdx(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ═══════════════════════════════════════════

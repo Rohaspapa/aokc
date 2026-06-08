@@ -352,6 +352,113 @@ body {
   color: var(--c-good);
 }
 
+/* 오늘의 한 단어 */
+.word-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--c-border);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 600;
+  -webkit-appearance: none;
+  appearance: none;
+  color: var(--c-purple);
+  text-align: center;
+}
+.word-input:focus {
+  outline: none;
+  border-color: var(--c-purple);
+}
+.word-input::placeholder {
+  color: var(--c-muted);
+  font-weight: 500;
+  font-size: 14px;
+}
+.word-chip-group {
+  margin-top: 10px;
+}
+.word-chip-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--c-muted);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+.word-chips {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.word-chip {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--c-text);
+  -webkit-transition: all 0.15s;
+  transition: all 0.15s;
+}
+.word-chip:active {
+  -webkit-transform: scale(0.95);
+  transform: scale(0.95);
+}
+.word-chip.positive { color: #2D7A4E; border-color: #A7CFB8; background: #DCE9E1; }
+.word-chip.neutral { color: #6B5510; border-color: #E8D4A0; background: #F8EBCF; }
+.word-chip.negative { color: #6B1E0E; border-color: #E8B6A8; background: #F8E2DA; }
+
+/* 카드 부제 — 선택사항 표시 */
+.optional-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  color: var(--c-muted);
+  padding: 2px 7px;
+  border-radius: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* 앵커 기억 노트 */
+.anchor-card {
+  background: -webkit-linear-gradient(135deg, #FFF7E1, #F8EBCF);
+  background: linear-gradient(135deg, #FFF7E1, #F8EBCF);
+  border: 1px solid #E8D4A0;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.anchor-card .card-title { color: #6B5510; }
+.anchor-list {
+  list-style: none;
+  margin-top: 6px;
+}
+.anchor-item {
+  padding: 10px 0;
+  border-bottom: 1px dashed #E8D4A0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #3D2F08;
+}
+.anchor-item:last-child { border-bottom: none; }
+.anchor-item strong { font-weight: 700; }
+.anchor-item .anchor-meta {
+  font-size: 10px;
+  color: #8B6F1A;
+  font-weight: 600;
+  margin-bottom: 2px;
+  letter-spacing: 0.3px;
+}
+
 /* 요약 */
 .summary-grid {
   display: grid;
@@ -501,8 +608,41 @@ body {
 
     <!-- 영감 -->
     <div class="inspire-box">
-      <strong>2008년 처음 코프볼 코트에 섰던 그 설렘.</strong><br>
-      <em>그 마음이 가장 강력한 앵커입니다.</em>
+      <strong>일본전 터닝슛. 그 한 골이 승리의 발판이 됐다.</strong><br>
+      <em>그날 찾은 자신감과 의미는 지금도 내 안에 살아있다.</em>
+      <div style="font-size:11px;opacity:0.75;margin-top:6px;font-style:normal">2008년 첫 코트의 설렘 — 모든 것의 시작이었던 그 마음.</div>
+    </div>
+
+    <!-- 오늘의 한 단어 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-text">💭 오늘의 한 단어</span>
+        <div class="save-indicator" id="word-saved"></div>
+      </div>
+      <div class="card-sub">오늘을 압축하는 한 단어 — 평가가 아니라 표현입니다</div>
+      <input type="text" class="word-input" id="word-input" placeholder="오늘을 한 단어로..." oninput="saveWord()" maxlength="20">
+      <div class="word-chip-group">
+        <div class="word-chip-label">빠른 선택</div>
+        <div class="word-chips">
+          <button class="word-chip positive" onclick="pickWord('가벼움')">가벼움</button>
+          <button class="word-chip positive" onclick="pickWord('집중')">집중</button>
+          <button class="word-chip positive" onclick="pickWord('단단함')">단단함</button>
+          <button class="word-chip positive" onclick="pickWord('흐름')">흐름</button>
+          <button class="word-chip positive" onclick="pickWord('확신')">확신</button>
+          <button class="word-chip positive" onclick="pickWord('명료')">명료</button>
+          <button class="word-chip neutral" onclick="pickWord('평이')">평이</button>
+          <button class="word-chip neutral" onclick="pickWord('잔잔')">잔잔</button>
+          <button class="word-chip neutral" onclick="pickWord('무난')">무난</button>
+          <button class="word-chip negative" onclick="pickWord('무거움')">무거움</button>
+          <button class="word-chip negative" onclick="pickWord('답답')">답답</button>
+          <button class="word-chip negative" onclick="pickWord('흩어짐')">흩어짐</button>
+          <button class="word-chip negative" onclick="pickWord('공허')">공허</button>
+          <button class="word-chip negative" onclick="pickWord('조급')">조급</button>
+          <button class="word-chip negative" onclick="pickWord('지침')">지침</button>
+          <button class="word-chip negative" onclick="pickWord('흔들림')">흔들림</button>
+          <button class="word-chip negative" onclick="pickWord('버거움')">버거움</button>
+        </div>
+      </div>
     </div>
 
     <!-- 요약 -->
@@ -590,10 +730,10 @@ body {
     <!-- 자기평가 -->
     <div class="card">
       <div class="card-title">
-        <span class="card-title-text">⭐ 오늘의 자기평가</span>
+        <span class="card-title-text">⭐ 오늘의 자기평가 <span class="optional-tag">선택사항</span></span>
         <div class="save-indicator" id="rating-saved"></div>
       </div>
-      <div class="card-sub">멘탈 컨디션을 솔직하게 — 점수가 낮아도 괜찮아요</div>
+      <div class="card-sub">매일 안 해도 괜찮아요 — 한 주 돌아볼 때 한두 번이면 충분</div>
       <div class="rating-row">
         <button class="rating-btn" id="rate-1" onclick="setRating(1)">
           <span class="rating-emoji">😣</span>
@@ -626,11 +766,59 @@ body {
     <!-- 메모 -->
     <div class="card">
       <div class="card-title">
-        <span class="card-title-text">📝 오늘 가장 인상 깊었던 순간</span>
+        <span class="card-title-text">📝 오늘의 의미 있는 순간</span>
         <div class="save-indicator" id="memo-saved"></div>
       </div>
-      <div class="card-sub">한 줄이라도 — 1년 뒤 돌아봤을 때의 기록</div>
-      <textarea class="memo-input" id="memo-input" placeholder="예: 단체훈련에서 '지금'이라는 키워드가 잘 작동했다 / 컨디션 안 좋았지만 첫 패스를 정확히 했을 때 자신감이 생겼다" oninput="saveMemo()"></textarea>
+      <div class="card-sub">사실은 운동 메모, 의미는 여기 — 자문화기술지 자료로 쌓입니다</div>
+      <textarea class="memo-input" id="memo-input" placeholder="예: 단체훈련에서 '지금'이라는 키워드가 잘 작동했다 / 컨디션 안 좋았지만 첫 패스를 정확히 했을 때 자신감이 생겼다 / 학생들과의 코칭에서 처음 느낀 가르치는 보람" oninput="saveMemo()"></textarea>
+      <div style="font-size:10.5px;color:var(--c-muted);margin-top:8px;line-height:1.5">
+        <strong style="color:var(--c-purple)">💡 작성 팁</strong><br>
+        · 매일은 한 줄이라도 (한 단어 + 한 장면)<br>
+        · 주 1~2회는 길게 — 정체성(선수·교육자·리더) 중 어디였는지 함께
+      </div>
+    </div>
+
+    <!-- 앵커 기억 노트 -->
+    <div class="anchor-card">
+      <div class="card-title">
+        <span class="card-title-text">⚓ 앵커 기억 노트</span>
+      </div>
+      <div class="card-sub" style="color:#8B6F1A">시합 임박이나 멘탈 흔들릴 때 다시 보세요</div>
+      <ul class="anchor-list" id="anchor-list">
+        <li class="anchor-item">
+          <div class="anchor-meta">선수 · 결정적 순간</div>
+          <strong>일본전 터닝슛 득점</strong><br>
+          그 한 골이 팀 승리의 발판이 됐고, 나 자신은 자신감과 의미를 다시 찾았다.
+        </li>
+        <li class="anchor-item">
+          <div class="anchor-meta">선수 · 기원</div>
+          <strong>2008년 첫 코프볼 코트</strong><br>
+          모든 것의 시작이었던 그날의 설렘. 16년 여정의 출발점.
+        </li>
+        <li class="anchor-item">
+          <div class="anchor-meta">코치 · 자격</div>
+          <strong>IKF Level 3 코치 자격 획득 (2019)</strong><br>
+          국제 인증으로 입증된 코칭 역량. 가르치는 사람으로서의 정체성 확립.
+        </li>
+        <li class="anchor-item">
+          <div class="anchor-meta">리더 · 공동체</div>
+          <strong>한국 코프볼 공동체를 지켜온 16년</strong><br>
+          SKC와 서울교대 클럽 — 한국에 단 두 팀뿐인 코프볼 무대를 만들고 유지해왔다.
+        </li>
+        <li class="anchor-item" id="anchor-edit-hint" style="cursor:pointer" onclick="toggleAnchorEditor()">
+          <div class="anchor-meta" style="color:var(--c-muted)">＋ 추가하기</div>
+          <span style="color:var(--c-muted);font-size:12px">자신만의 결정적 순간을 더 추가할 수 있어요 (탭)</span>
+        </li>
+      </ul>
+      <div id="anchor-editor" style="display:none;margin-top:10px;padding:10px;background:#FFF7E1;border-radius:8px;border:1px solid #E8D4A0">
+        <input type="text" id="anchor-meta-input" placeholder="구분 (예: 선수 · 결정적 순간)" style="width:100%;padding:8px;border:1px solid #E8D4A0;border-radius:6px;font-size:12px;font-family:inherit;-webkit-appearance:none;appearance:none;margin-bottom:6px" maxlength="40">
+        <input type="text" id="anchor-title-input" placeholder="제목 (예: AOKC 2010 첫 출전)" style="width:100%;padding:8px;border:1px solid #E8D4A0;border-radius:6px;font-size:13px;font-family:inherit;font-weight:600;-webkit-appearance:none;appearance:none;margin-bottom:6px" maxlength="60">
+        <textarea id="anchor-desc-input" placeholder="그 순간의 의미·감각·결과" style="width:100%;padding:8px;border:1px solid #E8D4A0;border-radius:6px;font-size:12px;font-family:inherit;-webkit-appearance:none;appearance:none;resize:vertical;min-height:50px" maxlength="200"></textarea>
+        <div style="display:-webkit-flex;display:flex;gap:6px;margin-top:6px">
+          <button onclick="addAnchor()" style="flex:1;background:#B57318;color:#fff;border:none;padding:8px;border-radius:6px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">추가</button>
+          <button onclick="toggleAnchorEditor()" style="flex:1;background:transparent;border:1px solid #E8D4A0;color:#6B5510;padding:8px;border-radius:6px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">취소</button>
+        </div>
+      </div>
     </div>
 
     <button class="btn-secondary" onclick="resetToday()">오늘 기록 초기화</button>
@@ -742,6 +930,85 @@ function saveMemo() {
   data.memo = document.getElementById('memo-input').value;
   saveStore(store);
   showSavedIndicator('memo-saved', false); // 텍스트는 "저장 중..." 후 "저장됨"
+}
+
+// 오늘의 한 단어
+function saveWord() {
+  var data = getDayData();
+  var v = document.getElementById('word-input').value.trim();
+  data.word = v;
+  saveStore(store);
+  showSavedIndicator('word-saved', false);
+}
+function pickWord(w) {
+  var input = document.getElementById('word-input');
+  input.value = w;
+  saveWord();
+}
+
+// 앵커 기억 노트
+function toggleAnchorEditor() {
+  var ed = document.getElementById('anchor-editor');
+  if (ed.style.display === 'none' || !ed.style.display) {
+    ed.style.display = '';
+    document.getElementById('anchor-title-input').focus();
+  } else {
+    ed.style.display = 'none';
+    document.getElementById('anchor-meta-input').value = '';
+    document.getElementById('anchor-title-input').value = '';
+    document.getElementById('anchor-desc-input').value = '';
+  }
+}
+function addAnchor() {
+  var meta = document.getElementById('anchor-meta-input').value.trim();
+  var title = document.getElementById('anchor-title-input').value.trim();
+  var desc = document.getElementById('anchor-desc-input').value.trim();
+  if (!title) {
+    window.alert('제목은 필수입니다');
+    return;
+  }
+  if (!store.anchors) store.anchors = [];
+  store.anchors.push({
+    meta: meta || '나의 순간',
+    title: title,
+    desc: desc,
+    created: new Date().toISOString()
+  });
+  saveStore(store);
+  toggleAnchorEditor();
+  renderAnchors();
+}
+function deleteAnchor(idx) {
+  if (!store.anchors) return;
+  if (!window.confirm('이 앵커 기억을 삭제할까요?')) return;
+  store.anchors.splice(idx, 1);
+  saveStore(store);
+  renderAnchors();
+}
+function renderAnchors() {
+  // 기본 4개 항목 + 사용자 추가 항목
+  var list = document.getElementById('anchor-list');
+  if (!list) return;
+  var defaults = list.querySelectorAll('.anchor-item');
+  // 사용자 항목만 제거 (default-anchor 클래스 제외)
+  for (var i = list.children.length - 1; i >= 0; i--) {
+    if (list.children[i].classList.contains('user-anchor')) {
+      list.removeChild(list.children[i]);
+    }
+  }
+  // 추가 힌트 항목 찾기
+  var hint = document.getElementById('anchor-edit-hint');
+  if (!store.anchors) store.anchors = [];
+  for (var i = 0; i < store.anchors.length; i++) {
+    var a = store.anchors[i];
+    var li = document.createElement('li');
+    li.className = 'anchor-item user-anchor';
+    var safeMeta = a.meta.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var safeTitle = a.title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var safeDesc = (a.desc || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    li.innerHTML = '<div class="anchor-meta">' + safeMeta + ' <span style="float:right;cursor:pointer;color:#B8412A;font-weight:700" onclick="deleteAnchor(' + i + ')">✕</span></div><strong>' + safeTitle + '</strong>' + (safeDesc ? '<br>' + safeDesc : '');
+    list.insertBefore(li, hint);
+  }
 }
 
 // 저장 표시
