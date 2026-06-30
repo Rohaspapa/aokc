@@ -797,7 +797,7 @@ var DAY_ROUTINE = {
 };
 
 // 추가 활동 키
-var ADDON_KEYS = ['cardio', 'stretch', 'korfball', 'rest'];
+var ADDON_KEYS = ['cardio', 'stretch', 'korfball', 'rest', 'recovery'];
 
 var PLAN_START = new Date(2026, 4, 1);
 
@@ -1228,7 +1228,7 @@ function renderWeekly() {
   var trackedDays = 0;
   var activeDays = 0;
   var typeCounts = { A: 0, B: 0, M: 0, S: 0 };
-  var addonCounts = { cardio: 0, stretch: 0, korfball: 0, rest: 0 };
+  var addonCounts = { cardio: 0, stretch: 0, korfball: 0, rest: 0, recovery: 0 };
   var totalPct = 0;
 
   for (var i = 0; i < 30; i++) {
@@ -1263,6 +1263,7 @@ function renderWeekly() {
     if (addonCounts.cardio) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🏃‍♂️ 유산소</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.cardio + '회</div></div>';
     if (addonCounts.stretch) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🧘 스트레칭</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.stretch + '회</div></div>';
     if (addonCounts.rest) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🛌 휴식</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.rest + '회</div></div>';
+    if (addonCounts.recovery) statsHtml += '<div class="weekly-row"><div class="weekly-day" style="width:auto;flex:1">🩹 회복 루틴</div><div class="weekly-pct" style="width:auto;font-size:14px">' + addonCounts.recovery + '회</div></div>';
   }
   document.getElementById('month-stats').innerHTML = statsHtml;
 }

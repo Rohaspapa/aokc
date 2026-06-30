@@ -232,6 +232,18 @@
   .back-btn:active{background:var(--line);}
   .back-bar .ctx{font-size:12px;color:var(--ink-dim);font-weight:600;}
   .back-bar .ctx b{color:var(--tape);}
+
+  /* 오늘 완료 → 메인 통계 연동 */
+  .logday{background:linear-gradient(180deg,rgba(61,220,151,.10),transparent),var(--panel);border:1px solid var(--line);border-left:4px solid var(--pulse);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+  .logday h3{font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .logday .desc{font-size:12.5px;color:var(--ink-dim);margin-bottom:14px;}
+  .logday .desc b{color:var(--tape);}
+  .logbtn{width:100%;border:none;border-radius:11px;padding:15px;font-size:15.5px;font-weight:800;cursor:pointer;transition:.15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;}
+  .logbtn.off{background:var(--pulse);color:#0f1419;}
+  .logbtn.off:active{transform:scale(.99);}
+  .logbtn.on{background:var(--panel-2);color:var(--pulse);border:1.5px solid var(--pulse);}
+  .logday .stamp{font-size:12px;color:var(--ink-dim);margin-top:10px;text-align:center;}
+  .logday .stamp b{color:var(--pulse);}
 </style>
 </head>
 <body>
@@ -572,6 +584,20 @@
     </ul>
   </div>
 
+  <!-- TODAY LOG → MAIN STATS -->
+  <div class="sec-head">
+    <span class="sec-num">✓</span>
+    <h2>오늘 운동 완료</h2>
+    <span class="day">메인 통계에 반영</span>
+  </div>
+
+  <div class="logday">
+    <h3>🩹 오늘 회복 루틴 완료 기록</h3>
+    <p class="desc">버튼을 누르면 <b>오늘 날짜</b>가 AOKC 메인의 운동 통계(달성률·연속일수·7일 카운트)에 <b>회복 루틴</b>으로 반영됩니다. 부상 중에도 스트릭이 끊기지 않습니다.</p>
+    <button class="logbtn off" id="logBtn">오늘 완료로 기록하기</button>
+    <div class="stamp" id="logStamp"></div>
+  </div>
+
   <!-- WEEKLY CHECKLIST -->
   <div class="sec-head">
     <span class="sec-num">✓</span>
@@ -683,6 +709,54 @@
   load();
   exChks.forEach(syncStrike);
   update();
+
+  // ── 메인 운동 통계(aokc2026_workout) 연동 ──
+  // 오늘 날짜에 recovery:true 를 기록하면 메인의 운동한 날·연속일수·달성률에 반영됨.
+  var WK_KEY = 'aokc2026_workout';
+  function dateKey(d){
+    var y=d.getFullYear(), m=('0'+(d.getMonth()+1)).slice(-2), day=('0'+d.getDate()).slice(-2);
+    return y+'-'+m+'-'+day;
+  }
+  var todayKey = dateKey(new Date());
+  var logBtn = document.getElementById('logBtn');
+  var logStamp = document.getElementById('logStamp');
+
+  function loadWk(){
+    try{ var r=localStorage.getItem(WK_KEY); if(r) return JSON.parse(r); }catch(e){}
+    return { dates:{} };
+  }
+  function isLoggedToday(){
+    var wk=loadWk();
+    return !!(wk.dates && wk.dates[todayKey] && wk.dates[todayKey].recovery);
+  }
+  function renderLog(){
+    if(isLoggedToday()){
+      logBtn.className='logbtn on';
+      logBtn.textContent='✓ 오늘 완료 기록됨 (취소하려면 탭)';
+      logStamp.innerHTML='<b>'+todayKey+'</b> · 메인 통계에 반영됨';
+    }else{
+      logBtn.className='logbtn off';
+      logBtn.textContent='오늘 완료로 기록하기';
+      logStamp.textContent='아직 오늘 기록이 없습니다';
+    }
+  }
+  logBtn.addEventListener('click', function(){
+    var wk=loadWk();
+    if(!wk.dates) wk.dates={};
+    if(!wk.dates[todayKey]) wk.dates[todayKey]={};
+    if(wk.dates[todayKey].recovery){
+      // 취소: recovery 플래그만 제거 (다른 운동 기록은 보존)
+      delete wk.dates[todayKey].recovery;
+      // 그날 데이터가 완전히 비면 날짜 자체를 정리
+      var keys=Object.keys(wk.dates[todayKey]);
+      if(keys.length===0) delete wk.dates[todayKey];
+    }else{
+      wk.dates[todayKey].recovery=true;
+    }
+    try{ localStorage.setItem(WK_KEY, JSON.stringify(wk)); }catch(e){}
+    renderLog();
+  });
+  renderLog();
 </script>
 </body>
 </html>
