@@ -262,6 +262,21 @@
   .day-chk:disabled{cursor:default;opacity:1;}
   .day-chk.auto:checked{background:var(--pulse);border-color:var(--pulse);}
   .day-chk.today-cell{box-shadow:0 0 0 2px var(--tape);}
+
+  /* 날짜 선택 바 */
+  .datepick{position:sticky;top:52px;z-index:15;background:rgba(15,20,25,.94);backdrop-filter:saturate(160%) blur(10px);-webkit-backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);margin:0 -18px 18px;padding:11px 18px;display:flex;align-items:center;gap:10px;}
+  .dp-btn{flex:0 0 auto;width:38px;height:38px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .dp-btn:active{background:var(--line);}
+  .dp-btn:disabled{opacity:.3;cursor:default;}
+  .dp-center{flex:1;text-align:center;line-height:1.25;}
+  .dp-date{font-size:15px;font-weight:800;color:var(--ink);}
+  .dp-date .dow{color:var(--tape);}
+  .dp-sub{font-size:11px;color:var(--ink-dim);margin-top:1px;}
+  .dp-today-btn{flex:0 0 auto;font-size:12px;font-weight:700;padding:8px 12px;border-radius:9px;background:var(--pulse);color:#0f1419;border:none;cursor:pointer;}
+  .dp-today-btn:disabled{opacity:.3;cursor:default;}
+  .viewing-past .logday .desc{opacity:.85;}
+  .past-note{display:none;font-size:12px;color:var(--tape);background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.3);border-radius:9px;padding:9px 12px;margin-bottom:12px;}
+  .viewing-past .past-note{display:block;}
 </style>
 </head>
 <body>
@@ -296,6 +311,19 @@
 </header>
 
 <div class="wrap">
+
+  <!-- 날짜 선택 바 -->
+  <div class="datepick">
+    <button class="dp-btn" id="dpPrev">‹</button>
+    <div class="dp-center">
+      <div class="dp-date" id="dpDate">오늘</div>
+      <div class="dp-sub" id="dpSub"></div>
+    </div>
+    <button class="dp-btn" id="dpNext">›</button>
+    <button class="dp-today-btn" id="dpToday">오늘</button>
+  </div>
+
+  <div class="past-note" id="pastNote">📅 과거 날짜를 보고 있습니다. 이 날의 기록을 수정할 수 있어요.</div>
 
   <!-- A ROUTINE -->
   <div class="sec-head">
@@ -690,33 +718,30 @@
     var y=d.getFullYear(), m=('0'+(d.getMonth()+1)).slice(-2), day=('0'+d.getDate()).slice(-2);
     return y+'-'+m+'-'+day;
   }
+  function ymd(k){ var p=k.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+
   var today    = new Date();
+  today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   var todayKey = dateKey(today);
 
-  // 이번 주(월~일) 날짜 배열
-  function thisWeekDays(){
-    var t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    var dow = t.getDay();                 // 0=일
-    var offset = (dow===0) ? -6 : (1-dow); // 월요일로 이동
-    var mon = new Date(t.getFullYear(), t.getMonth(), t.getDate()+offset);
-    var arr=[];
-    for(var i=0;i<7;i++) arr.push(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate()+i));
-    return arr;
-  }
-  var week = thisWeekDays();
+  // 현재 보고 있는 날짜 (기본 = 오늘). 미래로는 못 감.
+  var selDate = new Date(today);
+  var selKey  = dateKey(selDate);
 
-  // ── 회복탭 저장소 로드/세이브 ──
+  // ── 회복탭 저장소 ──
   function loadRec(){
     try{ var r=localStorage.getItem(REC_KEY); if(r){ var o=JSON.parse(r); if(o&&o.dates) return o; } }catch(e){}
     return { dates:{} };
   }
   function saveRec(o){ try{ localStorage.setItem(REC_KEY, JSON.stringify(o)); }catch(e){} }
   var rec = loadRec();
-  function todayRec(){
-    if(!rec.dates[todayKey]) rec.dates[todayKey] = { ex:{}, addon:{} };
-    if(!rec.dates[todayKey].ex)    rec.dates[todayKey].ex={};
-    if(!rec.dates[todayKey].addon) rec.dates[todayKey].addon={};
-    return rec.dates[todayKey];
+
+  // 선택된 날짜의 레코드 (없으면 생성)
+  function selRec(){
+    if(!rec.dates[selKey]) rec.dates[selKey] = { ex:{}, addon:{} };
+    if(!rec.dates[selKey].ex)    rec.dates[selKey].ex={};
+    if(!rec.dates[selKey].addon) rec.dates[selKey].addon={};
+    return rec.dates[selKey];
   }
 
   // ── 메인 통계 저장소 ──
@@ -726,11 +751,21 @@
   }
   function saveWk(o){ try{ localStorage.setItem(WK_KEY, JSON.stringify(o)); }catch(e){} }
 
+  // 이번 주(월~일) — 선택 날짜가 속한 주로 계산
+  function weekOf(base){
+    var t = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+    var dow = t.getDay();
+    var offset = (dow===0) ? -6 : (1-dow);
+    var mon = new Date(t.getFullYear(), t.getMonth(), t.getDate()+offset);
+    var arr=[];
+    for(var i=0;i<7;i++) arr.push(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate()+i));
+    return arr;
+  }
+
   // ═══════════════════════════════════════════
   //  운동 항목 체크박스 (A/B 루틴)
   // ═══════════════════════════════════════════
   var exChks = [].slice.call(document.querySelectorAll('.ex .chk'));
-  // 각 체크박스에 인덱스 + 루틴타입(A/B) 부여
   exChks.forEach(function(cb, i){
     cb.setAttribute('data-exidx', i);
     var routine = cb.closest('.routine');
@@ -738,110 +773,84 @@
              : routine && routine.classList.contains('B') ? 'B' : '?';
     cb.setAttribute('data-routine', type);
   });
-
   function syncStrike(cb){
     var name = cb.closest('.ex-head').querySelector('.ex-name');
     name.classList.toggle('done', cb.checked);
   }
 
-  // 오늘 A/B 각각 몇 개 체크됐는지
-  function countTypes(){
+  // 특정 레코드의 활동 판정
+  function activityOf(r){
+    if(!r) return { active:false, tag:'', kind:null };
     var a=0,b=0;
-    exChks.forEach(function(cb){
-      if(cb.checked){ if(cb.getAttribute('data-routine')==='A') a++; else if(cb.getAttribute('data-routine')==='B') b++; }
-    });
-    return {a:a,b:b};
-  }
-
-  // 오늘 무슨 활동을 했는지 대표 라벨/타입 판정
-  //  우선순위: 루틴(A/B) > 코프볼 > 유산소 > 스트레칭
-  function todayActivity(){
-    var t = todayRec();
-    var tc = countTypes();
-    if(tc.a>0 || tc.b>0){
-      var type = (tc.a>=tc.b) ? 'A' : 'B';
-      return { active:true, tag:(type==='A'?'A루틴':'B루틴'), kind:'routine', routineType:type };
+    if(r.ex){ for(var idx in r.ex){ if(r.ex[idx]){ var cb=exChks[idx]; if(cb){ (cb.getAttribute('data-routine')==='A')?a++:b++; } } } }
+    if(a>0||b>0){ var type=(a>=b)?'A':'B'; return { active:true, tag:(type+'루틴'), kind:'routine', routineType:type }; }
+    if(r.addon){
+      if(r.addon.korfball) return { active:true, tag:'코프볼', kind:'korfball' };
+      if(r.addon.cardio)   return { active:true, tag:'유산소', kind:'cardio' };
+      if(r.addon.stretch)  return { active:true, tag:'스트레칭', kind:'stretch' };
     }
-    if(t.addon.korfball) return { active:true, tag:'코프볼', kind:'korfball' };
-    if(t.addon.cardio)   return { active:true, tag:'유산소', kind:'cardio' };
-    if(t.addon.stretch)  return { active:true, tag:'스트레칭', kind:'stretch' };
     return { active:false, tag:'', kind:null };
   }
 
   // ═══════════════════════════════════════════
-  //  메인 통계(aokc2026_workout) 동기화
-  //  오늘 활동 여부에 따라 오늘 날짜 레코드를 갱신
+  //  메인 통계(aokc2026_workout) 동기화 — 선택 날짜 기준
   // ═══════════════════════════════════════════
   function syncMain(){
-    var act = todayActivity();
+    var act = activityOf(rec.dates[selKey]);
     var wk = loadWk();
     if(!wk.dates) wk.dates={};
-    var day = wk.dates[todayKey] || {};
+    var day = wk.dates[selKey] || {};
 
-    // 회복탭이 관리하는 플래그만 초기화 (다른 탭에서 찍은 값은 보존)
-    delete day.recovery; delete day.korfball;
+    delete day.recovery; delete day.korfball;   // 회복탭 관리 플래그만 초기화
 
     if(act.active){
-      // 활동 종류와 무관하게 그날은 '회복 활동 1회'로 일관 기록 (72점)
-      day.recovery = true;
-      // 코프볼만 보너스(+5)를 위해 함께 표시
-      if(act.kind==='korfball') day.korfball = true;
-      wk.dates[todayKey] = day;
+      day.recovery = true;                        // 어떤 활동이든 그날 1회(72점)
+      if(act.kind==='korfball') day.korfball = true;  // 코프볼만 보너스(+5)
+      wk.dates[selKey] = day;
     }else{
-      if(Object.keys(day).length===0) delete wk.dates[todayKey];
-      else wk.dates[todayKey] = day;
+      if(Object.keys(day).length===0) delete wk.dates[selKey];
+      else wk.dates[selKey] = day;
     }
     saveWk(wk);
   }
 
   // ═══════════════════════════════════════════
-  //  주간 그리드 렌더 (자동)
+  //  주간 그리드
   // ═══════════════════════════════════════════
   var cells = [].slice.call(document.querySelectorAll('#weekGrid .wd'));
   var fill = document.getElementById('fill');
   var cntEl = document.getElementById('cnt');
   var ms = document.getElementById('milestone');
-
-  function activityForDate(d){
-    var k = dateKey(d);
-    // 오늘은 실시간 판정
-    if(k===todayKey) return todayActivity();
-    // 과거: 회복탭 저장 데이터로 판정
-    var r = rec.dates[k];
-    if(r){
-      var a=0,b=0;
-      if(r.ex){ for(var idx in r.ex){ if(r.ex[idx]){ var cb=exChks[idx]; if(cb){ (cb.getAttribute('data-routine')==='A')?a++:b++; } } } }
-      if(a>0||b>0) return { active:true, tag:(a>=b?'A루틴':'B루틴') };
-      if(r.addon){
-        if(r.addon.korfball) return { active:true, tag:'코프볼' };
-        if(r.addon.cardio)   return { active:true, tag:'유산소' };
-        if(r.addon.stretch)  return { active:true, tag:'스트레칭' };
-      }
-    }
-    return { active:false, tag:'' };
-  }
+  var dowNames=['일','월','화','수','목','금','토'];
 
   function renderGrid(){
+    var week = weekOf(selDate);
     var count=0;
     cells.forEach(function(cell, i){
       var d = week[i];
+      var k = dateKey(d);
       var chk = cell.querySelector('.day-chk');
       var tag = cell.querySelector('.done-tag');
-      var isToday = dateKey(d)===todayKey;
-      cell.querySelector('.lbl').classList.toggle('today-lbl', isToday);
-      chk.classList.toggle('today-cell', isToday);
+      var isToday = (k===todayKey);
+      var isSel   = (k===selKey);
+      var isFuture = (d>today);
 
-      var act = activityForDate(d);
+      var act = activityOf(rec.dates[k]);
       chk.checked = act.active;
-      tag.textContent = act.active ? act.tag : (isToday ? '오늘' : '');
-      if(act.active) count++;
+      chk.classList.toggle('today-cell', isSel);   // 선택된 칸을 강조
+      if(act.active){ tag.textContent = act.tag; tag.classList.remove('rest-tag'); count++; }
+      else{ tag.textContent = isToday ? '오늘' : (isFuture ? '' : '·'); }
+
+      // 그리드 칸 클릭 → 그 날짜로 이동 (미래 제외)
+      cell.style.cursor = isFuture ? 'default' : 'pointer';
+      cell.onclick = isFuture ? null : (function(dd){ return function(){ goDate(dd); }; })(d);
     });
     cntEl.textContent = count;
     fill.style.width = Math.min(count/4*100,100)+'%';
     if(count>=4){ ms.textContent='🎉 목표 4회 달성! 완벽한 한 주입니다.'; ms.className='milestone ok'; }
     else if(count>=3){ ms.textContent='✅ 최소 목표 3회 달성! 잘하고 있어요.'; ms.className='milestone ok'; }
     else if(count>0){ ms.textContent='🔥 '+(3-count)+'회 더 하면 최소 목표 달성!'; ms.className='milestone go'; }
-    else{ ms.textContent='오늘 첫 운동을 체크해보세요.'; ms.className='milestone go'; }
+    else{ ms.textContent='이번 주 첫 운동을 체크해보세요.'; ms.className='milestone go'; }
   }
 
   // ═══════════════════════════════════════════
@@ -851,79 +860,117 @@
   var logStamp = document.getElementById('logStamp');
 
   function renderAddons(){
-    var t = todayRec();
+    var r = rec.dates[selKey] || { addon:{} };
+    var ad = r.addon || {};
     addonBtns.forEach(function(btn){
       var key = btn.getAttribute('data-addon');
-      btn.classList.toggle('on', !!t.addon[key]);
+      btn.classList.toggle('on', !!ad[key]);
     });
-    var act = todayActivity();
+    var act = activityOf(rec.dates[selKey]);
+    var label = (selKey===todayKey) ? '오늘' : (selKey);
     if(act.active){
-      logStamp.innerHTML = '<b>'+todayKey+'</b> · 오늘 «'+act.tag+'» 기록됨 · 메인 통계 반영';
+      logStamp.innerHTML = '<b>'+selKey+'</b> · «'+act.tag+'» 기록됨 · 메인 통계 반영';
     }else{
-      logStamp.textContent = '아직 오늘 기록이 없습니다';
+      logStamp.textContent = label+' 기록이 없습니다';
     }
   }
   addonBtns.forEach(function(btn){
     btn.addEventListener('click', function(){
       var key = btn.getAttribute('data-addon');
-      var t = todayRec();
-      t.addon[key] = !t.addon[key];
+      var r = selRec();
+      r.addon[key] = !r.addon[key];
       saveRec(rec);
-      syncMain();
-      renderAddons();
-      renderGrid();
+      syncMain(); renderAddons(); renderGrid();
     });
   });
 
-  // ═══════════════════════════════════════════
-  //  운동 항목 체크 이벤트
-  // ═══════════════════════════════════════════
+  // 운동 항목 체크
   exChks.forEach(function(cb){
     cb.addEventListener('change', function(){
       syncStrike(cb);
-      var t = todayRec();
-      t.ex[cb.getAttribute('data-exidx')] = cb.checked ? 1 : 0;
+      var r = selRec();
+      r.ex[cb.getAttribute('data-exidx')] = cb.checked ? 1 : 0;
       saveRec(rec);
-      syncMain();
-      renderAddons();
-      renderGrid();
+      syncMain(); renderAddons(); renderGrid();
     });
   });
 
-  // ── 오늘 기록 지우기 ──
-  document.getElementById('reset').addEventListener('click', function(){
-    if(!window.confirm('오늘('+todayKey+') 회복 기록을 지울까요?')) return;
-    delete rec.dates[todayKey];
+  // ═══════════════════════════════════════════
+  //  날짜 이동
+  // ═══════════════════════════════════════════
+  var dpDate = document.getElementById('dpDate');
+  var dpSub  = document.getElementById('dpSub');
+  var dpPrev = document.getElementById('dpPrev');
+  var dpNext = document.getElementById('dpNext');
+  var dpToday= document.getElementById('dpToday');
+  var wrap   = document.querySelector('.wrap');
+  var resetBtn = document.getElementById('reset');
+
+  function loadSelIntoUI(){
+    var r = rec.dates[selKey];
+    if(r && r.ex){ exChks.forEach(function(cb,i){ cb.checked=!!r.ex[i]; }); }
+    else{ exChks.forEach(function(cb){ cb.checked=false; }); }
+    exChks.forEach(syncStrike);
+  }
+
+  function renderDateBar(){
+    var isToday = (selKey===todayKey);
+    var diff = Math.round((today - selDate)/86400000);
+    var label;
+    if(isToday) label='오늘';
+    else if(diff===1) label='어제';
+    else if(diff===2) label='그저께';
+    else label=(selDate.getMonth()+1)+'월 '+selDate.getDate()+'일';
+    dpDate.innerHTML = label + ' <span class="dow">('+dowNames[selDate.getDay()]+')</span>';
+    dpSub.textContent = selKey;
+    // 미래로는 못 감
+    var tomorrow = new Date(selDate.getFullYear(),selDate.getMonth(),selDate.getDate()+1);
+    dpNext.disabled = (tomorrow>today);
+    dpToday.disabled = isToday;
+    // 과거 보기 표시
+    wrap.classList.toggle('viewing-past', !isToday);
+    // 지우기 버튼 라벨
+    resetBtn.textContent = isToday ? '오늘 기록 지우기' : (label+' 기록 지우기');
+  }
+
+  function goDate(d){
+    // 미래 방지
+    if(d>today) d=new Date(today);
+    selDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    selKey  = dateKey(selDate);
+    loadSelIntoUI();
+    renderDateBar(); renderAddons(); renderGrid();
+    // 상단으로 부드럽게(운동 항목이 위에 있으니)
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  dpPrev.addEventListener('click', function(){
+    var d=new Date(selDate.getFullYear(),selDate.getMonth(),selDate.getDate()-1);
+    goDate(d);
+  });
+  dpNext.addEventListener('click', function(){
+    var d=new Date(selDate.getFullYear(),selDate.getMonth(),selDate.getDate()+1);
+    if(d<=today) goDate(d);
+  });
+  dpToday.addEventListener('click', function(){ goDate(new Date(today)); });
+
+  // 기록 지우기 (선택 날짜)
+  resetBtn.addEventListener('click', function(){
+    if(!window.confirm(selKey+' 회복 기록을 지울까요?')) return;
+    delete rec.dates[selKey];
     saveRec(rec);
-    // 화면 체크 해제
     exChks.forEach(function(c){ c.checked=false; syncStrike(c); });
-    syncMain();
-    renderAddons();
-    renderGrid();
+    syncMain(); renderAddons(); renderGrid();
   });
 
   // ═══════════════════════════════════════════
-  //  초기화: 오늘 저장분 복원 → 화면 반영
-  //  (날짜가 바뀌면 오늘 레코드가 없으므로 자동으로 빈 체크로 시작)
+  //  초기화
   // ═══════════════════════════════════════════
-  (function init(){
-    var t = rec.dates[todayKey];
-    if(t && t.ex){
-      exChks.forEach(function(cb, i){ cb.checked = !!t.ex[i]; });
-    }else{
-      exChks.forEach(function(cb){ cb.checked=false; });
-    }
-    exChks.forEach(syncStrike);
-
-    // 요일 표시
-    var dowNames=['일','월','화','수','목','금','토'];
-    var dowEl=document.getElementById('todayDow');
-    if(dowEl) dowEl.textContent = (today.getMonth()+1)+'월 '+today.getDate()+'일 ('+dowNames[today.getDay()]+')';
-
-    syncMain();       // 앱 열 때 오늘 상태를 메인과 한번 맞춰줌
-    renderAddons();
-    renderGrid();
-  })();
+  loadSelIntoUI();
+  renderDateBar();
+  syncMain();
+  renderAddons();
+  renderGrid();
 })();
 </script>
 </body>
