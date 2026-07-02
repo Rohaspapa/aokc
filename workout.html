@@ -726,33 +726,26 @@ body {
 
 <script>
 // ═══════════════════════════════════════════
-// 루틴 정의 — PDF 기준
+// 루틴 정의
+// A/B 본운동(웜업·쿨다운 포함)은 recovery.html이 현재 프로그램
+// 문서이므로 그쪽에서 진행·체크합니다. 여기(workout.html)는
+// 기록 허브: 수·토·일 회복일 체크리스트 + 추가활동 + 메모 + 통계.
+// P1 재건기(7/16~) 새 루틴 확정 시 items를 다시 채워 사용합니다.
 // ═══════════════════════════════════════════
 var ROUTINE_A = {
   type: 'A',
   name: 'A루틴 · 폭발력 / 심폐',
-  sub: '월·목 — 폭발적 동작과 심폐 자극',
-  items: [
-    { k: 'a1', name: '익스플로시브 스텝업', target: '양발 각 12회', detail: '최대한 빠르고 폭발적으로 도약, 무릎 정렬 주의' },
-    { k: 'a2', name: '폭발적 푸시업', target: '10~15회', detail: '상체가 살짝 뜨도록 강하게 밀고, 부드럽게 착지' },
-    { k: 'a3', name: '링 인버티드 로우', target: '10~15회', detail: '체조용 링 활용, 가슴 쪽으로 당기는 속도에 집중' },
-    { k: 'a4', name: '스케이터 점프', target: '좌우 왕복 10회', detail: '착지 후 1초간 완벽히 멈춰 하체 밸런스 잡기' },
-    { k: 'a5', name: '플랭크 숄더 탭', target: '좌우 왕복 16회', detail: '허리 위에 물잔이 있다고 상상하며 골반 고정' },
-    { k: 'a6', name: '버피 점프', target: '15회', detail: '코프볼 리바운드 하듯 만세하며 높이 점프' }
-  ]
+  sub: '월·목 — 본운동·체크는 회복 루틴 페이지에서',
+  linked: true,
+  items: []
 };
 
 var ROUTINE_B = {
   type: 'B',
   name: 'B루틴 · 감속 / 근력',
-  sub: '화·금 — 템포 조절과 근력 강화',
-  items: [
-    { k: 'b1', name: '싱글레그 힙힌지', target: '양발 각 12회', detail: '[3-1-X] 3초 천천히 다운, 1초 정지 후 폭발적 업' },
-    { k: 'b2', name: '파이크 푸시업', target: '10~15회', detail: '엉덩이 높게, 정수리와 양손이 삼각형(△) 이루게' },
-    { k: 'b3', name: '링 턱걸이 (풀업/친업)', target: '최대 횟수', detail: '할로우 바디 유지, 지치면 매달려 버티는 네거티브' },
-    { k: 'b4', name: '템포 리버스 런지', target: '양발 각 12회', detail: '[3-1-X] 3초 천천히 다운, 약한 다리 먼저 시작' },
-    { k: 'b5', name: '스탠딩 우드찹', target: '양방향 각 15회', detail: '4~5kg 메디신볼, 대각선 아래로 강하게 내리찍기' }
-  ]
+  sub: '화·금 — 본운동·체크는 회복 루틴 페이지에서',
+  linked: true,
+  items: []
 };
 
 var ROUTINE_MOBILITY = {
@@ -761,8 +754,8 @@ var ROUTINE_MOBILITY = {
   sub: '수·토 — 근막 이완과 가동성 회복',
   items: [
     { k: 'm1', name: '폼롤러 / 롤링바', target: '5~10분', detail: '흉추·대퇴사두·장경인대·햄스트링 근막 이완' },
-    { k: 'm2', name: '스레드 더 니들', target: '좌우 각 10회', detail: '네발기기에서 팔 뻗어 흉추(등 상부) 회전 열기' },
-    { k: 'm3', name: '월드 그레이티스트', target: '좌우 각 5회', detail: '깊은 런지 후 몸통 회전 (고관절·전신 유연성)' },
+    { k: 'm2', name: '스레드 더 니들', target: '좌우 각 10회', detail: '네발기기에서 팔 뻗어 흉추 회전 열기 — 바닥은 주먹·전완 지지(엄지 보호)' },
+    { k: 'm3', name: '월드 그레이티스트', target: '좌우 각 5회', detail: '깊은 런지 후 몸통 회전 — 바닥 짚을 땐 주먹으로(엄지 보호)' },
     { k: 'm4', name: '90/90 스트레칭', target: '좌우 각 2분', detail: '다리 만곡자 모양 후 숙이기 (고관절 회전 범위 확장)' },
     { k: 'm5', name: '문틀 펙 스트레칭', target: '좌우 각 1분', detail: '문틀에 팔 대고 가슴 내밀기 (흉근·어깨 정렬)' }
   ]
@@ -780,8 +773,8 @@ var ROUTINE_SUNDAY = {
 };
 
 var COOLDOWN_ITEMS = [
-  { k: 'c1', name: '다운독 자세', target: '30초 유지', detail: '엉덩이 치켜들고 종아리·아킬레스건·햄스트링 이완' },
-  { k: 'c2', name: '링 매달려 등 늘리기', target: '30초 유지', detail: '엉덩이 뒤로 빼며 광배근·어깨 주변 부드럽게 이완' },
+  { k: 'c1', name: '다운독 자세', target: '30초 유지', detail: '종아리·아킬레스·햄스트링 이완 — 회복기엔 주먹 지지 또는 벽 다운독으로(엄지 보호)' },
+  { k: 'c2', name: '문틀 가슴·어깨 스트레칭', target: '30초 유지', detail: '문틀에 팔꿈치 기대 가슴 열기 (링 매달리기는 회복기 금지 — 악력)' },
   { k: 'c3', name: '누워서 둔근 늘리기', target: '좌우 각 30초', detail: '다리를 4자로 만들어 가슴으로 당기기 (엉덩이)' }
 ];
 
@@ -864,7 +857,8 @@ var ROUTINE_BY_TYPE = {
 
 function hasCooldown(d) {
   var r = getRoutineForDate(d);
-  return r.type === 'A' || r.type === 'B';
+  // A/B가 회복 페이지로 연결(linked)된 동안은 쿨다운도 그쪽에서 진행
+  return (r.type === 'A' || r.type === 'B') && r.items.length > 0;
 }
 
 // 그날의 핵심 루틴 항목 완료 수 (쿨다운 제외)
@@ -898,8 +892,14 @@ function getAddonCount(data) {
 function getDayPct(d) {
   var data = store.dates[dateKey(d)] || {};
   var routine = getRoutineForDate(d);
-  var routineDone = getRoutineDone(data, routine);
   var routineTotal = routine.items.length;
+
+  // A/B가 회복 페이지로 연결된 날: 회복 루틴 완료(recovery) 여부로 판정
+  if (routineTotal === 0) {
+    return data.recovery ? 100 : 0;
+  }
+
+  var routineDone = getRoutineDone(data, routine);
   var pct = Math.round(routineDone / routineTotal * 100);
 
   // 쿨다운이 있는 날: 쿨다운 완료 시 추가 점수
@@ -1022,8 +1022,8 @@ function render() {
   var routine = getRoutineForDate(currentDate);
   var infoEl = document.getElementById('today-info');
   var routineDesc = {
-    A: '<strong>월·목 폭발력 루틴</strong>입니다. 빠르고 강하게 동작, 6개 운동을 모두 체크하세요.',
-    B: '<strong>화·금 근력 루틴</strong>입니다. 템포 조절([3-1-X])이 핵심, 5개 운동.',
+    A: '<strong>월·목 폭발력 루틴</strong>. 웜업 → 본운동 → 쿨다운 전체를 <strong>회복 루틴 페이지</strong>에서 진행·체크하세요. 완료하면 이 통계에 자동 반영됩니다.',
+    B: '<strong>화·금 근력 루틴</strong>. 웜업 → 본운동 → 쿨다운 전체를 <strong>회복 루틴 페이지</strong>에서 진행·체크하세요. 완료하면 이 통계에 자동 반영됩니다.',
     M: '<strong>수·토 모빌리티 회복일</strong>입니다. 근막 이완과 가동성 회복, 5개 항목.',
     S: '<strong>일요일 회복일</strong>입니다. 컨디션에 따라 가볍게 또는 완전 휴식.'
   };
@@ -1079,6 +1079,21 @@ function renderRoutine() {
   }
 
   var html = '';
+  if (routine.items.length === 0) {
+    // A/B 연결 모드: 회복 페이지로 안내
+    var doneToday = !!data.recovery;
+    html += '<a href="recovery.html" style="display:block;text-decoration:none;background:' + (doneToday ? 'rgba(74,124,89,0.12)' : 'rgba(184,65,42,0.08)') + ';border:1.5px ' + (doneToday ? 'solid #4A7C59' : 'dashed #B8412A') + ';border-radius:12px;padding:16px;text-align:center">';
+    if (doneToday) {
+      html += '<div style="font-size:15px;font-weight:700;color:#4A7C59">✓ 오늘 회복 루틴 완료됨</div>';
+      html += '<div style="font-size:12px;color:#8B7355;margin-top:4px">수정하려면 탭하세요</div>';
+    } else {
+      html += '<div style="font-size:15px;font-weight:700;color:#B8412A">🩹 본운동은 회복 루틴 페이지에서</div>';
+      html += '<div style="font-size:12px;color:#8B7355;margin-top:4px">웜업 → A/B 본운동 → 쿨다운 · 체크하면 여기 통계에 자동 반영</div>';
+    }
+    html += '</a>';
+    document.getElementById('routine-items').innerHTML = html;
+    return;
+  }
   for (var i = 0; i < routine.items.length; i++) {
     var item = routine.items[i];
     var done = !!data[item.k];
@@ -1123,8 +1138,17 @@ function renderCooldown() {
 function updateProgress() {
   var data = store.dates[dateKey(currentDate)] || {};
   var routine = getRoutineForDate(currentDate);
-  var routineDone = getRoutineDone(data, routine);
   var routineTotal = routine.items.length;
+
+  // A/B 연결 모드: 회복 루틴 완료 여부로 표시
+  if (routineTotal === 0) {
+    var done = data.recovery ? 1 : 0;
+    document.getElementById('prog-bar').style.width = (done * 100) + '%';
+    document.getElementById('prog-text').textContent = done ? '회복 루틴 완료' : '회복 루틴 페이지에서 진행';
+    return;
+  }
+
+  var routineDone = getRoutineDone(data, routine);
   var totalDone = routineDone;
   var totalSlots = routineTotal;
   if (hasCooldown(currentDate)) {
