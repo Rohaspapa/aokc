@@ -277,6 +277,50 @@
   .viewing-past .logday .desc{opacity:.85;}
   .past-note{display:none;font-size:12px;color:var(--tape);background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.3);border-radius:9px;padding:9px 12px;margin-bottom:12px;}
   .viewing-past .past-note{display:block;}
+
+  /* 대회 로드맵 */
+  .roadmap{background:linear-gradient(180deg,rgba(232,197,71,.10),transparent),var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:18px;}
+  .roadmap .rm-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+  .roadmap h3{font-size:16px;font-weight:800;}
+  .roadmap .dday{margin-left:auto;font-size:20px;font-weight:900;color:var(--tape);font-variant-numeric:tabular-nums;}
+  .roadmap .rm-sub{font-size:12px;color:var(--ink-dim);margin-bottom:14px;}
+  .phase{display:flex;gap:11px;padding:10px 0;border-top:1px solid var(--line);}
+  .phase .p-dot{flex:0 0 auto;width:10px;height:10px;border-radius:50%;background:var(--line);margin-top:5px;}
+  .phase.now .p-dot{background:var(--pulse);box-shadow:0 0 0 4px rgba(61,220,151,.18);}
+  .phase.past .p-dot{background:var(--ink-dim);}
+  .phase .p-body{flex:1;}
+  .phase .p-name{font-size:13.5px;font-weight:800;}
+  .phase.now .p-name{color:var(--pulse);}
+  .phase .p-range{font-size:11px;color:var(--ink-dim);font-weight:600;}
+  .phase .p-desc{font-size:12.5px;color:var(--ink-dim);margin-top:3px;}
+  .phase .p-desc b{color:var(--ink);}
+  .phase.now .p-badge{display:inline-block;font-size:10px;font-weight:800;color:#0f1419;background:var(--pulse);border-radius:5px;padding:1px 7px;margin-left:7px;vertical-align:1px;}
+  .phase .p-badge{display:none;}
+
+  /* 웜업/쿨다운 섹션 */
+  .wu{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;border-top:3px solid var(--tape);}
+  .wu .r-tag{background:rgba(232,197,71,.16);color:var(--tape);}
+  .wu-item{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:11px;}
+  .wu-item:last-child{border-bottom:none;}
+  .wu-step{flex:0 0 auto;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--tape);background:rgba(232,197,71,.12);border-radius:6px;padding:4px 8px;margin-top:2px;min-width:34px;text-align:center;}
+  .wu-body{flex:1;}
+  .wu-name{font-size:14.5px;font-weight:700;}
+  .wu-goal{font-size:12px;color:var(--tape);font-weight:700;margin-left:7px;}
+  .wu-desc{font-size:12.5px;color:var(--ink-dim);margin-top:3px;}
+  .wu-desc b{color:var(--ink);}
+  .cool-dn .wu-step{color:var(--aqua);background:rgba(77,182,232,.12);}
+  .cool-dn{border-top-color:var(--aqua);}
+  .cool-dn .r-tag{background:rgba(77,182,232,.16);color:var(--aqua);}
+
+  /* 점진적 과부하 다이얼 */
+  .overload{background:linear-gradient(180deg,rgba(157,140,240,.08),transparent),var(--panel);border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:var(--radius);padding:17px;margin-bottom:16px;}
+  .overload h3{font-size:14.5px;color:var(--violet);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .overload .ov-sub{font-size:12.5px;color:var(--ink-dim);margin-bottom:12px;}
+  .ov-row{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:baseline;}
+  .ov-week{flex:0 0 74px;font-size:12px;font-weight:800;color:var(--violet);}
+  .ov-what{flex:1;font-size:13px;color:var(--ink);}
+  .ov-what b{color:var(--tape);}
+  .ov-rpe{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--ink-dim);}
 </style>
 </head>
 <body>
@@ -324,6 +368,107 @@
   </div>
 
   <div class="past-note" id="pastNote">📅 과거 날짜를 보고 있습니다. 이 날의 기록을 수정할 수 있어요.</div>
+
+  <!-- 🗓 AOKC 2026 로드맵 -->
+  <div class="roadmap">
+    <div class="rm-top">
+      <h3>🗓 AOKC 2026 로드맵</h3>
+      <span class="dday" id="rmDday">D-</span>
+    </div>
+    <p class="rm-sub">2026.12.5~12 · 말레이시아 셀랑고르 · 대회일 역산 5단계 (현재 단계에 초록 불)</p>
+    <div class="phase" data-from="2026-06-29" data-to="2026-07-15">
+      <div class="p-dot"></div>
+      <div class="p-body">
+        <div class="p-name">P0 · 회복기 <span class="p-range">~ 7/15</span></div>
+        <div class="p-desc">엄지 보호 최우선. 이 페이지의 A/B 루틴으로 <b>하체 파워·코어·움직임의 질</b> 유지. 체지방 감량 시작(주 -0.2kg).</div>
+      </div>
+    </div>
+    <div class="phase" data-from="2026-07-16" data-to="2026-08-31">
+      <div class="p-dot"></div>
+      <div class="p-body">
+        <div class="p-name">P1 · 재건기 <span class="p-range">7/16 ~ 8/31</span></div>
+        <div class="p-desc">깁스 해제 후 <b>그립 재로딩 4주 프로토콜</b>(공 캐치→패스→슛 순). 전신 근력 기반 재건, 유산소 베이스(주2회 Zone2 30분).</div>
+      </div>
+    </div>
+    <div class="phase" data-from="2026-09-01" data-to="2026-10-15">
+      <div class="p-dot"></div>
+      <div class="p-body">
+        <div class="p-name">P2 · 강화기 <span class="p-range">9/1 ~ 10/15</span></div>
+        <div class="p-desc"><b>최대근력 + 파워</b> 병행. 코프볼 특이적 인터벌(30초 전력 : 30초 회복 × 10). 체지방 목표 중간 점검(인바디).</div>
+      </div>
+    </div>
+    <div class="phase" data-from="2026-10-16" data-to="2026-11-15">
+      <div class="p-dot"></div>
+      <div class="p-body">
+        <div class="p-name">P3 · 전환기 <span class="p-range">10/16 ~ 11/15</span></div>
+        <div class="p-desc">플라이오 피크 + <b>스피드·방향전환</b> + 실전 스크리미지 비중 확대. 새로운 운동 도입 금지 시작(대회 8주 전 원칙).</div>
+      </div>
+    </div>
+    <div class="phase" data-from="2026-11-16" data-to="2026-12-04">
+      <div class="p-dot"></div>
+      <div class="p-body">
+        <div class="p-name">P4 · 테이퍼 <span class="p-range">11/16 ~ 12/4</span></div>
+        <div class="p-desc">볼륨 <b>-50%</b>, 강도는 유지. 수면·회복 최우선. "덜 한 것 같은 불안"은 몸이 차오르는 정상 신호.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- W. 웜업 -->
+  <div class="sec-head">
+    <span class="sec-num">W</span>
+    <h2>웜업 — 매 운동 전 필수</h2>
+    <span class="day">약 8분 · RAMP</span>
+  </div>
+
+  <div class="wu">
+    <div class="r-top">
+      <span class="r-tag">WARM-UP</span>
+      <span class="r-title">체온 올리기 → 활성화 → 가동성 → 점화</span>
+      <span class="r-day">A·B·대체활동 공통</span>
+    </div>
+    <div class="coach">
+      <b>코치 코멘트.</b> 38세의 몸은 20대보다 "예열"이 조금 더 필요할 뿐, 예열만 되면 낼 수 있는 출력은 다릅니다. 특히 점프·감속 훈련 전 웜업 생략은 아킬레스·무릎 부상의 지름길입니다. <b>웜업 없이는 점프도 없습니다.</b>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">R</span>
+      <div class="wu-body">
+        <div class="wu-name">제자리 스텝 + 팔 스윙<span class="wu-goal">2분</span></div>
+        <div class="wu-desc">심박과 체온 올리기. 가볍게 시작해 마지막 30초는 무릎을 높이. 오른손 엄지는 힘 빼고 자연스럽게.</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">A</span>
+      <div class="wu-body">
+        <div class="wu-name">글루트 브릿지 12회 + 데드버그 8회/측<span class="wu-goal">2분</span></div>
+        <div class="wu-desc">둔근·코어 활성화. 점프의 엔진(둔근)을 먼저 깨워야 무릎이 대신 일하지 않습니다.</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">M</span>
+      <div class="wu-body">
+        <div class="wu-name">90/90 힙 오프너 6회/측 + 무릎 벽터치(발목) 8회/측 + 흉추 회전 6회/측<span class="wu-goal">3분</span></div>
+        <div class="wu-desc">고관절·발목·흉추 가동성. 바닥 지지는 <b>주먹·전완으로</b>(엄지 보호). 발목 가동성이 착지 충격 흡수의 절반입니다.</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">P</span>
+      <div class="wu-body">
+        <div class="wu-name">스쿼트→점프 램프업 5회 + 사이드 셔플 2×10m<span class="wu-goal">1분</span></div>
+        <div class="wu-desc">신경계 점화. 처음 2회는 절반 높이, 마지막 2회만 전력의 80%. 본운동 첫 세트가 "1세트"가 되게 하는 다리입니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📈 점진적 과부하 다이얼 -->
+  <div class="overload">
+    <h3>📈 점진적 과부하 — 4주 파동 사이클</h3>
+    <p class="ov-sub">같은 무게·횟수를 반복하면 몸은 3주면 적응을 멈춥니다. 아래 다이얼로 매주 자극을 한 칸씩 올리고, 4주째는 의도적으로 내립니다(디로드). 사이클이 끝나면 1주차로 돌아가되 <b>지난 사이클의 2주차 수준에서 시작</b>하세요.</p>
+    <div class="ov-row"><span class="ov-week">1주 적응</span><span class="ov-what">문서의 기본 세트·횟수 그대로</span><span class="ov-rpe">RPE 6~7</span></div>
+    <div class="ov-row"><span class="ov-week">2주 축적</span><span class="ov-what">세트 <b>+1</b> 또는 반복 <b>+2~3</b> (택1)</span><span class="ov-rpe">RPE 7~8</span></div>
+    <div class="ov-row"><span class="ov-week">3주 강화</span><span class="ov-what">템포·높이·정지 강화 — 점프는 <b>더 높게</b>, 템포 운동은 <b>4초 하강</b>, 플랭크는 <b>+15초</b></span><span class="ov-rpe">RPE 8</span></div>
+    <div class="ov-row"><span class="ov-week">4주 디로드</span><span class="ov-what">세트 <b>-40%</b>, 동작의 질에만 집중. 몸이 다시 차오르는 주</span><span class="ov-rpe">RPE 5~6</span></div>
+    <div class="ov-row"><span class="ov-week">공통 원칙</span><span class="ov-what">마지막 세트에 <b>2회 여유</b>가 남는 강도(RIR 2). 통증 2/10 초과 시 그 동작만 강도 한 칸 다운</span><span class="ov-rpe"></span></div>
+  </div>
 
   <!-- A ROUTINE -->
   <div class="sec-head">
@@ -621,8 +766,53 @@
   </div>
 
   <!-- COOLDOWN -->
+  <div class="sec-head">
+    <span class="sec-num">C</span>
+    <h2>쿨다운 — 매 운동 후 필수</h2>
+    <span class="day">약 7분</span>
+  </div>
+
+  <div class="wu cool-dn">
+    <div class="r-top">
+      <span class="r-tag">COOL-DOWN</span>
+      <span class="r-title">심박 하강 → 정적 스트레칭 → 호흡</span>
+      <span class="r-day">A·B·대체활동 공통</span>
+    </div>
+    <div class="coach">
+      <b>코치 코멘트.</b> 쿨다운은 "오늘 훈련"이 아니라 <b>"내일 훈련"을 위한 투자</b>입니다. 38세의 회복 속도 차이는 여기서 갈립니다. 정적 스트레칭은 각 30초, 반동 없이, 통증 직전까지만.
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">1</span>
+      <div class="wu-body">
+        <div class="wu-name">천천히 걷기 / 제자리 스텝<span class="wu-goal">2분</span></div>
+        <div class="wu-desc">심박을 서서히 내립니다. 운동 직후 바로 앉거나 눕지 않기.</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">2</span>
+      <div class="wu-body">
+        <div class="wu-name">하체 정적 스트레칭 4종<span class="wu-goal">각 30초/측</span></div>
+        <div class="wu-desc">대퇴사두(스탠딩, 벽은 <b>왼손</b>) → 햄스트링 → 둔근(피겨4, 누워서) → 종아리. 점프 훈련의 충격을 받은 순서대로 풀어줍니다.</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">3</span>
+      <div class="wu-body">
+        <div class="wu-name">가슴·어깨 문틀 스트레칭<span class="wu-goal">30초</span></div>
+        <div class="wu-desc">문틀에 <b>팔꿈치</b>를 기대어 가슴을 엽니다. 링 매달리기는 회복기 동안 절대 금지(악력).</div>
+      </div>
+    </div>
+    <div class="wu-item">
+      <span class="wu-step">4</span>
+      <div class="wu-body">
+        <div class="wu-name">박스 호흡 (4-4-4-4)<span class="wu-goal">1분</span></div>
+        <div class="wu-desc">코로 4초 들이쉬고 → 4초 멈춤 → 4초 내쉬고 → 4초 멈춤 × 4회. 신경계를 회복 모드로 전환합니다. 멘탈 탭의 "오늘의 한 단어"를 이때 정하면 좋습니다.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="cool">
-    <h3>🧊 쿨다운 · 가동성 수정사항 (월·화·목·금 공통)</h3>
+    <h3>🧊 가동성 수정사항 (수·토·일 회복일 포함)</h3>
     <ul>
       <li><b>'링 매달려 등 늘리기'는 절대 금지</b> — 악력이 들어갑니다. 대신 문틀에 <b>손바닥(왼손)이나 팔꿈치</b>를 기대 가슴·어깨를 늘려주세요.</li>
       <li><b>스레드 더 니들 / 월드 그레이티스트 스트레칭</b> — 바닥 지지가 필요하면 손가락을 펴서 짚지 말고 <b>주먹을 쥐고 너클로</b> 대거나 <b>팔꿈치를 바닥에</b> 대 오른손 엄지에 체중이 실리지 않게 합니다.</li>
@@ -971,6 +1161,37 @@
   syncMain();
   renderAddons();
   renderGrid();
+})();
+</script>
+<script>
+(function(){
+  // AOKC 2026 D-day (대회 첫날 2026-12-05)
+  var comp = new Date(2026,11,5);
+  var now = new Date();
+  now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var dd = Math.round((comp - now)/86400000);
+  var el = document.getElementById('rmDday');
+  if(el) el.textContent = dd>0 ? ('D-'+dd) : (dd===0 ? 'D-DAY' : '완료');
+
+  // 현재 단계 하이라이트
+  var phases = document.querySelectorAll('.roadmap .phase');
+  for(var i=0;i<phases.length;i++){
+    var p = phases[i];
+    var f = p.getAttribute('data-from').split('-');
+    var t = p.getAttribute('data-to').split('-');
+    var from = new Date(+f[0],+f[1]-1,+f[2]);
+    var to   = new Date(+t[0],+t[1]-1,+t[2]);
+    if(now>to) p.classList.add('past');
+    else if(now>=from && now<=to){
+      p.classList.add('now');
+      var nameEl = p.querySelector('.p-name');
+      if(nameEl && !nameEl.querySelector('.p-badge')){
+        var b=document.createElement('span'); b.className='p-badge'; b.textContent='지금';
+        var range=nameEl.querySelector('.p-range');
+        nameEl.insertBefore(b, range);
+      }
+    }
+  }
 })();
 </script>
 </body>
