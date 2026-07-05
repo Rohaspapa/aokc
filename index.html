@@ -123,6 +123,45 @@ body {
   font-weight: 700;
 }
 
+/* 국면별 운동 흐름 타임라인 */
+.flow-card { background:#fff; border:1px solid var(--c-line); border-radius:14px; padding:16px; margin-bottom:14px; }
+.flow-head { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.flow-title { font-size:14px; font-weight:800; color:var(--c-ink); }
+.flow-toggle { font-size:12px; color:var(--c-ink-soft); }
+.flow-body { margin-top:12px; }
+.flow-phase { border-left:3px solid var(--c-line); padding:0 0 14px 13px; margin-left:4px; position:relative; }
+.flow-phase:last-child { padding-bottom:0; }
+.flow-phase::before { content:''; position:absolute; left:-7px; top:2px; width:11px; height:11px; border-radius:50%; background:var(--c-line); border:2px solid #fff; }
+.flow-phase.now::before { background:var(--c-accent); box-shadow:0 0 0 3px rgba(74,124,89,0.2); }
+.flow-phase.now { border-left-color:var(--c-accent); }
+.flow-phase.past::before { background:var(--c-ink-soft); }
+.flow-p-name { font-size:12.5px; font-weight:800; }
+.flow-p-name .pid { color:var(--c-amber); margin-right:5px; }
+.flow-p-range { font-size:10.5px; color:var(--c-ink-soft); font-weight:600; margin-left:6px; }
+.flow-p-badge { display:inline-block; font-size:9px; font-weight:800; color:#fff; background:var(--c-accent); border-radius:4px; padding:1px 6px; margin-left:6px; vertical-align:1px; }
+.flow-p-focus { font-size:11px; color:var(--c-ink-soft); margin:3px 0 7px; }
+.flow-routines { display:flex; flex-direction:column; gap:5px; }
+.flow-rt { font-size:10.5px; line-height:1.5; }
+.flow-rt b { color:var(--c-ink); font-weight:700; }
+.flow-rt .rt-tag { display:inline-block; min-width:15px; font-weight:800; }
+.flow-rt .rt-a { color:var(--c-coral); }
+.flow-rt .rt-b { color:var(--c-blue); }
+.flow-rt .rt-list { color:var(--c-ink-soft); }
+
+/* 국면 상세 아코디언 */
+.pd-item { border:1px solid var(--c-line); border-radius:9px; margin-bottom:7px; overflow:hidden; }
+.pd-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; background:#faf8f3; }
+.pd-name { font-size:12.5px; font-weight:700; color:var(--c-ink); }
+.pd-arrow { font-size:11px; color:var(--c-ink-soft); }
+.pd-body { padding:10px 12px; display:flex; gap:14px; }
+.pd-col { flex:1; }
+.pd-col-t { font-size:11px; font-weight:800; margin-bottom:5px; }
+.pd-col-t.rt-a { color:var(--c-coral); }
+.pd-col-t.rt-b { color:var(--c-blue); }
+.pd-ex { display:flex; justify-content:space-between; gap:6px; font-size:10.5px; padding:2px 0; border-bottom:1px dashed #eee; }
+.pd-ex span:first-child { color:var(--c-ink); }
+.pd-rep { color:var(--c-ink-soft); white-space:nowrap; font-weight:600; }
+
 /* ── 콘텐츠 영역 ── */
 .content {
   padding: 14px;
@@ -977,6 +1016,15 @@ body {
     <div class="signal-monthly" id="wk-workout-month">이번 달 누적 <strong>0회</strong></div>
   </div>
 
+  <!-- 국면별 운동 흐름 타임라인 -->
+  <div class="flow-card">
+    <div class="flow-head" onclick="toggleFlow()">
+      <span class="flow-title">📋 대회까지 운동 흐름</span>
+      <span class="flow-toggle" id="flow-toggle">펼치기 ▾</span>
+    </div>
+    <div class="flow-body" id="flow-body" style="display:none"></div>
+  </div>
+
   <div class="signal-card diet">
     <div class="signal-head">
       <div class="signal-title">🥗 이번 주 식단</div>
@@ -1271,148 +1319,55 @@ body {
     </div>
   </a>
 
-  <!-- 홈 워크아웃 루틴 (PDF 기준) -->
+  <!-- 현재 국면 요약 -->
   <div class="card" style="border-color:var(--c-coral)">
-    <div class="card-title">🔥 주간 홈 워크아웃 루틴</div>
-    <div class="card-sub">주 4회 운동 + 3일 모빌리티/회복 · A·B 루틴 교대 (A–B–A–B)</div>
-
-    <table class="tbl" style="margin-bottom:12px">
+    <div class="card-title">🔥 지금은 <span id="ex-phase-name">—</span></div>
+    <div class="card-sub" id="ex-phase-focus">—</div>
+    <table class="tbl" style="margin-top:10px;margin-bottom:12px">
       <tr><th>요일</th><th>루틴</th><th>유형</th></tr>
-      <tr><td><strong>월</strong></td><td>A루틴 · 폭발력 / 심폐</td><td><span class="badge b-coral">A</span></td></tr>
-      <tr><td><strong>화</strong></td><td>B루틴 · 감속 / 근력</td><td><span class="badge b-blue">B</span></td></tr>
+      <tr><td><strong>월</strong></td><td id="ex-day-1">A · 파워</td><td><span class="badge b-coral">A</span></td></tr>
+      <tr><td><strong>화</strong></td><td id="ex-day-2">B · 근력</td><td><span class="badge b-blue">B</span></td></tr>
       <tr><td><strong>수</strong></td><td>모빌리티 회복</td><td><span class="badge b-teal">M</span></td></tr>
-      <tr><td><strong>목</strong></td><td>A루틴 · 폭발력 / 심폐</td><td><span class="badge b-coral">A</span></td></tr>
-      <tr><td><strong>금</strong></td><td>B루틴 · 감속 / 근력</td><td><span class="badge b-blue">B</span></td></tr>
+      <tr><td><strong>목</strong></td><td id="ex-day-4">A · 파워</td><td><span class="badge b-coral">A</span></td></tr>
+      <tr><td><strong>금</strong></td><td id="ex-day-5">B · 근력</td><td><span class="badge b-blue">B</span></td></tr>
       <tr><td><strong>토</strong></td><td>모빌리티 회복</td><td><span class="badge b-teal">M</span></td></tr>
-      <tr><td><strong>일</strong></td><td>가벼운 스트레칭</td><td><span class="badge b-amber">S</span></td></tr>
+      <tr><td><strong>일</strong></td><td>가벼운 회복</td><td><span class="badge b-amber">S</span></td></tr>
     </table>
-
-    <div class="tip">💡 폭발력(A)과 근력(B)을 격일로 교대해 같은 근육 회복 시간을 확보. 운동일 사이엔 모빌리티로 가동성 유지 + 누적 피로 풀기. 일요일은 컨디션에 따라 가볍게 또는 완전 휴식.</div>
-    <div class="tip tip-blue" style="margin-top:8px"><strong>템포 표기 [3-1-X]</strong> = 내릴 때 3초 / 정지 1초 / 올릴 때 폭발적(eXplosive)</div>
+    <div class="tip">💡 매일의 구체 운동은 <strong>운동 탭</strong>에서 오늘 국면에 맞춰 자동 표시됩니다. A(파워)와 B(근력)를 격일 교대해 회복 시간을 확보하고, 사이엔 모빌리티로 가동성을 유지합니다.</div>
   </div>
 
-  <!-- A루틴 -->
-  <div class="card" style="border-color:var(--c-coral)">
-    <div class="card-title">⚡ A루틴 — 폭발력 / 심폐 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(월·목)</span></div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">익스플로시브 스텝업<div class="set-tip">최대한 빠르고 폭발적으로 도약, 무릎 정렬 주의</div></div><div class="set-rep">양발 12회</div></li>
-      <li class="set-item"><div class="set-name">폭발적 푸시업<div class="set-tip">상체가 살짝 뜨도록 강하게 밀고, 부드럽게 착지</div></div><div class="set-rep">10~15회</div></li>
-      <li class="set-item"><div class="set-name">링 인버티드 로우<div class="set-tip">체조용 링 활용, 가슴 쪽으로 당기는 속도에 집중</div></div><div class="set-rep">10~15회</div></li>
-      <li class="set-item"><div class="set-name">스케이터 점프<div class="set-tip">착지 후 1초간 완벽히 멈춰 하체 밸런스 잡기</div></div><div class="set-rep">왕복 10회</div></li>
-      <li class="set-item"><div class="set-name">플랭크 숄더 탭<div class="set-tip">허리 위에 물잔이 있다고 상상하며 골반 고정</div></div><div class="set-rep">왕복 16회</div></li>
-      <li class="set-item"><div class="set-name">버피 점프<div class="set-tip">코프볼 리바운드 하듯 만세하며 높이 점프</div></div><div class="set-rep">15회</div></li>
-    </ul>
-  </div>
-
-  <!-- B루틴 -->
-  <div class="card" style="border-color:var(--c-blue)">
-    <div class="card-title">💪 B루틴 — 감속 / 근력 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(화·금)</span></div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">싱글레그 힙힌지<div class="set-tip">[3-1-X] 3초 천천히 다운, 1초 정지 후 폭발적 업</div></div><div class="set-rep">양발 12회</div></li>
-      <li class="set-item"><div class="set-name">파이크 푸시업<div class="set-tip">엉덩이 높게, 정수리와 양손이 삼각형(△) 이루게</div></div><div class="set-rep">10~15회</div></li>
-      <li class="set-item"><div class="set-name">링 턱걸이 (풀업/친업)<div class="set-tip">할로우 바디 유지, 지치면 매달려 버티는 네거티브</div></div><div class="set-rep">최대 횟수</div></li>
-      <li class="set-item"><div class="set-name">템포 리버스 런지<div class="set-tip">[3-1-X] 3초 천천히 다운, 약한 다리 먼저 시작</div></div><div class="set-rep">양발 12회</div></li>
-      <li class="set-item"><div class="set-name">스탠딩 우드찹<div class="set-tip">4~5kg 메디신볼, 대각선 아래로 강하게 내리찍기</div></div><div class="set-rep">양방향 15회</div></li>
-    </ul>
-  </div>
-
-  <!-- 쿨다운 -->
-  <div class="card" style="border-color:var(--c-amber)">
-    <div class="card-title">🧘 운동 직후 쿨다운 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(월·화·목·금 공통)</span></div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">다운독 자세<div class="set-tip">엉덩이 치켜들고 종아리·아킬레스건·햄스트링 이완</div></div><div class="set-rep">30초</div></li>
-      <li class="set-item"><div class="set-name">링 매달려 등 늘리기<div class="set-tip">엉덩이 뒤로 빼며 광배근·어깨 주변 부드럽게 이완</div></div><div class="set-rep">30초</div></li>
-      <li class="set-item"><div class="set-name">누워서 둔근 늘리기<div class="set-tip">다리를 4자로 만들어 가슴으로 당기기 (엉덩이)</div></div><div class="set-rep">좌우 30초</div></li>
-    </ul>
-    <div class="tip">A·B 루틴 끝나고 바로 — 회복과 가동성 유지에 필수</div>
-  </div>
-
-  <!-- 모빌리티 -->
-  <div class="card" style="border-color:var(--c-accent)">
-    <div class="card-title">🌿 모빌리티 / 회복 스트레칭 <span style="font-size:11px;font-weight:500;color:var(--c-muted)">(수·토)</span></div>
-    <div class="card-sub">근막 이완 + 가동성 회복 (운동 없는 날)</div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">폼롤러 / 롤링바<div class="set-tip">흉추·대퇴사두·장경인대·햄스트링 근막 이완</div></div><div class="set-rep">5~10분</div></li>
-      <li class="set-item"><div class="set-name">스레드 더 니들<div class="set-tip">네발기기에서 팔 뻗어 흉추(등 상부) 회전 열기</div></div><div class="set-rep">좌우 10회</div></li>
-      <li class="set-item"><div class="set-name">월드 그레이티스트<div class="set-tip">깊은 런지 후 몸통 회전 (고관절·전신 유연성)</div></div><div class="set-rep">좌우 5회</div></li>
-      <li class="set-item"><div class="set-name">90/90 스트레칭<div class="set-tip">다리 만곡자 모양 후 숙이기 (고관절 회전 범위 확장)</div></div><div class="set-rep">좌우 2분</div></li>
-      <li class="set-item"><div class="set-name">문틀 펙 스트레칭<div class="set-tip">문틀에 팔 대고 가슴 내밀기 (흉근·어깨 정렬)</div></div><div class="set-rep">좌우 1분</div></li>
-    </ul>
-  </div>
-
-  <!-- 기존 참고용 운동 정보 -->
+  <!-- 국면별 상세 운동 (동적) -->
   <div class="card">
-    <div class="card-title">📅 (참고) 이전 주간 스케줄</div>
-    <div class="card-sub">대안 — 헬스장·잔디·코트 기반 워크아웃</div>
-    <table class="tbl">
-      <tr><th>요일</th><th>내용</th><th>장소</th></tr>
-      <tr><td><strong>월</strong></td><td>기능성 근력</td><td>헬스장</td></tr>
-      <tr><td><strong>화</strong></td><td>민첩성·드릴</td><td>잔디·공터</td></tr>
-      <tr><td><strong>수</strong></td><td>완전 회복 (산책·스트레칭)</td><td>—</td></tr>
-      <tr><td><strong>목</strong></td><td>기능성 근력</td><td>헬스장</td></tr>
-      <tr><td><strong>금</strong></td><td>민첩성·드릴 / 코어</td><td>잔디·공터</td></tr>
-      <tr><td><strong>토</strong></td><td>가족 시간 (휴식)</td><td>—</td></tr>
-      <tr><td><strong>일</strong></td><td><strong>코프볼 단체훈련</strong></td><td>코트 (3시간)</td></tr>
-    </table>
-    <div class="tip">💡 점심 후 시간대 권장 (혈압 안정) / 토요일 휴식이 일요일 훈련 퍼포먼스 결정</div>
+    <div class="card-title">🗂 국면별 운동 상세</div>
+    <div class="card-sub">각 시기를 눌러 그 국면의 A·B 루틴 전체 운동을 확인하세요</div>
+    <div id="phase-detail-accordion" style="margin-top:10px"></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">🏋️ 헬스장 — 기능성 근력 (월·목, 약 55분)</div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">고블릿 스쿼트<div class="set-tip">하체+코어, 무릎 부담↓</div></div><div class="set-rep">4×12</div></li>
-      <li class="set-item"><div class="set-name">루마니안 데드리프트<div class="set-tip">슬굴곡근·둔근, 달리기 파워</div></div><div class="set-rep">3×10</div></li>
-      <li class="set-item"><div class="set-name">덤벨 스텝업<div class="set-tip">편측 하체, 균형감각</div></div><div class="set-rep">3×10/발</div></li>
-      <li class="set-item"><div class="set-name">케이블 로테이션<div class="set-tip">코어 회전력, 슛·킥 파워</div></div><div class="set-rep">3×12</div></li>
-      <li class="set-item"><div class="set-name">TRX 인버티드 로우<div class="set-tip">등 근력, 자세 교정</div></div><div class="set-rep">3×12</div></li>
-      <li class="set-item"><div class="set-name">덤벨 숄더프레스<div class="set-tip">어깨 안정화</div></div><div class="set-rep">3×10</div></li>
-    </ul>
-    <div class="tip tip-coral">⚠️ 통풍 주의: 세트 사이 수분 보충 / 무게보다 자세·가동범위 우선</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🏃 잔디·공터 — 민첩성 드릴 (화·금, 약 50분)</div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">워밍업<div class="set-tip">조깅 400m → 레그스윙 → 동적 스트레칭</div></div><div class="set-rep">10분</div></li>
-      <li class="set-item"><div class="set-name">민첩성 드릴<div class="set-tip">4방향 셔틀런 10m×4 (5세트) / 지그재그</div></div><div class="set-rep">15분</div></li>
-      <li class="set-item"><div class="set-name">방향전환·점프<div class="set-tip">5m 폭발 스타트 6회 / 점프 착지 자세</div></div><div class="set-rep">15분</div></li>
-      <li class="set-item"><div class="set-name">볼 드릴<div class="set-tip">패스&런 / 코프볼 슛 동작</div></div><div class="set-rep">10분</div></li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🤸 맨몸 서킷 — 보조용 (집·공터)</div>
-    <div class="card-sub">4라운드, 라운드 사이 휴식 60초</div>
-    <ul class="set-list">
-      <li class="set-item"><div class="set-name">스쿼트 점프</div><div class="set-rep">10회</div></li>
-      <li class="set-item"><div class="set-name">푸시업</div><div class="set-rep">12회</div></li>
-      <li class="set-item"><div class="set-name">싱글레그 힙힌지</div><div class="set-rep">8/발</div></li>
-      <li class="set-item"><div class="set-name">마운틴 클라이머</div><div class="set-rep">20회</div></li>
-      <li class="set-item"><div class="set-name">측면 도약 스텝</div><div class="set-rep">10회</div></li>
-    </ul>
-    <div class="tip">🧘 마무리: 플랭크 1분×3 / 정적 스트레칭 10분</div>
-  </div>
 
   <!-- 페이즈별 가이드 -->
   <div class="card" style="border-color:var(--c-amber)">
     <div class="card-title">📈 시즌 페이즈 가이드</div>
     <div class="row">
-      <div class="row-label" style="color:var(--c-accent);font-weight:700">기초기</div>
-      <div class="row-content"><strong>5~7월</strong> · 근력·체력 기초 다지기 / 무게보다 횟수와 자세 / 일요훈련 강도 70%</div>
+      <div class="row-label" style="color:var(--c-coral);font-weight:700">회복기</div>
+      <div class="row-content"><strong>~7/15</strong> · 엄지 보호 최우선 / 하체 파워·코어 유지 / 체지방 감량 시작</div>
     </div>
     <div class="row">
-      <div class="row-label" style="color:var(--c-blue);font-weight:700">발전기</div>
-      <div class="row-content"><strong>8~10월</strong> · 강도 점진 ↑ / 민첩성·폭발력 비중 ↑ / 일요훈련 강도 80~90%</div>
+      <div class="row-label" style="color:var(--c-amber);font-weight:700">재건기</div>
+      <div class="row-content"><strong>7/16~8/31</strong> · 그립 재로딩(캐치→패스→슛) / 전신 근력 재건 / 유산소 베이스</div>
     </div>
     <div class="row">
-      <div class="row-label" style="color:var(--c-coral);font-weight:700">시합기</div>
-      <div class="row-content"><strong>11월</strong> · 실전 시뮬레이션 / 부상 예방 우선 / 일요훈련 100% (전술 정합도)</div>
+      <div class="row-label" style="color:var(--c-accent);font-weight:700">강화기</div>
+      <div class="row-content"><strong>9/1~10/15</strong> · 최대근력+파워 / 코프볼 인터벌 / 헬스장 주1회(밴드 대체)</div>
     </div>
     <div class="row">
-      <div class="row-label" style="color:var(--c-amber);font-weight:700">테이퍼링</div>
-      <div class="row-content"><strong>D-10 ~ D-1</strong> · 볼륨 50~60% 감소, 강도는 유지 / D-3부터 가벼운 동작만 / 충분한 수면</div>
+      <div class="row-label" style="color:var(--c-blue);font-weight:700">전환기</div>
+      <div class="row-content"><strong>10/16~11/15</strong> · 플라이오 피크 / 스피드·방향전환 / 실전 스크리미지 (새 운동 금지)</div>
     </div>
-    <div class="tip">💡 테이퍼링은 "쉬는 것"이 아닌 "신선도 회복기" — 부하만 줄이고 빠른 동작은 유지</div>
+    <div class="row">
+      <div class="row-label" style="color:var(--c-purple);font-weight:700">테이퍼</div>
+      <div class="row-content"><strong>11/16~12/4</strong> · 볼륨 -50%, 강도 유지 / 수면·회복 최우선 / 신선도 회복</div>
+    </div>
+    <div class="tip">💡 매일의 운동은 <strong>운동 탭</strong>에서 오늘 국면에 맞춰 자동으로 표시됩니다. 컨디션이 안 좋으면 "오늘은 가볍게", 부상 시 국면 수동 지정으로 조절하세요.</div>
   </div>
 
 </div>
@@ -1746,23 +1701,155 @@ function getStats(area, stores) {
 function getCurrentPhase() {
   var t = todayDate();
   var d_to_comp = daysBetween(t, COMP_START);
-  if (t < new Date(2026, 4, 1)) return { idx: -1, name: '준비전', tip: '5월부터 시작' };
-  if (t < new Date(2026, 7, 1)) return { idx: 0, name: '기초기', tip: '🌱 <strong>기초기</strong> · 근력과 체력의 토대를 쌓는 시기예요. 무게보다 자세, 강도보다 일관성에 집중하세요. 일요훈련은 70% 강도로.' };
-  if (t < new Date(2026, 10, 1)) return { idx: 1, name: '발전기', tip: '⚡ <strong>발전기</strong> · 강도를 점진적으로 올리는 시기. 민첩성·폭발력 비중을 늘리고, 일요훈련은 80~90% 강도까지 끌어올리세요.' };
-  if (d_to_comp > 10) return { idx: 2, name: '시합기', tip: '🎯 <strong>시합기</strong> · 실전 시뮬레이션 중심. 부상 예방을 최우선으로 하고, 전술 정합도를 마무리합니다. 일요훈련 100% 강도.' };
-  if (d_to_comp > 0) return { idx: 3, name: '테이퍼링', tip: '🪶 <strong>테이퍼링</strong> · 볼륨은 50~60%로 줄이되 강도는 유지. 신선도 회복기예요. D-3부터는 가벼운 동작만, 충분한 수면 우선.' };
-  if (t <= COMP_END) return { idx: 4, name: '대회', tip: '🏆 <strong>대회기간</strong> · 16년 여정의 축하 무대! 정해둔 루틴만 따르세요. "지금 이 한 플레이"에만 집중.' };
-  return { idx: 5, name: '대회후', tip: '✨ <strong>고생하셨습니다</strong> · 16년의 마지막 무대를 마쳤어요. 충분히 쉬고, 다음 챕터(코치)를 준비하세요.' };
+  // workout.html과 동일한 5국면 체계 (대회일 역산)
+  if (t < new Date(2026, 5, 29)) return { idx: -1, name: '준비전', tip: '6월 29일부터 프로그램 시작' };
+  if (t <= new Date(2026, 6, 15)) return { idx: 0, name: '회복기', tip: '🩹 <strong>회복기 (P0)</strong> · 엄지 보호 최우선. 하체 파워·코어·움직임의 질을 유지하고 체지방 감량을 시작합니다. 무리한 그립 동작은 금지.' };
+  if (t <= new Date(2026, 7, 31)) return { idx: 1, name: '재건기', tip: '🔧 <strong>재건기 (P1)</strong> · 깁스 해제 후 그립을 점진적으로 재로딩(캐치→패스→슛). 전신 근력 기반을 재건하고 유산소 베이스를 구축합니다.' };
+  if (t <= new Date(2026, 9, 15)) return { idx: 2, name: '강화기', tip: '💪 <strong>강화기 (P2)</strong> · 최대근력과 파워를 병행. 코프볼 특이적 인터벌을 추가하고, 헬스장 주1회(밴드 대체 가능)를 옵션으로 넣습니다.' };
+  if (t <= new Date(2026, 10, 15)) return { idx: 3, name: '전환기', tip: '⚡ <strong>전환기 (P3)</strong> · 플라이오 피크 + 스피드·방향전환 + 실전 스크리미지. 대회 8주 전부터 새 운동 도입은 금지합니다.' };
+  if (d_to_comp > 0) return { idx: 4, name: '테이퍼', tip: '🪶 <strong>테이퍼 (P4)</strong> · 볼륨 -50%, 강도는 유지. 수면·회복 최우선. "덜 한 것 같은 불안"은 몸이 차오르는 정상 신호예요.' };
+  if (t <= COMP_END) return { idx: 5, name: '대회', tip: '🏆 <strong>대회기간</strong> · 18년 여정의 축하 무대! 정해둔 루틴만 따르세요. "지금 이 한 플레이"에만 집중.' };
+  return { idx: 6, name: '대회후', tip: '✨ <strong>고생하셨습니다</strong> · 마지막 무대를 마쳤어요. 충분히 쉬고 다음 챕터를 준비하세요.' };
+}
+
+// 국면별 운동 흐름 타임라인
+var FLOW_PHASES = [
+  { id:'P0', name:'회복기', range:'~7/15', from:new Date(2026,5,29), to:new Date(2026,6,15),
+    focus:'엄지 보호 · 하체 파워 유지 · 감량 시작',
+    a:'점핑스쿼트·스케이터·전완플랭크·턱점프·밴드스쿼트', b:'싱글레그힙힌지·템포런지·굿모닝·트위스트·밴드로우' },
+  { id:'P1', name:'재건기', range:'~8/31', from:new Date(2026,6,16), to:new Date(2026,7,31),
+    focus:'그립 재로딩 · 전신 근력 재건 · 유산소 베이스',
+    a:'박스점프·스텝업·푸시업·스케이터·숄더탭', b:'고블릿스쿼트·싱글RDL·인버티드로우·파이크·우드찹' },
+  { id:'P2', name:'강화기', range:'~10/15', from:new Date(2026,8,1), to:new Date(2026,9,15),
+    focus:'최대근력+파워 · 코프볼 인터벌 · 헬스장 주1회',
+    a:'뎁스점프·브로드점프·MB슬램·싱글홉·슛드릴', b:'트랩바데드·힙쓰러스트·불가리안·풀업·카프' },
+  { id:'P3', name:'전환기', range:'~11/15', from:new Date(2026,9,16), to:new Date(2026,10,15),
+    focus:'플라이오 피크 · 스피드/방향전환 · 스크리미지',
+    a:'래더·5-10-5셔틀·뎁스→스프린트·컷팅·캐치앤슛', b:'점프데드·점프스쿼트·불가리안·풀업·파워스텝업' },
+  { id:'P4', name:'테이퍼', range:'~12/4', from:new Date(2026,10,16), to:new Date(2026,11,4),
+    focus:'볼륨 -50% · 강도 유지 · 수면/회복 최우선',
+    a:'박스점프·브로드점프·캐치앤슛(감량)', b:'점프스쿼트·불가리안·풀업(감량)' }
+];
+
+function toggleFlow() {
+  var body = document.getElementById('flow-body');
+  var tog = document.getElementById('flow-toggle');
+  if (body.style.display === 'none') {
+    body.style.display = '';
+    tog.textContent = '접기 ▴';
+    renderFlow();
+  } else {
+    body.style.display = 'none';
+    tog.textContent = '펼치기 ▾';
+  }
+}
+
+function renderFlow() {
+  var t = todayDate();
+  var html = '';
+  for (var i = 0; i < FLOW_PHASES.length; i++) {
+    var p = FLOW_PHASES[i];
+    var cls = 'flow-phase';
+    var badge = '';
+    if (t > p.to) cls += ' past';
+    else if (t >= p.from && t <= p.to) { cls += ' now'; badge = '<span class="flow-p-badge">지금</span>'; }
+    html += '<div class="' + cls + '">';
+    html += '<div class="flow-p-name"><span class="pid">' + p.id + '</span>' + p.name + '<span class="flow-p-range">' + p.range + '</span>' + badge + '</div>';
+    html += '<div class="flow-p-focus">' + p.focus + '</div>';
+    html += '<div class="flow-routines">';
+    html += '<div class="flow-rt"><span class="rt-tag rt-a">A</span> <span class="rt-list">' + p.a + '</span></div>';
+    html += '<div class="flow-rt"><span class="rt-tag rt-b">B</span> <span class="rt-list">' + p.b + '</span></div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  document.getElementById('flow-body').innerHTML = html;
+}
+
+// 국면별 상세 운동 (A/B 전체 항목)
+var PHASE_DETAIL = {
+  'P0 회복기': {
+    A: [['점핑 스쿼트','15회×4'],['스케이터 점프','좌우10회×3'],['전완 플랭크','45초×3'],['턱 점프','10회×3'],['밴드 스쿼트','15회×4']],
+    B: [['싱글레그 힙힌지','양발12회×3'],['템포 리버스 런지','양발12회×3'],['맨몸 굿모닝','15회×4'],['트위스트 크런치','좌우15회×3'],['밴드 시티드 로우','12~15회×3']]
+  },
+  'P1 재건기': {
+    A: [['박스 점프(계단·벤치)','8회×4'],['익스플로시브 스텝업','양발10회×3'],['푸시업(점진)','10~15회×3'],['스케이터 점프','좌우12회×3'],['플랭크 숄더탭','좌우16회×3']],
+    B: [['고블릿 스쿼트','12회×4'],['싱글레그 RDL','양발10회×3'],['인버티드 로우','10~15회×3'],['파이크 푸시업','10~12회×3'],['스탠딩 우드찹','양방향15회×3']]
+  },
+  'P2 강화기': {
+    A: [['뎁스 점프(낮은 단)','6회×5'],['브로드 점프','5회×4'],['메디신볼 슬램','10회×4'],['싱글레그 홉','좌우8회×3'],['하프 니 슛 드릴','20구']],
+    B: [['트랩바 데드리프트','5~6회×4'],['바벨 힙 쓰러스트','8~10회×3'],['불가리안 스플릿','양발8회×3'],['풀업/랫풀다운','최대~10회×3'],['카프 레이즈','12~15회×3']]
+  },
+  'P3 전환기': {
+    A: [['래더 드릴','5패턴×2'],['5-10-5 셔틀','6회'],['뎁스점프→스프린트','6회×3'],['컷팅 드릴','좌우8회×2'],['캐치앤슛 드릴','30구']],
+    B: [['트랩바 점프 데드','5회×4'],['점프 스쿼트(하중)','6회×4'],['불가리안 스플릿','양발8회×3'],['풀업','최대×3'],['파워 스텝업','양발8회×3']]
+  },
+  'P4 테이퍼': {
+    A: [['박스 점프(계단·벤치)','5회×2'],['브로드 점프','3회×2'],['캐치앤슛','20구']],
+    B: [['점프 스쿼트','5회×3'],['불가리안 스플릿','양발6회×2'],['풀업','가볍게×2']]
+  }
+};
+
+function renderPhaseAccordion() {
+  var el = document.getElementById('phase-detail-accordion');
+  if (!el) return;
+  var t = todayDate();
+  var keys = Object.keys(PHASE_DETAIL);
+  var html = '';
+  for (var i = 0; i < FLOW_PHASES.length; i++) {
+    var p = FLOW_PHASES[i];
+    var key = p.id + ' ' + p.name;
+    var detail = PHASE_DETAIL[key];
+    if (!detail) continue;
+    var isNow = (t >= p.from && t <= p.to);
+    html += '<div class="pd-item">';
+    html += '<div class="pd-head" onclick="togglePd(' + i + ')">';
+    html += '<span class="pd-name"><span style="color:var(--c-amber);font-weight:800">' + p.id + '</span> ' + p.name + (isNow ? ' <span class="flow-p-badge">지금</span>' : '') + '</span>';
+    html += '<span class="pd-arrow" id="pd-arrow-' + i + '">' + (isNow ? '▴' : '▾') + '</span>';
+    html += '</div>';
+    html += '<div class="pd-body" id="pd-body-' + i + '" style="display:' + (isNow ? 'block' : 'none') + '">';
+    html += '<div class="pd-col"><div class="pd-col-t rt-a">A · 파워</div>';
+    for (var a = 0; a < detail.A.length; a++) html += '<div class="pd-ex"><span>' + detail.A[a][0] + '</span><span class="pd-rep">' + detail.A[a][1] + '</span></div>';
+    html += '</div>';
+    html += '<div class="pd-col"><div class="pd-col-t rt-b">B · 근력</div>';
+    for (var bx = 0; bx < detail.B.length; bx++) html += '<div class="pd-ex"><span>' + detail.B[bx][0] + '</span><span class="pd-rep">' + detail.B[bx][1] + '</span></div>';
+    html += '</div>';
+    html += '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function togglePd(i) {
+  var body = document.getElementById('pd-body-' + i);
+  var arrow = document.getElementById('pd-arrow-' + i);
+  if (body.style.display === 'none') { body.style.display = 'block'; arrow.textContent = '▴'; }
+  else { body.style.display = 'none'; arrow.textContent = '▾'; }
+}
+
+// 운동 패널 현재 국면 요약
+function renderExercisePhase() {
+  var phase = getCurrentPhase();
+  var nameEl = document.getElementById('ex-phase-name');
+  var focusEl = document.getElementById('ex-phase-focus');
+  if (!nameEl) return;
+  var focusMap = {
+    '회복기':'엄지 보호 · 하체 파워 유지 · 감량 시작',
+    '재건기':'그립 재로딩 · 전신 근력 재건 · 유산소 베이스',
+    '강화기':'최대근력+파워 · 코프볼 인터벌 · 헬스장 주1회',
+    '전환기':'플라이오 피크 · 스피드/방향전환 · 스크리미지',
+    '테이퍼':'볼륨 -50% · 강도 유지 · 수면/회복 최우선'
+  };
+  nameEl.textContent = phase.name + (phase.idx>=0 && phase.idx<=4 ? ' (P'+phase.idx+')' : '');
+  focusEl.textContent = focusMap[phase.name] || '대회 준비';
 }
 
 function renderPhaseBar() {
   var phase = getCurrentPhase();
   var phases = [
-    { name: '기초기', sub: '5~7월' },
-    { name: '발전기', sub: '8~10월' },
-    { name: '시합기', sub: '11월' },
-    { name: '테이퍼', sub: 'D-10' },
-    { name: '대회', sub: '12/6-13' }
+    { name: '회복기', sub: '~7/15' },
+    { name: '재건기', sub: '~8/31' },
+    { name: '강화기', sub: '~10/15' },
+    { name: '전환기', sub: '~11/15' },
+    { name: '테이퍼', sub: '~12/4' }
   ];
   var html = '';
   for (var i = 0; i < phases.length; i++) {
@@ -2212,6 +2299,8 @@ function importData() {
 // ═══════════════════════════════════════════
 renderPhaseBar();
 renderProgress();
+renderPhaseAccordion();
+renderExercisePhase();
 
 </script>
 </body>

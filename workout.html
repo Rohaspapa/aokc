@@ -360,6 +360,32 @@ body {
 .workout-target.M { background: var(--c-accent-light); color: var(--c-accent); }
 .workout-target.S { background: var(--c-amber-light); color: #6B5510; }
 .workout-target.C { background: var(--c-purple-light); color: var(--c-purple); }
+.workout-target.W { background: #fdf0d5; color: #a0741c; }
+.routine-badge.W { background: #fdf0d5; color: #a0741c; }
+.grip-badge { display:inline-block; font-size:9.5px; font-weight:800; color:#fff; background:var(--c-coral); border-radius:4px; padding:1px 6px; margin-left:6px; vertical-align:1px; }
+.workout-row.grip-warn { background:rgba(184,65,42,0.04); }
+
+/* 엄지 주의사항 경고 */
+.rehab-warn-head { font-size:13.5px; font-weight:800; color:var(--c-coral); margin-bottom:8px; }
+.rehab-warn-list { margin:0; padding-left:18px; }
+.rehab-warn-list li { font-size:12px; color:var(--c-ink); line-height:1.6; margin-bottom:4px; }
+.rehab-warn-list li strong { color:var(--c-coral); }
+/* 재활 체크포인트 접이식 헤더 */
+.rehab-head { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.rehab-title { font-size:14px; font-weight:800; color:var(--c-ink); }
+.rehab-badge-inline { display:inline-block; font-size:11px; font-weight:800; color:var(--c-coral); background:var(--c-coral-light); border-radius:10px; padding:1px 8px; margin-left:8px; }
+.rehab-caret { font-size:13px; color:var(--c-ink-soft); }
+
+/* 국면 컨트롤 */
+.phase-controls { margin: 10px 0 4px; padding: 10px; background: #faf8f3; border: 1px solid var(--c-line); border-radius: 10px; }
+.phase-ctrl-btn { width: 100%; padding: 9px; border: 1.5px solid var(--c-line); border-radius: 8px; background: #fff; font-family: inherit; font-size: 12.5px; font-weight: 700; color: var(--c-ink); cursor: pointer; margin-bottom: 8px; }
+.phase-ctrl-btn.on { background: #fdf0d5; border-color: #d9a441; color: #8a5a00; }
+.phase-ctrl-btn:active { -webkit-transform: scale(0.98); transform: scale(0.98); }
+.phase-select-row { display: flex; align-items: center; gap: 8px; }
+.phase-select-lbl { font-size: 11.5px; color: var(--c-ink-soft); font-weight: 600; white-space: nowrap; }
+.phase-select { flex: 1; padding: 7px 8px; border: 1px solid var(--c-line); border-radius: 7px; font-family: inherit; font-size: 12px; background: #fff; color: var(--c-ink); }
+.phase-manual-note { font-size: 11px; color: var(--c-coral); margin-top: 7px; }
+.phase-manual-note a { color: var(--c-blue); font-weight: 600; }
 
 /* 단순 옵션 그리드 (유산소·스트레칭·휴식·코프볼) */
 .option-grid {
@@ -578,18 +604,6 @@ body {
 
 <div class="content">
 
-  <!-- 🩹 임시 회복 루틴 진입 카드 (엄지 부상 회복기 종료 후 이 블록만 삭제하면 원상복구) -->
-  <a href="recovery.html" style="display:block;text-decoration:none;background:-webkit-linear-gradient(135deg,#B8412A,#D45438);background:linear-gradient(135deg,#B8412A,#D45438);color:#fff;padding:14px 16px;border-radius:14px;margin-bottom:14px;-webkit-box-shadow:0 2px 8px rgba(184,65,42,0.25);box-shadow:0 2px 8px rgba(184,65,42,0.25)">
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="font-size:26px;line-height:1">🩹</div>
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:15px;margin-bottom:2px">임시 회복 루틴 (엄지 부상)</div>
-        <div style="font-size:12px;opacity:0.9">반깁스 2~3주 · 엄지 보호 홈 워크아웃 · 본 통계와 분리</div>
-      </div>
-      <div style="font-size:20px;opacity:0.8">›</div>
-    </div>
-  </a>
-
   <div class="toggle-section">
     <button class="toggle-btn on" id="view-day-btn" onclick="switchView('day')">📅 오늘</button>
     <button class="toggle-btn" id="view-week-btn" onclick="switchView('week')">📊 주간</button>
@@ -631,6 +645,21 @@ body {
     </div>
     <div class="progress-text" id="prog-text">0/0 항목 완료</div>
 
+    <!-- 엄지 재활: 회복기=주의사항 / 재건기=접이식 체크포인트 -->
+    <div class="card" id="rehab-card" style="display:none">
+      <div id="rehab-card-inner"></div>
+    </div>
+
+    <!-- 웜업 카드 (A·B 루틴 일에만) -->
+    <div class="card" id="warmup-card" style="display:none">
+      <div class="card-title">
+        <span class="card-title-text">🔥 웜업 (RAMP)</span>
+        <span class="routine-badge W">운동 전 필수</span>
+      </div>
+      <div class="card-sub">체온 → 활성화 → 가동성 → 점화. 웜업 없이는 점프도 없습니다.</div>
+      <div id="warmup-items"></div>
+    </div>
+
     <!-- 오늘의 루틴 카드 -->
     <div class="card" id="routine-card">
       <div class="card-title">
@@ -649,6 +678,9 @@ body {
           <button class="rp-btn" id="rp-S" onclick="pickRoutine('S')">가벼운<br>스트레칭</button>
         </div>
       </div>
+
+      <!-- 국면 컨트롤 (오늘은 가볍게 + 수동 국면) -->
+      <div class="phase-controls" id="phase-controls"></div>
 
       <div id="routine-items"></div>
     </div>
@@ -726,68 +758,280 @@ body {
 
 <script>
 // ═══════════════════════════════════════════
-// 루틴 정의
-// A/B 본운동(웜업·쿨다운 포함)은 recovery.html이 현재 프로그램
-// 문서이므로 그쪽에서 진행·체크합니다. 여기(workout.html)는
-// 기록 허브: 수·토·일 회복일 체크리스트 + 추가활동 + 메모 + 통계.
-// P1 재건기(7/16~) 새 루틴 확정 시 items를 다시 채워 사용합니다.
+// 루틴 정의 — PDF 기준
 // ═══════════════════════════════════════════
-var ROUTINE_A = {
-  type: 'A',
-  name: 'A루틴 · 폭발력 / 심폐',
-  sub: '월·목 — 본운동·체크는 회복 루틴 페이지에서',
-  linked: true,
-  items: []
-};
+// ═══════════════════════════════════════════════════════════
+// 국면(PHASE) 시스템 — 대회일(2026-12-05) 역산 5국면
+// 각 국면마다 A(파워)/B(근력)/M(모빌리티)/S(회복) 루틴을 정의.
+// 회복기 프로그램을 기준으로 시기 목적에 맞게 발전시킴.
+// ═══════════════════════════════════════════════════════════
 
-var ROUTINE_B = {
-  type: 'B',
-  name: 'B루틴 · 감속 / 근력',
-  sub: '화·금 — 본운동·체크는 회복 루틴 페이지에서',
-  linked: true,
-  items: []
-};
+var COMPETITION_DATE = new Date(2026, 11, 5); // 12/5
 
-var ROUTINE_MOBILITY = {
-  type: 'M',
-  name: '모빌리티 / 회복 스트레칭',
-  sub: '수·토 — 근막 이완과 가동성 회복',
-  items: [
-    { k: 'm1', name: '폼롤러 / 롤링바', target: '5~10분', detail: '흉추·대퇴사두·장경인대·햄스트링 근막 이완' },
-    { k: 'm2', name: '스레드 더 니들', target: '좌우 각 10회', detail: '네발기기에서 팔 뻗어 흉추 회전 열기 — 바닥은 주먹·전완 지지(엄지 보호)' },
-    { k: 'm3', name: '월드 그레이티스트', target: '좌우 각 5회', detail: '깊은 런지 후 몸통 회전 — 바닥 짚을 땐 주먹으로(엄지 보호)' },
-    { k: 'm4', name: '90/90 스트레칭', target: '좌우 각 2분', detail: '다리 만곡자 모양 후 숙이기 (고관절 회전 범위 확장)' },
-    { k: 'm5', name: '문틀 펙 스트레칭', target: '좌우 각 1분', detail: '문틀에 팔 대고 가슴 내밀기 (흉근·어깨 정렬)' }
-  ]
-};
-
-var ROUTINE_SUNDAY = {
-  type: 'S',
-  name: '가벼운 스트레칭',
-  sub: '일 — 컨디션에 따라 가볍게 또는 완전 휴식',
-  items: [
-    { k: 's1', name: '전신 스트레칭', target: '10~15분', detail: '편안한 정적 스트레칭, 호흡과 함께' },
-    { k: 's2', name: '폼롤러 가볍게', target: '5분', detail: '뭉친 부위 위주로 부드럽게' },
-    { k: 's3', name: '산책', target: '20~30분', detail: '가벼운 활동, 회복 촉진' }
-  ]
-};
-
-var COOLDOWN_ITEMS = [
-  { k: 'c1', name: '다운독 자세', target: '30초 유지', detail: '종아리·아킬레스·햄스트링 이완 — 회복기엔 주먹 지지 또는 벽 다운독으로(엄지 보호)' },
-  { k: 'c2', name: '문틀 가슴·어깨 스트레칭', target: '30초 유지', detail: '문틀에 팔꿈치 기대 가슴 열기 (링 매달리기는 회복기 금지 — 악력)' },
-  { k: 'c3', name: '누워서 둔근 늘리기', target: '좌우 각 30초', detail: '다리를 4자로 만들어 가슴으로 당기기 (엉덩이)' }
+// 국면 경계 (해당 날짜 <= d <= 종료일)
+var PHASES = [
+  { id:'P0', key:'recovery',  name:'회복기',  color:'#B8412A', from:'2026-06-29', to:'2026-07-15',
+    focus:'엄지 보호 최우선. 하체 파워·코어·움직임의 질 유지. 체지방 감량 시작.' },
+  { id:'P1', key:'rebuild',   name:'재건기',  color:'#C77F2E', from:'2026-07-16', to:'2026-08-31',
+    focus:'깁스 해제 후 그립 재로딩. 전신 근력 기반 재건, 유산소 베이스 구축.' },
+  { id:'P2', key:'strength',  name:'강화기',  color:'#4A7C59', from:'2026-09-01', to:'2026-10-15',
+    focus:'최대근력 + 파워 병행. 코프볼 특이적 인터벌. 헬스장 주1회 옵션.' },
+  { id:'P3', key:'convert',   name:'전환기',  color:'#3E6B8A', from:'2026-10-16', to:'2026-11-15',
+    focus:'플라이오 피크 + 스피드·방향전환 + 실전 스크리미지. 새 운동 도입 금지.' },
+  { id:'P4', key:'taper',     name:'테이퍼',  color:'#7A5C99', from:'2026-11-16', to:'2026-12-04',
+    focus:'볼륨 -50%, 강도 유지. 수면·회복 최우선. 몸이 차오르는 시기.' }
 ];
 
-// 요일별 루틴 매핑 (0=일, 1=월, ...)
-var DAY_ROUTINE = {
-  0: ROUTINE_SUNDAY,    // 일
-  1: ROUTINE_A,         // 월
-  2: ROUTINE_B,         // 화
-  3: ROUTINE_MOBILITY,  // 수
-  4: ROUTINE_A,         // 목
-  5: ROUTINE_B,         // 금
-  6: ROUTINE_MOBILITY   // 토
+// ─────────────────────────────────────────────
+// 국면별 루틴 정의
+// 구조: PHASE_ROUTINES[phaseKey][routineType] = { name, sub, items:[{k,name,target,detail}] }
+// k 접두어는 국면+타입으로 유니크하게 (예: p2a1) — 날짜별 저장과 충돌 없음
+// ─────────────────────────────────────────────
+var PHASE_ROUTINES = {
+
+  // ══════════ P0 회복기 (엄지 보호) ══════════
+  recovery: {
+    A: { name:'A · 폭발력/심폐', sub:'월·목 — 엄지 무부하 하체 폭발력', items:[
+      { k:'r0a1', name:'점핑 스쿼트', target:'15회 × 4', detail:'손은 가슴 앞 고정, 착지 시 무릎 정렬. 폭발적 하체 파워' },
+      { k:'r0a2', name:'스케이터 점프', target:'좌우 10회 × 3', detail:'착지 후 1초 정지. 측면 가속·감속' },
+      { k:'r0a3', name:'전완 플랭크', target:'45초 × 3', detail:'손바닥 대신 전완 전체 지지. 오른손 엄지 힘 빼기' },
+      { k:'r0a4', name:'턱 점프(Tuck)', target:'10회 × 3', detail:'버피 대체. 착지 시 발바닥 전체로 소리 없이' },
+      { k:'r0a5', name:'밴드 스쿼트(어깨거치)', target:'15회 × 4', detail:'밴드 밟고 어깨 거치. 헬스장이면 레그프레스로 대체' }
+    ]},
+    B: { name:'B · 감속/근력', sub:'화·금 — [3-1-X] 템포 맨몸 제어', items:[
+      { k:'r0b1', name:'싱글레그 힙힌지', target:'양발 각 12회 × 3', detail:'[3-1-X] 템포. 흔들리면 왼손으로 벽 지지' },
+      { k:'r0b2', name:'템포 리버스 런지', target:'양발 각 12회 × 3', detail:'3초 다운·1초 정지·폭발 업. 무릎 정렬' },
+      { k:'r0b3', name:'맨몸 굿모닝', target:'15회 × 4', detail:'턱걸이 대체. 손은 관자놀이 옆, 엄지 무부하' },
+      { k:'r0b4', name:'트위스트 크런치', target:'좌우 각 15회 × 3', detail:'우드찹 대체. 몸통 회전력에만 집중' },
+      { k:'r0b5', name:'밴드 시티드 로우', target:'12~15회 × 3', detail:'발바닥에 밴드 걸고 당기기. 손목 감아 엄지 무부하' }
+    ]},
+    M: { name:'모빌리티/회복', sub:'수·토 — 근막 이완과 가동성', items:[
+      { k:'r0m1', name:'폼롤러', target:'5~10분', detail:'흉추·대퇴사두·장경인대·햄스트링 이완' },
+      { k:'r0m2', name:'스레드 더 니들', target:'좌우 각 10회', detail:'바닥은 주먹·전완 지지(엄지 보호)' },
+      { k:'r0m3', name:'90/90 스트레칭', target:'좌우 각 2분', detail:'고관절 회전 범위 확장' },
+      { k:'r0m4', name:'문틀 펙 스트레칭', target:'좌우 각 1분', detail:'문틀에 팔꿈치 대고 가슴 열기' }
+    ]},
+    S: { name:'가벼운 회복', sub:'일 — 컨디션 따라 가볍게', items:[
+      { k:'r0s1', name:'전신 스트레칭', target:'10~15분', detail:'정적 스트레칭, 호흡과 함께' },
+      { k:'r0s2', name:'산책', target:'20~30분', detail:'가벼운 활동, 회복 촉진' }
+    ]}
+  },
+
+  // ══════════ P1 재건기 (그립 재로딩 + 전신 재건) ══════════
+  rebuild: {
+    A: { name:'A · 파워 재건', sub:'월·목 — 점프 파워 + 그립 점진 로딩', items:[
+      { k:'r1a1', name:'박스 점프', target:'8회 × 4', detail:'계단·벤치·낮은 단(무릎 아래 높이) 활용. 착지 충격 흡수가 핵심. 박스 없으면 브로드 점프로 대체' },
+      { k:'r1a2', name:'익스플로시브 스텝업', target:'양발 각 10회 × 3', detail:'폭발적 도약, 무릎 정렬. 편측 파워' },
+      { k:'r1a3', name:'푸시업(점진)', target:'10~15회 × 3', detail:'그립 재로딩 1주차는 벽/무릎 푸시업부터. 통증 2/10 이하' },
+      { k:'r1a4', name:'스케이터 점프', target:'좌우 12회 × 3', detail:'측면 파워, 착지 1초 정지' },
+      { k:'r1a5', name:'플랭크 숄더탭', target:'좌우 16회 × 3', detail:'그립 회복되면 손바닥 지지 시작. 골반 고정' }
+    ]},
+    B: { name:'B · 근력 재건', sub:'화·금 — 전신 근력 기반 재건', items:[
+      { k:'r1b1', name:'고블릿 스쿼트', target:'12회 × 4', detail:'덤벨/케틀벨 가슴 앞. 네 손가락 위주 그립, 통증 시 스트랩', grip:true },
+      { k:'r1b2', name:'싱글레그 RDL', target:'양발 각 10회 × 3', detail:'[3-1-X] 후면사슬. 밸런스 재건', grip:true },
+      { k:'r1b3', name:'인버티드 로우', target:'10~15회 × 3', detail:'그립 재로딩. 낮은 바/링, 통증 없는 각도부터', grip:true },
+      { k:'r1b4', name:'파이크 푸시업', target:'10~12회 × 3', detail:'어깨 근력. 정수리와 양손 삼각형' },
+      { k:'r1b5', name:'스탠딩 우드찹', target:'양방향 15회 × 3', detail:'3~4kg 밴드/볼. 회전 파워 재건', grip:true }
+    ]},
+    M: { name:'모빌리티 + 유산소', sub:'수·토 — 가동성 + Zone2 베이스', items:[
+      { k:'r1m1', name:'폼롤러 + 가동성', target:'10분', detail:'흉추·고관절·발목 위주' },
+      { k:'r1m2', name:'월드 그레이티스트', target:'좌우 각 5회', detail:'깊은 런지 후 회전, 전신 유연성' },
+      { k:'r1m3', name:'Zone2 유산소', target:'30분', detail:'러닝/자전거. 대화 가능한 강도. 유산소 베이스 구축' }
+    ]},
+    S: { name:'가벼운 회복', sub:'일 — 능동 회복', items:[
+      { k:'r1s1', name:'전신 스트레칭', target:'15분', detail:'정적 스트레칭' },
+      { k:'r1s2', name:'산책/가벼운 조깅', target:'20~30분', detail:'능동 회복' }
+    ]}
+  },
+
+  // ══════════ P2 강화기 (최대근력 + 파워) ══════════
+  strength: {
+    A: { name:'A · 파워/플라이오', sub:'월·목 — 최대 출력 플라이오메트릭', items:[
+      { k:'r2a1', name:'뎁스 점프', target:'6회 × 5', detail:'낮은 단(30~40cm)에서 내려와 즉시 점프. 계단·벤치 활용. 반응 시간 최소화, 최대 파워' },
+      { k:'r2a2', name:'브로드 점프', target:'5회 × 4', detail:'수평 폭발력. 착지 안정성 강조' },
+      { k:'r2a3', name:'메디신볼 슬램', target:'10회 × 4', detail:'3~4kg. 전신 파워 전달, 코어 연동' },
+      { k:'r2a4', name:'싱글레그 홉', target:'좌우 8회 × 3', detail:'편측 파워·안정성. 방향전환 기초' },
+      { k:'r2a5', name:'하프 니 슛 드릴', target:'20구', detail:'파워 훈련 직후 슈팅. 피로 하 정확도(P2 슈팅 연계)' }
+    ]},
+    B: { name:'B · 최대근력', sub:'화·금 — 고중량 저반복 (헬스장/밴드)', items:[
+      { k:'r2b1', name:'트랩바 데드리프트', target:'5~6회 × 4', detail:'전신 힘의 기둥. 스트랩 필수. 홈: 밴드 데드 4×8' },
+      { k:'r2b2', name:'바벨 힙 쓰러스트', target:'8~10회 × 3', detail:'둔근 = 점프 엔진. 정점 1초 정지. 홈: 밴드 힙쓰러스트 3×15' },
+      { k:'r2b3', name:'불가리안 스플릿', target:'양발 8회 × 3', detail:'편측 근력. 약한 다리 먼저. 홈: 배낭 하중 3×10' },
+      { k:'r2b4', name:'풀업/랫풀다운', target:'최대~10회 × 3', detail:'상체 당김. 홈: 밴드 랫풀다운. 스트랩으로 그립 보조' },
+      { k:'r2b5', name:'카프 레이즈', target:'12~15회 × 3', detail:'3초 하강. 착지 충격 흡수·발목 탄성' }
+    ]},
+    M: { name:'모빌리티 + 인터벌', sub:'수·토 — 가동성 + 코프볼 인터벌', items:[
+      { k:'r2m1', name:'폼롤러 + 가동성', target:'10분', detail:'고강도 훈련 사이 회복' },
+      { k:'r2m2', name:'코프볼 인터벌', target:'30초 전력:30초 회복 × 10', detail:'경기 특이적 반복 스프린트 능력' },
+      { k:'r2m3', name:'흉추·고관절 가동성', target:'10분', detail:'슈팅 가동 범위 유지' }
+    ]},
+    S: { name:'능동 회복', sub:'일 — 회복 + 인바디 점검', items:[
+      { k:'r2s1', name:'전신 스트레칭', target:'15분', detail:'정적 스트레칭' },
+      { k:'r2s2', name:'Zone2 유산소', target:'20~30분', detail:'가벼운 유산소 회복' }
+    ]}
+  },
+
+  // ══════════ P3 전환기 (플라이오 피크 + 스피드) ══════════
+  convert: {
+    A: { name:'A · 스피드/방향전환', sub:'월·목 — 최고 속도·민첩성', items:[
+      { k:'r3a1', name:'래더 드릴', target:'5패턴 × 2', detail:'발 빠르기·협응. 인아웃·라테랄 등 다양한 패턴' },
+      { k:'r3a2', name:'5-10-5 셔틀', target:'6회', detail:'방향전환 스피드. 감속-재가속 능력' },
+      { k:'r3a3', name:'뎁스 점프→스프린트', target:'6회 × 3', detail:'플라이오 + 즉시 5m 스프린트. 반응 파워' },
+      { k:'r3a4', name:'컷팅 드릴', target:'좌우 8회 × 2', detail:'45도 커팅. 실전 방향전환 패턴' },
+      { k:'r3a5', name:'캐치앤슛 드릴', target:'30구', detail:'컷 후 캐치·슛. 경기 속도 슈팅(P3 슈팅 연계)' }
+    ]},
+    B: { name:'B · 파워 유지', sub:'화·금 — 근력 유지 + 파워 전환', items:[
+      { k:'r3b1', name:'트랩바 점프 데드', target:'5회 × 4', detail:'가벼운 무게(40%) 폭발적. 근력을 파워로 전환' },
+      { k:'r3b2', name:'점프 스쿼트(하중)', target:'6회 × 4', detail:'배낭/덤벨 가볍게. 부하 하 파워' },
+      { k:'r3b3', name:'불가리안 스플릿', target:'양발 8회 × 3', detail:'편측 근력 유지' },
+      { k:'r3b4', name:'풀업', target:'최대 × 3', detail:'상체 당김 유지' },
+      { k:'r3b5', name:'파워 스텝업', target:'양발 8회 × 3', detail:'폭발적 편측 파워' }
+    ]},
+    M: { name:'모빌리티 + 스크리미지', sub:'수·토 — 실전 게임 비중 확대', items:[
+      { k:'r3m1', name:'동적 가동성', target:'10분', detail:'경기 준비 웜업 패턴' },
+      { k:'r3m2', name:'실전 스크리미지', target:'경기 형식', detail:'팀 훈련 또는 하프코트 게임. 의사결정 훈련' },
+      { k:'r3m3', name:'쿨다운 스트레칭', target:'10분', detail:'경기 후 회복' }
+    ]},
+    S: { name:'능동 회복', sub:'일 — 회복', items:[
+      { k:'r3s1', name:'전신 스트레칭', target:'15분', detail:'정적 스트레칭' },
+      { k:'r3s2', name:'가벼운 유산소', target:'20분', detail:'능동 회복' }
+    ]}
+  },
+
+  // ══════════ P4 테이퍼 (볼륨 -50%, 강도 유지) ══════════
+  taper: {
+    A: { name:'A · 파워 유지(감량)', sub:'월·목 — 볼륨 절반, 강도 유지', items:[
+      { k:'r4a1', name:'박스 점프', target:'5회 × 2', detail:'계단·벤치 활용. 날카로움 유지, 볼륨만 절반. 질은 최고로' },
+      { k:'r4a2', name:'브로드 점프', target:'3회 × 2', detail:'파워 유지, 완전 회복하며' },
+      { k:'r4a3', name:'캐치앤슛', target:'20구', detail:'슈팅 감각 유지. 성공률 위주' }
+    ]},
+    B: { name:'B · 근력 유지(감량)', sub:'화·금 — 가볍게, 신경계만 자극', items:[
+      { k:'r4b1', name:'점프 스쿼트', target:'5회 × 3', detail:'가볍게, 폭발적으로. 신경계 점화 유지' },
+      { k:'r4b2', name:'불가리안 스플릿', target:'양발 6회 × 2', detail:'편측 근력 유지, 가볍게' },
+      { k:'r4b3', name:'풀업', target:'가볍게 × 2', detail:'상체 감각 유지' }
+    ]},
+    M: { name:'모빌리티 + 슈팅', sub:'수·토 — 회복 + 슈팅 감각', items:[
+      { k:'r4m1', name:'동적 가동성', target:'10분', detail:'몸 상태 최상 유지' },
+      { k:'r4m2', name:'슈팅 감각 훈련', target:'30구', detail:'편안하게, 성공률 위주. 자신감 축적' }
+    ]},
+    S: { name:'완전 회복', sub:'일 — 수면·회복 최우선', items:[
+      { k:'r4s1', name:'가벼운 스트레칭', target:'10분', detail:'몸 풀기 정도만' },
+      { k:'r4s2', name:'산책', target:'20분', detail:'가벼운 활동. 대회 준비 컨디셔닝' }
+    ]}
+  }
 };
+
+// ─────────────────────────────────────────────
+// 엄지 재활 체크포인트 (재건기 진입 관문)
+// 6/24 탈구 → 약 3주 고정 → 7/15경 해제 예정
+// 그립 운동을 열기 전 통과해야 할 기준
+// ─────────────────────────────────────────────
+var REHAB_KEY = 'aokc2026_rehab';
+var REHAB_CHECKS = [
+  { k:'rh1', label:'붓기·열감이 가라앉았다', detail:'탈구 부위 부기와 발열이 눈에 띄게 줄었는지' },
+  { k:'rh2', label:'통증 없이 엄지를 굽혔다 펼 수 있다', detail:'통증 2/10 이하에서 부드럽게 가동' },
+  { k:'rh3', label:'가벼운 물건을 쥘 수 있다', detail:'컵·펜 등 일상 물건을 통증 없이 쥐기' },
+  { k:'rh4', label:'의료진에게 복귀 확인을 받았다', detail:'정형외과·재활의학과에서 그립 운동 시작 승인' }
+];
+
+function loadRehab(){
+  try{ var r=localStorage.getItem(REHAB_KEY); if(r) return JSON.parse(r); }catch(e){}
+  return {};
+}
+function saveRehab(o){ try{ localStorage.setItem(REHAB_KEY, JSON.stringify(o)); }catch(e){} }
+function rehabAllClear(){
+  var r=loadRehab();
+  for(var i=0;i<REHAB_CHECKS.length;i++){ if(!r[REHAB_CHECKS[i].k]) return false; }
+  return true;
+}
+function toggleRehab(k){
+  var r=loadRehab();
+  r[k]=!r[k];
+  saveRehab(r);
+  render();
+}
+
+// 재활 체크포인트 접힘 상태 (기본: 접힘)
+var REHAB_COLLAPSE_KEY = 'aokc2026_rehab_collapsed';
+function getRehabCollapsed(){
+  try{ var v=localStorage.getItem(REHAB_COLLAPSE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; }
+}
+function toggleRehabCollapse(){
+  var cur=getRehabCollapsed();
+  try{ localStorage.setItem(REHAB_COLLAPSE_KEY, cur?'0':'1'); }catch(e){}
+  render();
+}
+var PHASE_WARMUP = {
+  recovery: [
+    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'심박·체온 올리기. 엄지 힘 빼기' },
+    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
+    { k:'wu3', name:'고관절·발목·흉추 가동성', target:'3분', detail:'바닥 지지는 주먹·전완(엄지 보호)' },
+    { k:'wu4', name:'스쿼트→점프 램프업', target:'1분', detail:'신경계 점화, 마지막만 80%' }
+  ],
+  rebuild: [
+    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'심박·체온 올리기' },
+    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
+    { k:'wu3', name:'동적 가동성 서킷', target:'3분', detail:'고관절·발목·흉추. 그립 워밍업 추가' },
+    { k:'wu4', name:'점프 램프업', target:'1분', detail:'신경계 점화' }
+  ],
+  strength: [
+    { k:'wu1', name:'유산소 3분 + 관절 회전', target:'3분', detail:'자전거/로잉. 손잡이 가볍게' },
+    { k:'wu2', name:'글루트·코어 활성화', target:'2분', detail:'브릿지·데드버그·밴드 워크' },
+    { k:'wu3', name:'첫 종목 빈 무게 램프업', target:'2분', detail:'50%→75% 2세트. 신경근 준비' },
+    { k:'wu4', name:'포인트 점프 5회', target:'1분', detail:'플라이오 점화' }
+  ],
+  convert: [
+    { k:'wu1', name:'동적 웜업 서킷', target:'3분', detail:'경기 준비 패턴. 스킵·캐리오카' },
+    { k:'wu2', name:'스프린트 빌드업', target:'2분', detail:'50→70→85% 점진 가속' },
+    { k:'wu3', name:'방향전환 프라이밍', target:'2분', detail:'가벼운 컷·셔플' },
+    { k:'wu4', name:'반응 점프', target:'1분', detail:'신경계 최대 점화' }
+  ],
+  taper: [
+    { k:'wu1', name:'가벼운 동적 웜업', target:'4분', detail:'충분히, 서두르지 않고' },
+    { k:'wu2', name:'점프 프라이밍', target:'2분', detail:'가볍게 신경계만 깨우기' }
+  ]
+};
+
+// 국면별 쿨다운 (공통)
+var PHASE_COOLDOWN = {
+  _default: [
+    { k:'cd1', name:'천천히 걷기', target:'2분', detail:'심박 서서히 하강. 바로 앉지 않기' },
+    { k:'cd2', name:'하체 정적 스트레칭 4종', target:'각 30초/측', detail:'대퇴사두(벽은 왼손)·햄스트링·둔근·종아리' },
+    { k:'cd3', name:'가슴·어깨 문틀 스트레칭', target:'30초', detail:'문틀에 팔꿈치. 링 매달리기 금지(회복기)' },
+    { k:'cd4', name:'박스 호흡 4-4-4-4', target:'1분', detail:'신경계 회복 모드 전환. 오늘의 한 단어 정하기' }
+  ]
+};
+
+// ═══════════════════════════════════════════
+// 국면 판정 + 루틴 접근
+// ═══════════════════════════════════════════
+function ymdToDate(s){ var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+
+function getPhaseForDate(d){
+  var day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  for(var i=0;i<PHASES.length;i++){
+    var ph=PHASES[i];
+    if(day>=ymdToDate(ph.from) && day<=ymdToDate(ph.to)) return ph;
+  }
+  // 경계 밖: 첫 국면 이전이면 회복기, 마지막 이후면 테이퍼
+  if(day < ymdToDate(PHASES[0].from)) return PHASES[0];
+  return PHASES[PHASES.length-1];
+}
+
+// 요일 → 루틴 타입 (0=일 S, 월A 화B 수M 목A 금B 토M)
+var DAY_TYPE = { 0:'S', 1:'A', 2:'B', 3:'M', 4:'A', 5:'B', 6:'M' };
+
+// 국면 key + 타입 → 루틴 객체 {type,name,sub,items}
+function buildRoutine(phaseKey, type){
+  var r = PHASE_ROUTINES[phaseKey][type];
+  return { type:type, name:r.name, sub:r.sub, items:r.items };
+}
+
+// 추가 활동 키
+var ADDON_KEYS = ['cardio', 'stretch', 'korfball', 'rest', 'recovery'];
+
+var PLAN_START = new Date(2026, 4, 1);
+
 
 // 추가 활동 키
 var ADDON_KEYS = ['cardio', 'stretch', 'korfball', 'rest', 'recovery'];
@@ -833,35 +1077,80 @@ function getDayData() {
   return store.dates[k];
 }
 
-function getRoutineForDate(d) {
-  // 사용자가 그날 직접 선택한 루틴이 있으면 우선
+// ─────────────────────────────────────────────
+// 국면 판정 (수동 오버라이드 + '오늘은 가볍게' 반영)
+// ─────────────────────────────────────────────
+var PHASE_ORDER = ['recovery','rebuild','strength','convert','taper'];
+var MANUAL_PHASE_KEY = 'aokc2026_manual_phase'; // 수동 선택 국면(며칠 이상 지속용)
+
+function getManualPhase(){
+  try{ return localStorage.getItem(MANUAL_PHASE_KEY) || null; }catch(e){ return null; }
+}
+function setManualPhase(key){
+  try{ if(key) localStorage.setItem(MANUAL_PHASE_KEY, key); else localStorage.removeItem(MANUAL_PHASE_KEY); }catch(e){}
+}
+function phaseByKey(key){
+  for(var i=0;i<PHASES.length;i++) if(PHASES[i].key===key) return PHASES[i];
+  return null;
+}
+
+// 그날 적용 국면: 그날 데이터의 easy 플래그는 강도만 낮춤(국면 자체는 유지)
+// 우선순위: 그날 수동 dayPhase > 전역 수동 국면 > 날짜 자동
+function getEffectivePhase(d){
   var data = store.dates[dateKey(d)];
-  if (data && data.routineType && ROUTINE_BY_TYPE[data.routineType]) {
-    return ROUTINE_BY_TYPE[data.routineType];
-  }
-  return DAY_ROUTINE[d.getDay()];
+  if(data && data.dayPhase && phaseByKey(data.dayPhase)) return phaseByKey(data.dayPhase);
+  var manual = getManualPhase();
+  if(manual && phaseByKey(manual)) return phaseByKey(manual);
+  return getPhaseForDate(d);
 }
 
-// 그날의 요일 기본 추천 루틴 (선택과 무관)
+// '오늘은 가볍게': 해당 국면에서 한 단계 쉬운 국면 key 반환 (강도 다운)
+function easierPhaseKey(key){
+  var idx = PHASE_ORDER.indexOf(key);
+  // 재건기 이상은 한 단계 아래로, 회복기는 그대로(이미 최저)
+  if(idx <= 0) return 'recovery';
+  return PHASE_ORDER[idx-1];
+}
+
+function getRoutineForDate(d) {
+  var data = store.dates[dateKey(d)] || {};
+  var phase = getEffectivePhase(d);
+  var phaseKey = phase.key;
+  // '오늘은 가볍게' 플래그 → 한 단계 쉬운 국면 루틴
+  if(data.easy) phaseKey = easierPhaseKey(phaseKey);
+  // 그날 직접 선택한 루틴 타입 우선, 없으면 요일 기본
+  var type = (data.routineType && PHASE_ROUTINES[phaseKey][data.routineType]) ? data.routineType : DAY_TYPE[d.getDay()];
+  return buildRoutine(phaseKey, type);
+}
+
+// 그날의 요일 기본 추천 루틴 (선택과 무관, 현재 국면 기준)
 function getRecommendedRoutine(d) {
-  return DAY_ROUTINE[d.getDay()];
+  var phase = getEffectivePhase(d);
+  return buildRoutine(phase.key, DAY_TYPE[d.getDay()]);
 }
-
-// 타입 → 루틴 객체
-var ROUTINE_BY_TYPE = {
-  A: ROUTINE_A,
-  B: ROUTINE_B,
-  M: ROUTINE_MOBILITY,
-  S: ROUTINE_SUNDAY
-};
 
 function hasCooldown(d) {
   var r = getRoutineForDate(d);
-  // A/B가 회복 페이지로 연결(linked)된 동안은 쿨다운도 그쪽에서 진행
-  return (r.type === 'A' || r.type === 'B') && r.items.length > 0;
+  return r.type === 'A' || r.type === 'B';
+}
+function hasWarmup(d) {
+  var r = getRoutineForDate(d);
+  return r.type === 'A' || r.type === 'B';
 }
 
-// 그날의 핵심 루틴 항목 완료 수 (쿨다운 제외)
+// 현재 국면의 웜업/쿨다운 항목
+function getWarmupItems(d){
+  var phase = getEffectivePhase(d);
+  var data = store.dates[dateKey(d)] || {};
+  var key = phase.key;
+  if(data.easy) key = easierPhaseKey(key);
+  return PHASE_WARMUP[key] || PHASE_WARMUP.recovery;
+}
+function getCooldownItems(d){
+  return PHASE_COOLDOWN._default;
+}
+
+// 그날의 핵심 루틴 항목 완료 수 (웜업·쿨다운 제외)
 function getRoutineDone(data, routine) {
   var done = 0;
   for (var i = 0; i < routine.items.length; i++) {
@@ -871,10 +1160,20 @@ function getRoutineDone(data, routine) {
 }
 
 // 쿨다운 완료 수
-function getCooldownDone(data) {
+function getCooldownDone(data, d) {
+  var items = getCooldownItems(d || currentDate);
   var done = 0;
-  for (var i = 0; i < COOLDOWN_ITEMS.length; i++) {
-    if (data[COOLDOWN_ITEMS[i].k]) done++;
+  for (var i = 0; i < items.length; i++) {
+    if (data[items[i].k]) done++;
+  }
+  return done;
+}
+// 웜업 완료 수
+function getWarmupDone(data, d) {
+  var items = getWarmupItems(d || currentDate);
+  var done = 0;
+  for (var i = 0; i < items.length; i++) {
+    if (data[items[i].k]) done++;
   }
   return done;
 }
@@ -888,36 +1187,35 @@ function getAddonCount(data) {
   return c;
 }
 
-// 전체 그날 달성률 (루틴 + 쿨다운 + 추가활동 인정 여부)
+// 전체 그날 달성률 (웜업 + 루틴 + 쿨다운 + 추가활동 인정 여부)
 function getDayPct(d) {
   var data = store.dates[dateKey(d)] || {};
   var routine = getRoutineForDate(d);
-  var routineTotal = routine.items.length;
-
-  // A/B가 회복 페이지로 연결된 날: 회복 루틴 완료(recovery) 여부로 판정
-  if (routineTotal === 0) {
-    return data.recovery ? 100 : 0;
-  }
-
   var routineDone = getRoutineDone(data, routine);
-  var pct = Math.round(routineDone / routineTotal * 100);
+  var routineTotal = routine.items.length;
+  if (routineTotal === 0) return 0;
+  var totalDone = routineDone;
+  var totalSlots = routineTotal;
 
-  // 쿨다운이 있는 날: 쿨다운 완료 시 추가 점수
-  if (hasCooldown(d)) {
-    var cdDone = getCooldownDone(data);
-    var totalDone = routineDone + cdDone;
-    var totalSlots = routineTotal + COOLDOWN_ITEMS.length;
-    pct = Math.round(totalDone / totalSlots * 100);
+  // 웜업·쿨다운이 있는 날(A·B): 완료 시 합산
+  if (hasWarmup(d)) {
+    totalDone += getWarmupDone(data, d);
+    totalSlots += getWarmupItems(d).length;
   }
-  return pct;
+  if (hasCooldown(d)) {
+    totalDone += getCooldownDone(data, d);
+    totalSlots += getCooldownItems(d).length;
+  }
+  return Math.round(totalDone / totalSlots * 100);
 }
 
-// 활동이 있는 날인지 (루틴 1개 이상 OR 추가활동 1개 이상)
+// 활동이 있는 날인지 (루틴/웜업/쿨다운 1개 이상 OR 추가활동 1개 이상)
 function hasActivity(d) {
   var data = store.dates[dateKey(d)] || {};
   var routine = getRoutineForDate(d);
   if (getRoutineDone(data, routine) > 0) return true;
-  if (hasCooldown(d) && getCooldownDone(data) > 0) return true;
+  if (hasWarmup(d) && getWarmupDone(data, d) > 0) return true;
+  if (hasCooldown(d) && getCooldownDone(data, d) > 0) return true;
   for (var i = 0; i < ADDON_KEYS.length; i++) {
     if (data[ADDON_KEYS[i]]) return true;
   }
@@ -1018,19 +1316,25 @@ function render() {
   document.getElementById('date-text').firstChild.nodeValue = dayText;
   document.getElementById('date-sub').textContent = (currentDate.getMonth()+1) + '월 ' + currentDate.getDate() + '일 (' + weekDays[currentDate.getDay()] + ')';
 
-  // 오늘 루틴 안내
+  // 오늘 루틴 안내 + 국면 배너
   var routine = getRoutineForDate(currentDate);
+  var phase = getEffectivePhase(currentDate);
+  var data = store.dates[dateKey(currentDate)] || {};
   var infoEl = document.getElementById('today-info');
-  var routineDesc = {
-    A: '<strong>월·목 폭발력 루틴</strong>. 웜업 → 본운동 → 쿨다운 전체를 <strong>회복 루틴 페이지</strong>에서 진행·체크하세요. 완료하면 이 통계에 자동 반영됩니다.',
-    B: '<strong>화·금 근력 루틴</strong>. 웜업 → 본운동 → 쿨다운 전체를 <strong>회복 루틴 페이지</strong>에서 진행·체크하세요. 완료하면 이 통계에 자동 반영됩니다.',
-    M: '<strong>수·토 모빌리티 회복일</strong>입니다. 근막 이완과 가동성 회복, 5개 항목.',
-    S: '<strong>일요일 회복일</strong>입니다. 컨디션에 따라 가볍게 또는 완전 휴식.'
-  };
-  infoEl.innerHTML = routineDesc[routine.type] || '';
+  var typeLabel = { A:'파워', B:'근력', M:'모빌리티', S:'회복' };
+  var dday = Math.round((COMPETITION_DATE - new Date(currentDate.getFullYear(),currentDate.getMonth(),currentDate.getDate()))/86400000);
+  var autoPhase = getPhaseForDate(currentDate);
+  var manualNote = '';
+  if(data.dayPhase) manualNote = ' · <span style="color:#B8412A">이 날만 '+phaseByKey(data.dayPhase).name+' 선택</span>';
+  else if(getManualPhase() && getManualPhase()!==autoPhase.key) manualNote = ' · <span style="color:#B8412A">수동 '+phase.name+' 유지 중</span>';
+  var easyNote = data.easy ? ' · <span style="color:#C77F2E">😌 오늘은 가볍게</span>' : '';
+  infoEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+    + '<span style="font-weight:800;color:'+phase.color+'">'+phase.id+' '+phase.name+'</span>'
+    + '<span style="font-size:11px;color:#8B7355">D-'+dday+'</span>'
+    + manualNote + easyNote + '</div>'
+    + '<div style="font-size:12px;color:#8B7355;margin-top:4px">'+phase.focus+'</div>';
 
   // 추가 활동 상태
-  var data = store.dates[dateKey(currentDate)] || {};
   for (var i = 0; i < ADDON_KEYS.length; i++) {
     var btn = document.getElementById('opt-' + ADDON_KEYS[i]);
     if (btn) {
@@ -1042,32 +1346,95 @@ function render() {
   // 메모
   document.getElementById('memo-input').value = data.memo || '';
 
+  renderRehab();
+  renderWarmup();
   renderRoutine();
   renderCooldown();
   updateProgress();
   updateSummary();
+  renderPhaseControls();
+}
+
+// 엄지 재활 체크포인트 + 회복기 주의사항
+function renderRehab() {
+  var card = document.getElementById('rehab-card');
+  if (!card) return;
+  var phase = getEffectivePhase(currentDate);
+  var allClear = rehabAllClear();
+
+  // 표시 규칙:
+  //  - 회복기: 간결한 '엄지 주의사항' 경고만
+  //  - 재건기: 재활 체크포인트(접이식), 통과하면 숨김
+  //  - 강화기 이후: 숨김
+  if (phase.key === 'recovery') {
+    card.style.display = '';
+    card.className = 'card';
+    card.style.borderColor = 'var(--c-coral)';
+    document.getElementById('rehab-card-inner').innerHTML =
+        '<div class="rehab-warn-head">⚠️ 엄지 탈구 주의사항</div>'
+      + '<ul class="rehab-warn-list">'
+      + '<li>오른손 <strong>엄지로 쥐거나 바닥을 짚는 동작 금지</strong> — 지지는 왼손·전완·주먹으로</li>'
+      + '<li>통증·부기·저림이 <strong>악화되면 즉시 중단</strong>하고 무리하지 않기</li>'
+      + '<li>하체·유산소·코어는 정상 진행 가능 · <strong>그립/당기기 운동은 회복 후에</strong></li>'
+      + '<li>복귀 시점과 재활 강도는 <strong>반드시 의료진과 확인</strong></li>'
+      + '</ul>';
+    return;
+  }
+
+  if (phase.key === 'rebuild' && !allClear) {
+    card.style.display = '';
+    card.className = 'card';
+    card.style.borderColor = 'var(--c-coral)';
+    var r = loadRehab();
+    var collapsed = getRehabCollapsed();
+    var doneCount = 0;
+    for (var j=0;j<REHAB_CHECKS.length;j++){ if(r[REHAB_CHECKS[j].k]) doneCount++; }
+
+    var html = '<div class="rehab-head" onclick="toggleRehabCollapse()">';
+    html += '<div><span class="rehab-title">🩹 엄지 재활 체크포인트</span>';
+    html += '<span class="rehab-badge-inline">' + doneCount + '/' + REHAB_CHECKS.length + '</span></div>';
+    html += '<span class="rehab-caret">' + (collapsed ? '▾' : '▴') + '</span>';
+    html += '</div>';
+    html += '<div class="rehab-collapse" style="display:' + (collapsed ? 'none' : 'block') + '">';
+    html += '<div class="card-sub" style="margin:8px 0 4px">재건기입니다. 그립 운동을 열기 전 아래 4가지를 모두 확인하세요.</div>';
+    for (var i=0;i<REHAB_CHECKS.length;i++){
+      var c = REHAB_CHECKS[i];
+      var done = !!r[c.k];
+      html += '<div class="workout-row' + (done?' done':'') + '" onclick="toggleRehab(\'' + c.k + '\')">';
+      html += '<div class="checkbox' + (done?' done':'') + '"></div>';
+      html += '<div class="workout-content"><div><span class="workout-name">' + c.label + '</span></div>';
+      html += '<div class="workout-detail">' + c.detail + '</div></div></div>';
+    }
+    html += '<div class="tip tip-coral" style="margin-top:10px">⚠️ 그립·당기기 운동(로우·풀업·데드리프트)은 <strong>통증 없이 쥘 수 있을 때까지</strong> 미루세요. 복귀 시점은 반드시 의료진과 확인하세요.</div>';
+    html += '</div>';
+    document.getElementById('rehab-card-inner').innerHTML = html;
+    return;
+  }
+
+  card.style.display = 'none';
 }
 
 function renderRoutine() {
   var routine = getRoutineForDate(currentDate);
+  var phase = getEffectivePhase(currentDate);
   var data = store.dates[dateKey(currentDate)] || {};
-  document.getElementById('routine-title').textContent = '🏋️ ' + routine.name.split('·')[0].trim();
+  document.getElementById('routine-title').textContent = '🏋️ ' + routine.name;
   document.getElementById('routine-sub').textContent = routine.sub;
   var badge = document.getElementById('routine-badge');
-  var badgeText = { A: 'A루틴', B: 'B루틴', M: '회복일', S: '일요일' };
+  var badgeText = { A: 'A루틴', B: 'B루틴', M: '모빌리티', S: '회복' };
   badge.textContent = badgeText[routine.type];
   badge.className = 'routine-badge ' + routine.type;
 
-  // 루틴 선택 버튼 상태
+  // 루틴 선택 버튼 상태 (현재 국면의 루틴 이름으로)
   var rec = getRecommendedRoutine(currentDate);
-  var recName = { A: 'A루틴(폭발력)', B: 'B루틴(근력)', M: '모빌리티', S: '가벼운 스트레칭' };
+  var typeName = { A:'A · 파워', B:'B · 근력', M:'모빌리티', S:'회복' };
   var recEl = document.getElementById('rec-routine');
-  if (recEl) recEl.textContent = recName[rec.type];
+  if (recEl) recEl.textContent = typeName[rec.type];
   var labelEl = document.getElementById('routine-picker-label');
   if (data.routineType && data.routineType !== rec.type) {
-    labelEl.innerHTML = '오늘 추천: <strong>' + recName[rec.type] + '</strong> · 직접 <strong>' + recName[routine.type] + '</strong> 선택함';
+    labelEl.innerHTML = '오늘 추천: <strong>' + typeName[rec.type] + '</strong> · 직접 <strong>' + typeName[routine.type] + '</strong> 선택함';
   } else {
-    labelEl.innerHTML = '오늘 추천: <strong>' + recName[rec.type] + '</strong> · 다른 루틴으로 바꿀 수 있어요';
+    labelEl.innerHTML = phase.name + ' · 오늘 추천 <strong>' + typeName[rec.type] + '</strong> (바꿀 수 있어요)';
   }
   var types = ['A', 'B', 'M', 'S'];
   for (var ti = 0; ti < types.length; ti++) {
@@ -1078,36 +1445,52 @@ function renderRoutine() {
     }
   }
 
+  var gripGate = (phase.key === 'rebuild' && !rehabAllClear());
   var html = '';
-  if (routine.items.length === 0) {
-    // A/B 연결 모드: 회복 페이지로 안내
-    var doneToday = !!data.recovery;
-    html += '<a href="recovery.html" style="display:block;text-decoration:none;background:' + (doneToday ? 'rgba(74,124,89,0.12)' : 'rgba(184,65,42,0.08)') + ';border:1.5px ' + (doneToday ? 'solid #4A7C59' : 'dashed #B8412A') + ';border-radius:12px;padding:16px;text-align:center">';
-    if (doneToday) {
-      html += '<div style="font-size:15px;font-weight:700;color:#4A7C59">✓ 오늘 회복 루틴 완료됨</div>';
-      html += '<div style="font-size:12px;color:#8B7355;margin-top:4px">수정하려면 탭하세요</div>';
-    } else {
-      html += '<div style="font-size:15px;font-weight:700;color:#B8412A">🩹 본운동은 회복 루틴 페이지에서</div>';
-      html += '<div style="font-size:12px;color:#8B7355;margin-top:4px">웜업 → A/B 본운동 → 쿨다운 · 체크하면 여기 통계에 자동 반영</div>';
-    }
-    html += '</a>';
-    document.getElementById('routine-items').innerHTML = html;
-    return;
-  }
   for (var i = 0; i < routine.items.length; i++) {
     var item = routine.items[i];
+    var done = !!data[item.k];
+    var warn = (gripGate && item.grip);
+    html += '<div class="workout-row' + (done ? ' done' : '') + (warn ? ' grip-warn' : '') + '" onclick="toggleItem(\'' + item.k + '\')">';
+    html += '<div class="checkbox' + (done ? ' done' : '') + '"></div>';
+    html += '<div class="workout-content">';
+    html += '<div><span class="workout-num">' + (i+1) + '</span>';
+    html += '<span class="workout-name">' + item.name + '</span>';
+    html += '<span class="workout-target ' + routine.type + '">' + item.target + '</span>';
+    if (warn) html += '<span class="grip-badge">✋ 그립 주의</span>';
+    html += '</div>';
+    html += '<div class="workout-detail">' + item.detail + (warn ? ' <strong style="color:var(--c-coral)">— 재활 체크포인트 통과 전까지 무리한 그립 금지</strong>' : '') + '</div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  document.getElementById('routine-items').innerHTML = html;
+}
+
+function renderWarmup() {
+  var card = document.getElementById('warmup-card');
+  if (!card) return;
+  if (!hasWarmup(currentDate)) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  var items = getWarmupItems(currentDate);
+  var data = store.dates[dateKey(currentDate)] || {};
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
     var done = !!data[item.k];
     html += '<div class="workout-row' + (done ? ' done' : '') + '" onclick="toggleItem(\'' + item.k + '\')">';
     html += '<div class="checkbox' + (done ? ' done' : '') + '"></div>';
     html += '<div class="workout-content">';
     html += '<div><span class="workout-num">' + (i+1) + '</span>';
     html += '<span class="workout-name">' + item.name + '</span>';
-    html += '<span class="workout-target ' + routine.type + '">' + item.target + '</span></div>';
+    html += '<span class="workout-target W">' + item.target + '</span></div>';
     html += '<div class="workout-detail">' + item.detail + '</div>';
     html += '</div>';
     html += '</div>';
   }
-  document.getElementById('routine-items').innerHTML = html;
+  document.getElementById('warmup-items').innerHTML = html;
 }
 
 function renderCooldown() {
@@ -1117,10 +1500,11 @@ function renderCooldown() {
     return;
   }
   card.style.display = '';
+  var items = getCooldownItems(currentDate);
   var data = store.dates[dateKey(currentDate)] || {};
   var html = '';
-  for (var i = 0; i < COOLDOWN_ITEMS.length; i++) {
-    var item = COOLDOWN_ITEMS[i];
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
     var done = !!data[item.k];
     html += '<div class="workout-row' + (done ? ' done' : '') + '" onclick="toggleItem(\'' + item.k + '\')">';
     html += '<div class="checkbox' + (done ? ' done' : '') + '"></div>';
@@ -1138,26 +1522,66 @@ function renderCooldown() {
 function updateProgress() {
   var data = store.dates[dateKey(currentDate)] || {};
   var routine = getRoutineForDate(currentDate);
-  var routineTotal = routine.items.length;
-
-  // A/B 연결 모드: 회복 루틴 완료 여부로 표시
-  if (routineTotal === 0) {
-    var done = data.recovery ? 1 : 0;
-    document.getElementById('prog-bar').style.width = (done * 100) + '%';
-    document.getElementById('prog-text').textContent = done ? '회복 루틴 완료' : '회복 루틴 페이지에서 진행';
-    return;
-  }
-
   var routineDone = getRoutineDone(data, routine);
+  var routineTotal = routine.items.length;
   var totalDone = routineDone;
   var totalSlots = routineTotal;
-  if (hasCooldown(currentDate)) {
-    totalDone += getCooldownDone(data);
-    totalSlots += COOLDOWN_ITEMS.length;
+  if (hasWarmup(currentDate)) {
+    totalDone += getWarmupDone(data, currentDate);
+    totalSlots += getWarmupItems(currentDate).length;
   }
-  var pct = Math.round(totalDone / totalSlots * 100);
+  if (hasCooldown(currentDate)) {
+    totalDone += getCooldownDone(data, currentDate);
+    totalSlots += getCooldownItems(currentDate).length;
+  }
+  var pct = totalSlots ? Math.round(totalDone / totalSlots * 100) : 0;
   document.getElementById('prog-bar').style.width = pct + '%';
   document.getElementById('prog-text').textContent = totalDone + '/' + totalSlots + ' 항목 완료';
+}
+
+// 국면 컨트롤 (오늘은 가볍게 + 수동 국면 선택)
+function renderPhaseControls() {
+  var wrap = document.getElementById('phase-controls');
+  if (!wrap) return;
+  var data = store.dates[dateKey(currentDate)] || {};
+  var autoPhase = getPhaseForDate(currentDate);
+  var manual = getManualPhase();
+  var isEasy = !!data.easy;
+
+  var html = '';
+  // 오늘은 가볍게 토글
+  html += '<button class="phase-ctrl-btn' + (isEasy ? ' on' : '') + '" onclick="toggleEasy()">'
+       + (isEasy ? '😌 오늘은 가볍게 (해제)' : '😌 오늘은 가볍게') + '</button>';
+  // 수동 국면 선택 드롭다운
+  html += '<div class="phase-select-row">';
+  html += '<span class="phase-select-lbl">국면 수동 지정:</span>';
+  html += '<select class="phase-select" onchange="pickPhase(this.value)">';
+  html += '<option value="">자동 (날짜 기준: ' + autoPhase.name + ')</option>';
+  for (var i=0;i<PHASES.length;i++){
+    var sel = (manual===PHASES[i].key) ? ' selected' : '';
+    html += '<option value="'+PHASES[i].key+'"'+sel+'>'+PHASES[i].id+' '+PHASES[i].name+'</option>';
+  }
+  html += '</select>';
+  html += '</div>';
+  if (manual) {
+    html += '<div class="phase-manual-note">수동 국면 유지 중 · <a href="#" onclick="clearManualPhase();return false;">자동으로 복귀</a></div>';
+  }
+  wrap.innerHTML = html;
+}
+
+function toggleEasy() {
+  var data = getDayData();
+  data.easy = !data.easy;
+  saveStore(store);
+  render();
+}
+function pickPhase(key) {
+  setManualPhase(key || null);
+  render();
+}
+function clearManualPhase() {
+  setManualPhase(null);
+  render();
 }
 
 function updateSummary() {
