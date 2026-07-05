@@ -2249,6 +2249,10 @@ function exportData() {
     diet: localStorage.getItem(STORAGE_KEYS.diet) || null,
     workout: localStorage.getItem(STORAGE_KEYS.workout) || null,
     mental: localStorage.getItem(STORAGE_KEYS.mental) || null,
+    // 부가 설정값 (없어도 무방하지만 완전한 백업을 위해 포함)
+    manual_phase: localStorage.getItem('aokc2026_manual_phase') || null,
+    rehab: localStorage.getItem('aokc2026_rehab') || null,
+    rehab_collapsed: localStorage.getItem('aokc2026_rehab_collapsed') || null,
     exportedAt: new Date().toISOString()
   };
   var json = JSON.stringify(bundle);
@@ -2283,6 +2287,10 @@ function importData() {
     if (parsed.diet) localStorage.setItem(STORAGE_KEYS.diet, parsed.diet);
     if (parsed.workout) localStorage.setItem(STORAGE_KEYS.workout, parsed.workout);
     if (parsed.mental) localStorage.setItem(STORAGE_KEYS.mental, parsed.mental);
+    // 부가 설정값 (구버전 백업엔 없을 수 있으므로 있을 때만 복원)
+    if (parsed.manual_phase) localStorage.setItem('aokc2026_manual_phase', parsed.manual_phase);
+    if (parsed.rehab) localStorage.setItem('aokc2026_rehab', parsed.rehab);
+    if (parsed.rehab_collapsed) localStorage.setItem('aokc2026_rehab_collapsed', parsed.rehab_collapsed);
     area.value = '';
     area.style.display = 'none';
     msg.innerHTML = '✓ 복원 완료';
