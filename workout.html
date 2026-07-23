@@ -1229,6 +1229,7 @@ function toggleItem(k) {
   var data = getDayData();
   data[k] = !data[k];
   saveStore(store);
+  renderWarmup();
   renderRoutine();
   renderCooldown();
   updateProgress();
