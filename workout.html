@@ -691,7 +691,7 @@ body {
         <span class="card-title-text">🧘 운동 직후 쿨다운</span>
         <span class="routine-badge S">필수</span>
       </div>
-      <div class="card-sub">A·B 루틴 끝나고 바로 (월·화·목·금)</div>
+      <div class="card-sub" id="cooldown-sub">A·B 루틴 끝나고 바로 (월·화·목·금)</div>
       <div id="cooldown-items"></div>
     </div>
 
@@ -792,9 +792,9 @@ var PHASE_ROUTINES = {
   // ══════════ P0 회복기 (엄지 보호) ══════════
   recovery: {
     A: { name:'A · 폭발력/심폐', sub:'월·목 — 엄지 무부하 하체 폭발력', items:[
-      { k:'r0a1', name:'점핑 스쿼트', target:'15회 × 4', detail:'손은 가슴 앞 고정, 착지 시 무릎 정렬. 폭발적 하체 파워' },
+      { k:'r0a1', name:'점핑 스쿼트', target:'15회 × 4', detail:'손은 가슴 앞 고정, 착지 시 무릎 정렬. 루프 밴드를 무릎 위에 차면 무릎 모임 방지 + 둔근 자극 ↑ (권장)' },
       { k:'r0a2', name:'스케이터 점프', target:'좌우 10회 × 3', detail:'착지 후 1초 정지. 측면 가속·감속' },
-      { k:'r0a3', name:'전완 플랭크', target:'45초 × 3', detail:'손바닥 대신 전완 전체 지지. 오른손 엄지 힘 빼기' },
+      { k:'r0a3', name:'전완 플랭크 + 한 발 들기', target:'좌우 각 10초 × 3세트', detail:'전완 전체 지지(엄지 무부하). 왼발 10초→오른발 10초 번갈아 2라운드(40초). 든 발은 엉덩이 높이까지만, 골반 수평 유지. 흔들리면 시간 줄이기' },
       { k:'r0a4', name:'턱 점프(Tuck)', target:'10회 × 3', detail:'버피 대체. 착지 시 발바닥 전체로 소리 없이' },
       { k:'r0a5', name:'밴드 스쿼트(어깨거치)', target:'15회 × 4', detail:'밴드 밟고 어깨 거치. 헬스장이면 레그프레스로 대체' }
     ]},
@@ -803,7 +803,8 @@ var PHASE_ROUTINES = {
       { k:'r0b2', name:'템포 리버스 런지', target:'양발 각 12회 × 3', detail:'3초 다운·1초 정지·폭발 업. 무릎 정렬' },
       { k:'r0b3', name:'맨몸 굿모닝', target:'15회 × 4', detail:'턱걸이 대체. 손은 관자놀이 옆, 엄지 무부하' },
       { k:'r0b4', name:'트위스트 크런치', target:'좌우 각 15회 × 3', detail:'우드찹 대체. 몸통 회전력에만 집중' },
-      { k:'r0b5', name:'밴드 시티드 로우', target:'12~15회 × 3', detail:'발바닥에 밴드 걸고 당기기. 손목 감아 엄지 무부하' }
+      { k:'r0b5', name:'밴드 시티드 로우', target:'12~15회 × 3', detail:'발바닥에 밴드 걸고 당기기. 손목에 감아 엄지 무부하. 엄지 통증 있으면 건너뛰기' },
+      { k:'r0b6', name:'루프밴드 클램쉘', target:'좌우 각 15회 × 3', detail:'옆으로 누워 무릎 위 밴드, 무릎만 벌리기. 손 전혀 안 씀. 중둔근 = 착지 시 무릎 정렬의 핵심' }
     ]},
     M: { name:'모빌리티/회복', sub:'수·토 — 근막 이완과 가동성', items:[
       { k:'r0m1', name:'폼롤러', target:'5~10분', detail:'흉추·대퇴사두·장경인대·햄스트링 이완' },
@@ -819,19 +820,21 @@ var PHASE_ROUTINES = {
 
   // ══════════ P1 재건기 (그립 재로딩 + 전신 재건) ══════════
   rebuild: {
-    A: { name:'A · 파워 재건', sub:'월·목 — 점프 파워 + 그립 점진 로딩', items:[
-      { k:'r1a1', name:'박스 점프', target:'8회 × 4', detail:'계단·벤치·낮은 단(무릎 아래 높이) 활용. 착지 충격 흡수가 핵심. 박스 없으면 브로드 점프로 대체' },
-      { k:'r1a2', name:'익스플로시브 스텝업', target:'양발 각 10회 × 3', detail:'폭발적 도약, 무릎 정렬. 편측 파워' },
-      { k:'r1a3', name:'푸시업(점진)', target:'10~15회 × 3', detail:'그립 재로딩 1주차는 벽/무릎 푸시업부터. 통증 2/10 이하' },
-      { k:'r1a4', name:'스케이터 점프', target:'좌우 12회 × 3', detail:'측면 파워, 착지 1초 정지' },
-      { k:'r1a5', name:'플랭크 숄더탭', target:'좌우 16회 × 3', detail:'그립 회복되면 손바닥 지지 시작. 골반 고정' }
+    A: { name:'A · 파워 재건', sub:'월·목 — 점프 파워 (엄지 무부하 우선)', items:[
+      { k:'r1a1', name:'점프 스쿼트', target:'15회 × 4', detail:'수직 파워 대표 종목. 루프밴드를 무릎 위에 차면 무릎 정렬 + 둔근 자극 ↑ (권장). 박스·계단 있으면 박스 점프 8회×4로 대체 가능' },
+      { k:'r1a2', name:'턱 점프(Tuck)', target:'12~15회 × 3', detail:'속도·심폐 중심으로 연속 수행. 착지는 발바닥 전체로 소리 없이. 무릎 부담되면 12회로' },
+      { k:'r1a3', name:'스케이터 점프', target:'좌우 12회 × 3', detail:'측면 가속·감속. 착지 후 1초 완전 정지(라테랄 바운드 효과)' },
+      { k:'r1a4', name:'라인 홉 (앞뒤·좌우)', target:'앞뒤 30초 + 좌우 30초 × 3', detail:'수건 한 장 두고 두 발 모아 빠르게 넘나들기. 제자리에서 전후·측면 부하 + 잔발 스텝. 공간 한 걸음이면 충분' },
+      { k:'r1a5', name:'전완 플랭크 + 한 발 들기', target:'좌우 각 10초 × 3세트', detail:'전완 지지(엄지 무부하). 왼발 10초→오른발 10초 번갈아 2라운드(40초). 든 발은 엉덩이 높이까지, 골반 수평 유지. 엄지 회복 후 숄더탭으로 전환' },
+      { k:'r1a6', name:'푸시업(점진)', target:'10~15회 × 3', detail:'⚠️ 손바닥·엄지 밑동에 체중이 실립니다. 엄지 통증 있으면 건너뛰기. 시작할 땐 벽 푸시업부터, 통증 2/10 이하에서만', grip:true }
     ]},
     B: { name:'B · 근력 재건', sub:'화·금 — 전신 근력 기반 재건', items:[
       { k:'r1b1', name:'고블릿 스쿼트', target:'12회 × 4', detail:'덤벨/케틀벨 가슴 앞. 네 손가락 위주 그립, 통증 시 스트랩', grip:true },
       { k:'r1b2', name:'싱글레그 RDL', target:'양발 각 10회 × 3', detail:'[3-1-X] 후면사슬. 밸런스 재건', grip:true },
       { k:'r1b3', name:'인버티드 로우', target:'10~15회 × 3', detail:'그립 재로딩. 낮은 바/링, 통증 없는 각도부터', grip:true },
-      { k:'r1b4', name:'파이크 푸시업', target:'10~12회 × 3', detail:'어깨 근력. 정수리와 양손 삼각형' },
-      { k:'r1b5', name:'스탠딩 우드찹', target:'양방향 15회 × 3', detail:'3~4kg 밴드/볼. 회전 파워 재건', grip:true }
+      { k:'r1b4', name:'파이크 푸시업', target:'10~12회 × 3', detail:'⚠️ 손바닥·엄지에 체중이 실립니다. 엄지 통증 있으면 건너뛰고 아래 클램쉘·밴드 운동으로 대체', grip:true },
+      { k:'r1b5', name:'스탠딩 우드찹', target:'양방향 15회 × 3', detail:'3~4kg 밴드/볼. 회전 파워 재건', grip:true },
+      { k:'r1b6', name:'루프밴드 클램쉘', target:'좌우 각 15회 × 3', detail:'옆으로 누워 무릎 위 밴드, 무릎만 벌리기. 손 전혀 안 씀. 중둔근 = 착지 시 무릎 정렬의 핵심' }
     ]},
     M: { name:'모빌리티 + 유산소', sub:'수·토 — 가동성 + Zone2 베이스', items:[
       { k:'r1m1', name:'폼롤러 + 가동성', target:'10분', detail:'흉추·고관절·발목 위주' },
@@ -961,35 +964,57 @@ function toggleRehabCollapse(){
   try{ localStorage.setItem(REHAB_COLLAPSE_KEY, cur?'0':'1'); }catch(e){}
   render();
 }
+// 국면별 웜업 — 공용 기본 단계 (체온 → 활성화 → 가동성)
+// 마지막 '점화' 단계는 아래 WARMUP_PRIME에서 루틴 타입(A/B)별로 붙습니다
 var PHASE_WARMUP = {
   recovery: [
-    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'심박·체온 올리기. 엄지 힘 빼기' },
-    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
-    { k:'wu3', name:'고관절·발목·흉추 가동성', target:'3분', detail:'바닥 지지는 주먹·전완(엄지 보호)' },
-    { k:'wu4', name:'스쿼트→점프 램프업', target:'1분', detail:'신경계 점화, 마지막만 80%' }
+    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'가볍게 시작해 마지막 30초는 무릎 높이. 오른손 엄지는 힘 빼고' },
+    { k:'wu2', name:'글루트 브릿지 12회 + 데드버그 8회/측', target:'2분', detail:'둔근·코어 깨우기. 루프밴드 라테랄 워크 좌우 10걸음 추가 시 효과 ↑' },
+    { k:'wu3', name:'90/90 힙 6회 + 무릎 벽터치 8회 + 흉추 회전 6회', target:'3분', detail:'고관절·발목·흉추 순서. 바닥 지지는 주먹·전완으로(엄지 보호)' }
   ],
   rebuild: [
-    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'심박·체온 올리기' },
-    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
-    { k:'wu3', name:'동적 가동성 서킷', target:'3분', detail:'고관절·발목·흉추. 그립 워밍업 추가' },
-    { k:'wu4', name:'점프 램프업', target:'1분', detail:'신경계 점화' }
+    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'가볍게 시작해 마지막 30초는 무릎 높이' },
+    { k:'wu2', name:'글루트 브릿지 12회 + 데드버그 8회/측', target:'2분', detail:'둔근·코어 깨우기. 루프밴드 라테랄 워크 좌우 10걸음 추가 권장' },
+    { k:'wu3', name:'90/90 힙 6회 + 무릎 벽터치 8회 + 흉추 회전 6회', target:'3분', detail:'고관절·발목·흉추 순서. 바닥 지지는 주먹·전완으로(엄지 보호)' }
   ],
   strength: [
-    { k:'wu1', name:'유산소 3분 + 관절 회전', target:'3분', detail:'자전거/로잉. 손잡이 가볍게' },
-    { k:'wu2', name:'글루트·코어 활성화', target:'2분', detail:'브릿지·데드버그·밴드 워크' },
-    { k:'wu3', name:'첫 종목 빈 무게 램프업', target:'2분', detail:'50%→75% 2세트. 신경근 준비' },
-    { k:'wu4', name:'포인트 점프 5회', target:'1분', detail:'플라이오 점화' }
+    { k:'wu1', name:'자전거·로잉 3분 + 관절 회전', target:'3분', detail:'손잡이는 가볍게만 잡기' },
+    { k:'wu2', name:'글루트 브릿지 12회 + 밴드 라테랄 워크 10걸음', target:'2분', detail:'둔근 활성화. 고중량 전 필수' },
+    { k:'wu3', name:'90/90 힙 6회 + 흉추 회전 6회 + 발목 벽터치 8회', target:'2분', detail:'고중량 들기 전 관절 가동범위 확보' }
   ],
   convert: [
-    { k:'wu1', name:'동적 웜업 서킷', target:'3분', detail:'경기 준비 패턴. 스킵·캐리오카' },
-    { k:'wu2', name:'스프린트 빌드업', target:'2분', detail:'50→70→85% 점진 가속' },
-    { k:'wu3', name:'방향전환 프라이밍', target:'2분', detail:'가벼운 컷·셔플' },
-    { k:'wu4', name:'반응 점프', target:'1분', detail:'신경계 최대 점화' }
+    { k:'wu1', name:'스킵 + 캐리오카 왕복 2회', target:'3분', detail:'경기 준비 패턴으로 체온 올리기' },
+    { k:'wu2', name:'스프린트 빌드업 (50→70→85%)', target:'2분', detail:'3회 점진 가속. 마지막도 전력은 아님' },
+    { k:'wu3', name:'가벼운 컷·셔플 좌우 6회', target:'2분', detail:'방향전환 신경계 예습' }
   ],
   taper: [
-    { k:'wu1', name:'가벼운 동적 웜업', target:'4분', detail:'충분히, 서두르지 않고' },
-    { k:'wu2', name:'점프 프라이밍', target:'2분', detail:'가볍게 신경계만 깨우기' }
+    { k:'wu1', name:'가벼운 동적 웜업 (서두르지 않고)', target:'4분', detail:'스텝·팔스윙·가동성을 여유 있게. 이 시기엔 충분히 푸는 게 우선' }
   ]
+};
+
+// 웜업 마지막 '점화' 단계 — 뒤에 올 본운동을 미리 예습하는 단계
+// A(폭발력)는 점프로 신경계 점화 / B(근력)는 템포·힌지 리허설
+var WARMUP_PRIME = {
+  recovery: {
+    A: { k:'wpA', name:'점프 예비동작 (절반→80%)', target:'1분', detail:'맨몸 스쿼트 3회 → 절반 높이 점프 2회 → 80% 점프 2회. 전력 점프는 본운동 1세트부터' },
+    B: { k:'wpB', name:'맨몸 힌지 8회 + 템포 스쿼트 5회', target:'1분', detail:'힌지 = 엉덩이를 뒤로 빼고 무릎은 15도만(벽 터치로 확인). 스쿼트는 [3-1-X] 템포로' }
+  },
+  rebuild: {
+    A: { k:'wpA', name:'점프 예비동작 (절반→80%)', target:'1분', detail:'맨몸 스쿼트 3회 → 절반 높이 점프 2회 → 80% 점프 2회. 전력 점프는 본운동 1세트부터' },
+    B: { k:'wpB', name:'맨몸 힌지 8회 + 템포 스쿼트 5회', target:'1분', detail:'힌지 = 엉덩이를 뒤로 빼고 무릎은 15도만(벽 터치로 확인). 그립 워밍업은 엄지 통증 없을 때만 추가' }
+  },
+  strength: {
+    A: { k:'wpA', name:'제자리 점프 5회 (최대 의도)', target:'1분', detail:'높이보다 "빠르게 튀어오르는" 의도로. 플라이오 점화' },
+    B: { k:'wpB', name:'첫 종목 가벼운 3세트 (50→70→85%)', target:'2분', detail:'각 3~5회씩. 본세트 무게에 신경근을 미리 적응시키기' }
+  },
+  convert: {
+    A: { k:'wpA', name:'반응 점프 5회 (착지 즉시 재점프)', target:'1분', detail:'바닥에 닿는 시간을 최소화. 신경계 최대 점화' },
+    B: { k:'wpB', name:'가벼운 부하로 폭발 5회', target:'1분', detail:'무게는 절반 이하. 본운동에서 낼 속도를 미리 예습' }
+  },
+  taper: {
+    A: { k:'wpA', name:'가벼운 점프 5회 (감각 확인)', target:'2분', detail:'날카로움만 확인. 최대 강도는 금지' },
+    B: { k:'wpB', name:'맨몸 템포 동작 5회', target:'2분', detail:'동작 궤도만 가볍게 훑기' }
+  }
 };
 
 // 국면별 쿨다운 (공통)
@@ -1144,7 +1169,12 @@ function getWarmupItems(d){
   var data = store.dates[dateKey(d)] || {};
   var key = phase.key;
   if(data.easy) key = easierPhaseKey(key);
-  return PHASE_WARMUP[key] || PHASE_WARMUP.recovery;
+  var base = PHASE_WARMUP[key] || PHASE_WARMUP.recovery;
+  // 마지막 점화 단계는 그날 루틴 타입(A/B)에 맞춰 붙임
+  var r = getRoutineForDate(d);
+  var primeSet = WARMUP_PRIME[key] || WARMUP_PRIME.recovery;
+  var prime = primeSet[r.type];
+  return prime ? base.concat([prime]) : base;
 }
 function getCooldownItems(d){
   return PHASE_COOLDOWN._default;
@@ -1501,6 +1531,13 @@ function renderCooldown() {
     return;
   }
   card.style.display = '';
+  var subEl = document.getElementById('cooldown-sub');
+  if (subEl) {
+    var rt = getRoutineForDate(currentDate).type;
+    if (rt === 'A') subEl.innerHTML = '항목은 공통 · <strong>A(점프)일엔 종아리·아킬레스</strong>를 더 오래 늘려주세요';
+    else if (rt === 'B') subEl.innerHTML = '항목은 공통 · <strong>B(근력)일엔 햄스트링·고관절</strong>을 더 오래 늘려주세요';
+    else subEl.textContent = 'A·B 루틴 끝나고 바로';
+  }
   var items = getCooldownItems(currentDate);
   var data = store.dates[dateKey(currentDate)] || {};
   var html = '';
