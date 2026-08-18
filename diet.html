@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="식단 거울">
+<meta name="apple-mobile-web-app-title" content="식단">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 <link rel="apple-touch-icon" sizes="360x360" href="icon-360.png">
 <link rel="icon" type="image/png" href="icon.png">
 <meta name="theme-color" content="#0F4C36">
-<title>오늘의 식단 거울 — AOKC 2026</title>
+<title>오늘의 식단 — AOKC 2026</title>
 <style>
 :root {
   --c-bg: #F5F2EA;
@@ -32,478 +32,305 @@
   --c-purple: #5C3DAF;
   --c-purple-light: #E8E2F5;
   --c-good: #2D7A4E;
+  --c-line: #E0DCCF;
+  --c-ink: #1A1916;
+  --c-ink-soft: #7A7468;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* 모달 높이·오프셋 — 키보드 등장 시 JS가 덮어씀 */
+  --modal-h: 78vh;
+  --modal-offset: 0px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
-  background: var(--c-bg);
-  color: var(--c-text);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-  padding-bottom: calc(20px + var(--safe-bottom));
+  background: var(--c-bg); color: var(--c-text); min-height: 100vh;
+  font-size: 14px; line-height: 1.5; padding-bottom: calc(20px + var(--safe-bottom));
 }
-
-/* ── 헤더 ── */
 .header {
   background: -webkit-linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
   background: linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
-  color: #fff;
-  padding: 16px 18px 14px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  color: #fff; padding: 16px 18px 14px; position: sticky; top: 0; z-index: 100;
 }
 .header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-.header h1 .yr { opacity: 0.8; font-weight: 500; font-size: 13px; }
 .header p { font-size: 11px; opacity: 0.85; margin-top: 2px; }
 .header-row {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center;
 }
 .back-btn {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
+  background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 10px;
+  border-radius: 6px; font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer;
 }
-
 .content { padding: 14px; }
 
-/* ── 날짜 바 ── */
+.toggle-section {
+  display: -webkit-flex; display: flex; background: var(--c-surface-2);
+  border: 1px solid var(--c-border); border-radius: 10px; padding: 3px; margin-bottom: 12px;
+}
+.toggle-btn {
+  -webkit-flex: 1; flex: 1; padding: 8px; font-size: 12px; font-weight: 600;
+  background: transparent; border: none; border-radius: 8px; color: var(--c-muted);
+  cursor: pointer; font-family: inherit;
+}
+.toggle-btn.on {
+  background: var(--c-surface); color: var(--c-text);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.06); box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
 .date-bar {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
+  display: -webkit-flex; display: flex;
+  -webkit-align-items: center; align-items: center;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;
 }
 .date-btn {
-  background: var(--c-accent-light);
-  color: var(--c-accent);
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
+  background: var(--c-accent-light); color: var(--c-accent); border: none;
+  width: 32px; height: 32px; border-radius: 8px; font-size: 18px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
 }
-.date-text { font-size: 14px; font-weight: 700; }
-.date-text .sub {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--c-muted);
-  margin-top: 2px;
+.date-text { font-size: 14px; font-weight: 700; text-align: center; }
+.date-text .sub { display: block; font-size: 11px; font-weight: 500; color: var(--c-muted); margin-top: 2px; }
+
+/* 준수율 패널 */
+.score-panel {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 14px; padding: 16px; margin-bottom: 12px; text-align: center;
+}
+.score-num { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; color: var(--c-accent); }
+.score-num.mid { color: var(--c-amber); }
+.score-num.low { color: var(--c-muted); }
+.score-num .pct { font-size: 18px; font-weight: 700; }
+.score-bar { background: var(--c-border); height: 8px; border-radius: 4px; overflow: hidden; margin: 12px 0 8px; }
+.score-fill {
+  height: 100%; border-radius: 4px;
+  background: -webkit-linear-gradient(left, var(--c-accent), var(--c-accent-2));
+  background: linear-gradient(90deg, var(--c-accent), var(--c-accent-2));
+  -webkit-transition: width 0.3s; transition: width 0.3s;
+}
+.score-msg { font-size: 12.5px; line-height: 1.5; color: var(--c-text); }
+.score-msg.good { color: var(--c-good); font-weight: 600; }
+.week-tag {
+  display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 9px;
+  border-radius: 10px; background: var(--c-accent-light); color: var(--c-accent); margin-bottom: 8px;
 }
 
-/* ── 점수 패널 (거울) ── */
-.mirror-panel {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 14px;
-  text-align: center;
+/* 식사 카드 */
+.meal-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 14px; padding: 14px; margin-bottom: 10px;
 }
-.mirror-grade {
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  line-height: 1.1;
-}
-.mirror-grade.lvl-A { color: var(--c-good); }
-.mirror-grade.lvl-B { color: var(--c-accent); }
-.mirror-grade.lvl-C { color: var(--c-amber); }
-.mirror-grade.lvl-D { color: var(--c-coral); }
-.mirror-grade.lvl-F { color: #8B1F0E; }
-.mirror-msg {
-  font-size: 13px;
-  margin-top: 8px;
-  line-height: 1.55;
-  color: var(--c-text);
-  padding: 0 8px;
-}
-.mirror-msg.bad { color: var(--c-coral); font-weight: 600; }
-.mirror-msg.good { color: var(--c-good); font-weight: 600; }
-
-/* 위험 카운트 박스 */
-.risk-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.risk-box {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  position: relative;
-}
-.risk-box.alert { border-color: var(--c-coral); background: var(--c-coral-light); }
-.risk-box.warn { border-color: var(--c-amber); background: var(--c-amber-light); }
-.risk-box.good { border-color: #A7CFB8; background: var(--c-accent-light); }
-.risk-num {
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-.risk-num.alert { color: var(--c-coral); }
-.risk-num.warn { color: var(--c-amber); }
-.risk-num.good { color: var(--c-good); }
-.risk-num.zero { color: var(--c-muted); }
-.risk-lbl {
-  font-size: 11px;
-  font-weight: 600;
-  margin-top: 4px;
-  color: var(--c-text);
-}
-.risk-sub {
-  font-size: 9.5px;
-  color: var(--c-muted);
-  margin-top: 2px;
-  font-weight: 500;
-}
-
-/* ── 식사 입력 ── */
-.meal-section {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
-}
+.meal-card.done { border-color: #A7CFB8; background: #FBFDFB; }
+.meal-card.free { border-color: #E8D4A0; background: -webkit-linear-gradient(135deg,#FFFDF6,#FBF6E8); background: linear-gradient(135deg,#FFFDF6,#FBF6E8); }
 .meal-head {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
-  margin-bottom: 10px;
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center; margin-bottom: 8px;
 }
-.meal-title {
-  font-size: 14px;
-  font-weight: 700;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 6px;
+.meal-title { font-size: 14px; font-weight: 700; }
+.carb-tag { font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 10px; }
+.carb-tag.high { background: var(--c-blue-light); color: var(--c-blue); }
+.carb-tag.mid  { background: var(--c-accent-light); color: var(--c-accent); }
+.carb-tag.low  { background: var(--c-surface-2); color: var(--c-muted); border: 1px solid var(--c-border); }
+.carb-tag.free { background: var(--c-amber-light); color: #6B5510; }
+.meal-menu { font-size: 13.5px; line-height: 1.55; color: var(--c-text); margin-bottom: 6px; }
+.meal-note {
+  font-size: 11.5px; line-height: 1.5; color: var(--c-muted);
+  padding: 6px 9px; background: var(--c-surface-2); border-radius: 7px; margin-bottom: 4px;
 }
-.meal-count {
-  font-size: 11px;
-  color: var(--c-muted);
-  font-weight: 600;
-}
+.meal-note.kid { background: var(--c-blue-light); color: #0E3F73; }
+.meal-note.kid2 { background: var(--c-purple-light); color: #3D2E6B; }
+.carb-tag.box { background: var(--c-purple-light); color: var(--c-purple); }
+.safety-item { font-size: 11.5px; line-height: 1.55; padding: 9px 11px; background: var(--c-coral-light); color: #6B1E0E; border-radius: 8px; margin-bottom: 6px; }
+.safety-item b.h { display: block; font-weight: 800; margin-bottom: 2px; }
+.meal-note.adult { background: var(--c-accent-light); color: var(--c-accent); }
+.meal-note b { font-weight: 700; }
 
-/* 약 복용 체크 */
-.med-row {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  padding: 4px 0;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
+.pick-row { display: -webkit-flex; display: flex; gap: 5px; margin-top: 10px; }
+.pick-btn {
+  -webkit-flex: 1; flex: 1; padding: 9px 2px; font-size: 11px; font-weight: 700;
+  background: var(--c-surface-2); border: 1.5px solid var(--c-border); border-radius: 9px;
+  color: var(--c-muted); cursor: pointer; font-family: inherit;
+  -webkit-transition: all 0.15s; transition: all 0.15s;
 }
-.med-checkbox {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--c-muted);
-  border-radius: 8px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  margin-right: 13px;
-  position: relative;
-  -webkit-transition: all 0.15s;
-  transition: all 0.15s;
-  background: #fff;
-}
-.med-checkbox.done {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-}
-.med-checkbox.done:after {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 2px;
-  width: 8px;
-  height: 14px;
-  border: solid #fff;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-.med-text {
-  -webkit-flex: 1;
-  flex: 1;
-}
-.med-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--c-text);
-}
-.med-row.done .med-label {
-  color: var(--c-accent);
-}
-.med-sub {
-  font-size: 11px;
-  color: var(--c-muted);
-  margin-top: 2px;
-}
+.pick-btn:active { -webkit-transform: scale(0.96); transform: scale(0.96); }
+.pick-btn.on { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+.pick-btn.on.skip { background: var(--c-muted); border-color: var(--c-muted); }
+.pick-btn.on.school { background: var(--c-blue); border-color: var(--c-blue); }
 
-/* 저장 표시 */
-.save-indicator {
-  font-size: 11px;
-  font-weight: 600;
-  -webkit-transition: opacity 0.3s ease;
-  transition: opacity 0.3s ease;
-  opacity: 0;
-  white-space: nowrap;
+/* 학식 3원칙 */
+.l3-box { margin-top: 10px; padding: 10px; background: var(--c-blue-light); border-radius: 9px; }
+.l3-title { font-size: 11px; font-weight: 800; color: #0E3F73; margin-bottom: 6px; }
+.check-row {
+  display: -webkit-flex; display: flex;
+  -webkit-align-items: flex-start; align-items: flex-start;
+  padding: 7px 0; cursor: pointer; -webkit-user-select: none; user-select: none;
 }
-.save-indicator.show { opacity: 1; }
-.save-indicator.saving { color: var(--c-muted); }
-.save-indicator.saved { color: var(--c-good); }
+.checkbox {
+  width: 22px; height: 22px; border: 2px solid var(--c-muted); border-radius: 6px;
+  -webkit-flex-shrink: 0; flex-shrink: 0; margin-right: 10px; position: relative;
+  -webkit-transition: all 0.15s; transition: all 0.15s; background: #fff;
+}
+.checkbox.done { background: var(--c-accent); border-color: var(--c-accent); }
+.checkbox.done:after {
+  content: ''; position: absolute; left: 5px; top: 1px; width: 6px; height: 11px;
+  border: solid #fff; border-width: 0 2.5px 2.5px 0;
+  -webkit-transform: rotate(45deg); transform: rotate(45deg);
+}
+.check-text { -webkit-flex: 1; flex: 1; font-size: 12.5px; line-height: 1.45; }
+.check-text .sub { display: block; font-size: 10.5px; color: var(--c-muted); margin-top: 1px; }
+.check-row.done .check-text { color: var(--c-muted); }
 
-/* 입력된 음식 칩 */
+/* 물·약 */
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.mini-btn {
+  background: var(--c-surface); border: 1.5px solid var(--c-border); border-radius: 12px;
+  padding: 13px 8px; text-align: center; cursor: pointer; font-family: inherit;
+  -webkit-transition: all 0.15s; transition: all 0.15s; -webkit-user-select: none; user-select: none;
+}
+.mini-btn:active { -webkit-transform: scale(0.97); transform: scale(0.97); }
+.mini-btn.on { background: var(--c-accent-light); border-color: var(--c-accent); }
+.mini-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+.mini-label { font-size: 12px; font-weight: 700; color: var(--c-text); }
+.mini-sub { font-size: 10px; color: var(--c-muted); margin-top: 1px; }
+
+/* 접이식 섹션 */
+.fold {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+}
+.fold-head {
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center;
+  padding: 13px 14px; cursor: pointer; -webkit-user-select: none; user-select: none;
+}
+.fold-title { font-size: 13px; font-weight: 700; }
+.fold-meta { font-size: 11px; color: var(--c-muted); font-weight: 600; }
+.fold-body { padding: 0 14px 14px; }
+
+/* 예외 칩 */
+.exc-chips { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 6px; }
+.exc-chip {
+  background: var(--c-surface-2); border: 1.5px solid var(--c-border); border-radius: 16px;
+  padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--c-muted);
+  cursor: pointer; font-family: inherit;
+}
+.exc-chip.on { background: var(--c-amber-light); border-color: var(--c-amber); color: #6B5510; }
+.exc-note { font-size: 11px; color: var(--c-muted); margin-top: 8px; line-height: 1.5; }
+
+/* 자유기록 */
 .chip-area {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 32px;
-  padding: 8px;
-  background: var(--c-surface-2);
-  border-radius: 8px;
-  margin-bottom: 10px;
+  display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap;
+  gap: 6px; min-height: 30px; padding: 8px; background: var(--c-surface-2);
+  border-radius: 8px; margin-bottom: 8px;
 }
-.chip-area.empty:before {
-  content: '아직 입력된 음식이 없어요';
-  color: var(--c-muted);
-  font-size: 12px;
-  padding: 4px;
-}
+.chip-area.empty:before { content: '기록 없음'; color: var(--c-muted); font-size: 12px; padding: 3px; }
 .chip {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 16px;
-  padding: 5px 10px 5px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  display: -webkit-inline-flex;
-  display: inline-flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 6px;
+  background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px;
+  padding: 5px 8px 5px 11px; font-size: 12px; font-weight: 500;
+  display: -webkit-inline-flex; display: inline-flex;
+  -webkit-align-items: center; align-items: center; gap: 6px;
 }
 .chip.danger { background: var(--c-coral-light); border-color: #E8B6A8; color: #6B1E0E; }
 .chip.warn { background: var(--c-amber-light); border-color: #E8D4A0; color: #6B5510; }
 .chip.good { background: var(--c-accent-light); border-color: #A7CFB8; color: var(--c-accent); }
 .chip-x {
-  background: rgba(0,0,0,0.1);
-  border: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-  padding: 0;
+  background: rgba(0,0,0,0.1); border: none; width: 16px; height: 16px; border-radius: 50%;
+  font-size: 11px; line-height: 1; cursor: pointer; font-family: inherit; color: inherit; padding: 0;
 }
-
-/* 음식 추가 버튼 */
+.sub-label { font-size: 11px; font-weight: 700; color: var(--c-muted); margin: 8px 0 4px; }
 .add-food-btn {
-  width: 100%;
-  background: var(--c-accent-light);
-  color: var(--c-accent);
-  border: 1px dashed var(--c-accent);
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
+  width: 100%; background: var(--c-accent-light); color: var(--c-accent);
+  border: 1px dashed var(--c-accent); padding: 9px; border-radius: 8px;
+  font-size: 12.5px; font-weight: 600; font-family: inherit; cursor: pointer;
 }
+.grade-line {
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center;
+  padding: 9px 11px; background: var(--c-surface-2); border-radius: 9px; margin-bottom: 10px;
+}
+.grade-badge { font-size: 22px; font-weight: 800; }
+.grade-badge.A { color: var(--c-good); }
+.grade-badge.B { color: var(--c-accent); }
+.grade-badge.C { color: var(--c-amber); }
+.grade-badge.D { color: var(--c-coral); }
+.grade-badge.F { color: #8B1F0E; }
+.grade-txt { font-size: 11.5px; color: var(--c-muted); -webkit-flex: 1; flex: 1; margin-left: 10px; line-height: 1.45; }
 
-/* ── 음식 선택 모달 ── */
+/* 인사이트 */
+.insight-row { font-size: 12px; padding: 8px 10px; border-radius: 8px; margin-top: 6px; line-height: 1.5; }
+.insight-row.bad { background: var(--c-coral-light); color: #6B1E0E; }
+.insight-row.warn { background: var(--c-amber-light); color: #6B5510; }
+.insight-row.good { background: var(--c-accent-light); color: var(--c-accent); }
+.insight-row.neutral { background: var(--c-surface-2); color: var(--c-text); }
+
+/* 모달 */
 .modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 500;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: flex-end;
-  align-items: flex-end;
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 500;
+  -webkit-justify-content: center; justify-content: center;
+  -webkit-align-items: flex-end; align-items: flex-end;
 }
-.modal-overlay.on {
-  display: -webkit-flex;
-  display: flex;
-}
+.modal-overlay.on { display: -webkit-flex; display: flex; }
 .modal {
-  background: var(--c-surface);
-  width: 100%;
-  max-width: 500px;
-  /* 기본 높이 — JS에서 visualViewport 기반으로 동적 설정 */
-  height: var(--modal-h, 75vh);
-  max-height: var(--modal-h, 75vh);
-  /* 키보드 위로 모달이 위치하도록 transform 사용 */
-  -webkit-transform: translateY(var(--modal-offset, 0px));
-  transform: translateY(var(--modal-offset, 0px));
+  background: var(--c-surface); width: 100%; max-width: 500px;
+  height: var(--modal-h, 78vh); max-height: var(--modal-h, 78vh);
+  -webkit-transform: translateY(var(--modal-offset, 0px)); transform: translateY(var(--modal-offset, 0px));
   border-radius: 18px 18px 0 0;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
+  display: -webkit-flex; display: flex;
+  -webkit-flex-direction: column; flex-direction: column;
   -webkit-transition: -webkit-transform 0.2s ease, height 0.2s ease;
-  transition: transform 0.2s ease, height 0.2s ease;
-  overflow: hidden;
+  transition: transform 0.2s ease, height 0.2s ease; overflow: hidden;
 }
 .modal-head {
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--c-border);
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
+  padding: 14px 16px 10px; border-bottom: 1px solid var(--c-border);
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center;
+  -webkit-flex-shrink: 0; flex-shrink: 0;
 }
 .modal-title { font-size: 14px; font-weight: 700; }
 .modal-title small { color: var(--c-muted); font-weight: 500; }
 .modal-close {
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  color: var(--c-muted);
-  cursor: pointer;
-  padding: 0 4px;
-  font-family: inherit;
+  background: transparent; border: none; font-size: 22px; color: var(--c-muted);
+  cursor: pointer; padding: 0 4px; font-family: inherit;
 }
-.search-bar {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--c-border);
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  background: var(--c-surface);
-}
+.search-bar { padding: 10px 14px; border-bottom: 1px solid var(--c-border); -webkit-flex-shrink: 0; flex-shrink: 0; }
 .search-input {
-  width: 100%;
-  padding: 9px 12px;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  -webkit-appearance: none;
-  appearance: none;
+  width: 100%; padding: 9px 12px; border: 1px solid var(--c-border); border-radius: 8px;
+  font-size: 14px; font-family: inherit; -webkit-appearance: none; appearance: none;
 }
 .search-input:focus { outline: none; border-color: var(--c-accent); }
-
-/* 카테고리 탭 */
 .cat-tabs {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--c-border);
-  gap: 6px;
-  background: var(--c-surface);
+  display: -webkit-flex; display: flex; -webkit-flex-wrap: nowrap; flex-wrap: nowrap;
+  -webkit-flex-shrink: 0; flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  padding: 8px 14px; border-bottom: 1px solid var(--c-border); gap: 6px;
 }
 .cat-tab {
-  background: var(--c-surface-2);
-  border: 1px solid var(--c-border);
-  padding: 7px 12px;
-  border-radius: 14px;
-  font-size: 11.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  font-family: inherit;
-  color: var(--c-muted);
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
+  background: var(--c-surface-2); border: 1px solid var(--c-border); padding: 7px 12px;
+  border-radius: 14px; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  cursor: pointer; font-family: inherit; color: var(--c-muted);
+  -webkit-flex-shrink: 0; flex-shrink: 0;
 }
-.cat-tab.on {
-  background: var(--c-accent);
-  color: #fff;
-  border-color: var(--c-accent);
-}
-
-/* 음식 리스트 */
-.food-list {
-  -webkit-flex: 1;
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 4px 0;
-}
+.cat-tab.on { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+.food-list { -webkit-flex: 1; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; }
 .food-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--c-border);
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
-  cursor: pointer;
+  padding: 10px 16px; border-bottom: 1px solid var(--c-border);
+  display: -webkit-flex; display: flex;
+  -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-align-items: center; align-items: center; cursor: pointer;
 }
 .food-item:active { background: var(--c-surface-2); }
-.food-name {
-  font-size: 13.5px;
-  font-weight: 500;
-}
+.food-name { font-size: 13.5px; font-weight: 500; }
 .food-tags {
-  display: -webkit-flex;
-  display: flex;
-  gap: 4px;
-  margin-top: 4px;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
+  display: -webkit-flex; display: flex; gap: 4px; margin-top: 4px;
+  -webkit-flex-wrap: wrap; flex-wrap: wrap;
 }
-.tag {
-  font-size: 9.5px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-weight: 600;
-  letter-spacing: -0.1px;
-}
+.tag { font-size: 9.5px; padding: 2px 6px; border-radius: 8px; font-weight: 600; }
 .tag.gout { background: var(--c-coral-light); color: #6B1E0E; }
 .tag.salt { background: var(--c-amber-light); color: #6B5510; }
 .tag.fat { background: #F0E5F5; color: var(--c-purple); }
@@ -511,170 +338,55 @@ body {
 .tag.alc { background: #4A2E2E; color: #fff; }
 .tag.good { background: var(--c-accent-light); color: var(--c-accent); }
 .tag.protein { background: var(--c-blue-light); color: var(--c-blue); }
-
+.tag.pick { border: 1.5px dashed var(--c-border); background: #fff; color: var(--c-muted); padding: 6px 11px; font-size: 11.5px; cursor: pointer; font-family: inherit; border-radius: 12px; }
+.tag.pick.on { border-style: solid; }
 .food-add-btn {
-  background: var(--c-accent);
-  color: #fff;
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  font-size: 18px;
-  line-height: 1;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
+  background: var(--c-accent); color: #fff; border: none; width: 28px; height: 28px;
+  border-radius: 50%; font-size: 18px; line-height: 1; font-weight: 600;
+  cursor: pointer; font-family: inherit; -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.custom-box { padding: 12px 16px; background: var(--c-surface-2); border-top: 1px solid var(--c-border); }
+.custom-title { font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+.custom-tags { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+.custom-save {
+  width: 100%; background: var(--c-accent); color: #fff; border: none; padding: 10px;
+  border-radius: 8px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
 }
 
-/* ── 인사이트 카드 ── */
-.insight-card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
+/* 주간 */
+.weekly-row {
+  display: -webkit-flex; display: flex;
+  -webkit-align-items: center; align-items: center;
+  gap: 8px; margin-bottom: 7px; font-size: 12px;
 }
-.insight-title {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 6px;
-}
-.insight-row {
-  font-size: 12.5px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  line-height: 1.55;
-}
-.insight-row:last-child { margin-bottom: 0; }
-.insight-row.bad {
-  background: var(--c-coral-light);
-  color: #6B1E0E;
-}
-.insight-row.warn {
-  background: var(--c-amber-light);
-  color: #6B5510;
-}
-.insight-row.good {
-  background: var(--c-accent-light);
-  color: var(--c-accent);
-}
-.insight-row.neutral {
-  background: var(--c-surface-2);
-  color: var(--c-text);
-}
-.insight-row strong { font-weight: 700; }
-
-/* 주간 요약 */
-.weekly-bar-row {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 11px;
-}
-.weekly-day {
-  width: 30px;
-  font-weight: 600;
-  color: var(--c-muted);
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-.weekly-bar-track {
-  -webkit-flex: 1;
-  flex: 1;
-  height: 18px;
-  background: var(--c-surface-2);
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
+.weekly-day { width: 46px; font-weight: 600; color: var(--c-muted); -webkit-flex-shrink: 0; flex-shrink: 0; font-size: 11px; }
+.weekly-bar-track { -webkit-flex: 1; flex: 1; height: 18px; background: var(--c-surface-2); border-radius: 4px; overflow: hidden; }
 .weekly-bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  -webkit-transition: width 0.3s;
-  transition: width 0.3s;
+  height: 100%; border-radius: 4px;
+  background: -webkit-linear-gradient(left, var(--c-accent), var(--c-accent-2));
+  background: linear-gradient(90deg, var(--c-accent), var(--c-accent-2));
 }
-.weekly-bar-fill.A { background: var(--c-good); }
-.weekly-bar-fill.B { background: var(--c-accent); }
-.weekly-bar-fill.C { background: var(--c-amber); }
-.weekly-bar-fill.D { background: var(--c-coral); }
-.weekly-bar-fill.F { background: #8B1F0E; }
-.weekly-grade {
-  width: 24px;
-  text-align: right;
-  font-weight: 800;
-  font-size: 13px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
+.weekly-pct { width: 40px; text-align: right; font-weight: 700; font-size: 12px; color: var(--c-accent); -webkit-flex-shrink: 0; flex-shrink: 0; }
 
-/* 자주 먹는 음식 */
-.freq-row {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--c-border);
-  font-size: 12.5px;
-}
-.freq-row:last-child { border-bottom: none; }
-.freq-name { font-weight: 500; }
-.freq-count {
-  color: var(--c-muted);
-  font-size: 11.5px;
-  font-weight: 600;
-}
+/* 식단표 */
+.plan-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.plan-table th, .plan-table td { text-align: left; padding: 7px 5px; border-bottom: 1px solid var(--c-border); vertical-align: top; }
+.plan-table th { background: var(--c-surface-2); font-size: 10.5px; color: var(--c-muted); font-weight: 700; }
+.plan-table td.dow { font-weight: 800; width: 26px; color: var(--c-accent); }
+.plan-table tr.today-row { background: #FBFDFB; }
+.plan-table tr.today-row td.dow { color: var(--c-coral); }
 
-/* 빈 상태 */
-.empty-state {
-  text-align: center;
-  padding: 24px 16px;
-  color: var(--c-muted);
-  font-size: 12.5px;
-  line-height: 1.6;
+.empty-state { text-align: center; padding: 24px 16px; color: var(--c-muted); font-size: 12.5px; line-height: 1.6; }
+.card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 14px; padding: 14px; margin-bottom: 12px;
 }
-
-/* 토글 버튼 */
-.toggle-section {
-  display: -webkit-flex;
-  display: flex;
-  background: var(--c-surface-2);
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
-  padding: 3px;
-  margin-bottom: 12px;
+.card-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.principle {
+  background: var(--c-accent-light); border: 1px solid #A7CFB8; border-radius: 10px;
+  padding: 11px 13px; font-size: 11.5px; line-height: 1.6; color: var(--c-accent); margin-bottom: 12px;
 }
-.toggle-btn {
-  -webkit-flex: 1;
-  flex: 1;
-  padding: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  color: var(--c-muted);
-  cursor: pointer;
-  font-family: inherit;
-}
-.toggle-btn.on {
-  background: var(--c-surface);
-  color: var(--c-text);
-  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-}
-
+.principle b { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -682,8 +394,8 @@ body {
 <div class="header">
   <div class="header-row">
     <div>
-      <h1>🪞 오늘의 식단 거울</h1>
-      <p id="reflect-msg">먹은 음식을 입력하면 솔직하게 비춰드립니다</p>
+      <h1>🥗 오늘의 식단</h1>
+      <p id="hdr-sub">계획대로 갔는지만 체크하면 됩니다</p>
     </div>
     <button class="back-btn" onclick="goHome()">← 메인</button>
   </div>
@@ -691,16 +403,15 @@ body {
 
 <div class="content">
 
-  <!-- 일/주간 토글 -->
   <div class="toggle-section">
-    <button class="toggle-btn on" id="view-day-btn" onclick="switchView('day')">📅 오늘</button>
-    <button class="toggle-btn" id="view-week-btn" onclick="switchView('week')">📊 주간</button>
+    <button class="toggle-btn on" id="v-day-btn" onclick="switchView('day')">📅 오늘</button>
+    <button class="toggle-btn" id="v-week-btn" onclick="switchView('week')">📊 주간</button>
+    <button class="toggle-btn" id="v-plan-btn" onclick="switchView('plan')">📋 식단표</button>
   </div>
 
-  <!-- ════ 일별 뷰 ════ -->
+  <!-- ════ 오늘 ════ -->
   <div id="view-day">
 
-    <!-- 날짜 바 -->
     <div class="date-bar">
       <button class="date-btn" onclick="changeDate(-1)">‹</button>
       <div class="date-text" id="date-text">오늘
@@ -709,136 +420,98 @@ body {
       <button class="date-btn" onclick="changeDate(1)">›</button>
     </div>
 
-    <!-- 거울 점수 -->
-    <div class="mirror-panel">
-      <div class="mirror-grade" id="grade">—</div>
-      <div class="mirror-msg" id="grade-msg">아직 입력된 음식이 없어요</div>
+    <div class="score-panel">
+      <div class="week-tag" id="week-tag">A주</div>
+      <div class="score-num" id="score-num">0<span class="pct">%</span></div>
+      <div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+      <div class="score-msg" id="score-msg">아직 체크 전이에요</div>
     </div>
 
-    <!-- 위험 카운트 -->
-    <div class="risk-grid">
-      <div class="risk-box" id="risk-gout-box">
-        <div class="risk-num zero" id="cnt-gout">0</div>
-        <div class="risk-lbl">⚠️ 통풍 위험</div>
-        <div class="risk-sub">술·내장·등푸른생선</div>
+    <div id="meal-cards"></div>
+
+    <div class="mini-grid">
+      <div class="mini-btn" id="mini-water" onclick="toggleFlag('water')">
+        <span class="mini-icon">💧</span>
+        <div class="mini-label">물 2L</div>
+        <div class="mini-sub">요산 배출에 필수</div>
       </div>
-      <div class="risk-box" id="risk-salt-box">
-        <div class="risk-num zero" id="cnt-salt">0</div>
-        <div class="risk-lbl">🧂 나트륨 폭탄</div>
-        <div class="risk-sub">국·찌개·라면류</div>
-      </div>
-      <div class="risk-box" id="risk-fat-box">
-        <div class="risk-num zero" id="cnt-fat">0</div>
-        <div class="risk-lbl">🥓 포화지방</div>
-        <div class="risk-sub">삼겹살·튀김·치즈</div>
-      </div>
-      <div class="risk-box" id="risk-good-box">
-        <div class="risk-num zero" id="cnt-good">0</div>
-        <div class="risk-lbl">✅ 도움됨</div>
-        <div class="risk-sub">계획 식품·운동에 ↑</div>
+      <div class="mini-btn" id="mini-med" onclick="toggleFlag('med')">
+        <span class="mini-icon">💊</span>
+        <div class="mini-label">약 복용</div>
+        <div class="mini-sub">처방약 · 영양제</div>
       </div>
     </div>
 
-    <!-- 식사별 입력 -->
-    <div class="meal-section">
-      <div class="meal-head">
-        <div class="meal-title">🌅 아침</div>
-        <div class="meal-count" id="cnt-breakfast">0개</div>
+    <!-- 오늘의 예외 -->
+    <div class="fold">
+      <div class="fold-head" onclick="toggleFold('exc')">
+        <span class="fold-title">🔖 오늘의 예외</span>
+        <span class="fold-meta" id="exc-meta">없음 ▾</span>
       </div>
-      <div class="chip-area empty" id="chips-breakfast"></div>
-      <button class="add-food-btn" onclick="openModal('breakfast')">+ 음식 추가</button>
+      <div class="fold-body" id="fold-exc" style="display:none">
+        <div class="exc-chips" id="exc-chips"></div>
+        <div class="exc-note">점수를 깎지 않습니다. 있었던 일을 그냥 기록해 두는 칸이에요 — 나중에 패턴을 볼 때 쓰입니다.</div>
+      </div>
     </div>
 
-    <div class="meal-section">
-      <div class="meal-head">
-        <div class="meal-title">☀️ 점심</div>
-        <div class="meal-count" id="cnt-lunch">0개</div>
+    <!-- 자유 기록 -->
+    <div class="fold">
+      <div class="fold-head" onclick="toggleFold('log')">
+        <span class="fold-title">🔍 자세히 기록하기</span>
+        <span class="fold-meta" id="log-meta">▾</span>
       </div>
-      <div class="chip-area empty" id="chips-lunch"></div>
-      <button class="add-food-btn" onclick="openModal('lunch')">+ 음식 추가</button>
-    </div>
-
-    <div class="meal-section">
-      <div class="meal-head">
-        <div class="meal-title">🌙 저녁</div>
-        <div class="meal-count" id="cnt-dinner">0개</div>
-      </div>
-      <div class="chip-area empty" id="chips-dinner"></div>
-      <button class="add-food-btn" onclick="openModal('dinner')">+ 음식 추가</button>
-    </div>
-
-    <div class="meal-section">
-      <div class="meal-head">
-        <div class="meal-title">🍪 간식·음료</div>
-        <div class="meal-count" id="cnt-snack">0개</div>
-      </div>
-      <div class="chip-area empty" id="chips-snack"></div>
-      <button class="add-food-btn" onclick="openModal('snack')">+ 음식 추가</button>
-    </div>
-
-    <!-- 약 복용 체크 -->
-    <div class="meal-section">
-      <div class="meal-head">
-        <div class="meal-title">💊 오늘의 약 복용</div>
-        <div class="save-indicator" id="med-saved"></div>
-      </div>
-      <div class="med-row" onclick="toggleMed()">
-        <div class="med-checkbox" id="med-box"></div>
-        <div class="med-text">
-          <div class="med-label" id="med-label">먹지 않음</div>
-          <div class="med-sub">통풍약 · 콜레스테롤약 · 오메가3 · 종합비타민</div>
+      <div class="fold-body" id="fold-log" style="display:none">
+        <div class="grade-line" id="grade-line" style="display:none">
+          <div class="grade-badge" id="free-grade">—</div>
+          <div class="grade-txt" id="free-grade-txt"></div>
         </div>
+        <div id="free-meals"></div>
+        <div id="free-insights"></div>
       </div>
-    </div>
-
-    <!-- 인사이트 -->
-    <div class="insight-card" id="insight-card" style="display:none">
-      <div class="insight-title">💬 오늘의 코치 멘트</div>
-      <div id="insight-list"></div>
     </div>
 
   </div>
 
-  <!-- ════ 주간 뷰 ════ -->
+  <!-- ════ 주간 ════ -->
   <div id="view-week" style="display:none">
-    <div class="insight-card">
-      <div class="insight-title">📊 최근 7일 기록</div>
+    <div class="card">
+      <div class="card-title">📊 최근 7일 준수율</div>
       <div id="weekly-list"></div>
     </div>
-
-    <div class="insight-card">
-      <div class="insight-title">📈 7일 위험 신호 합계</div>
-      <div class="risk-grid" style="margin-bottom:0">
-        <div class="risk-box">
-          <div class="risk-num alert" id="wk-gout">0</div>
-          <div class="risk-lbl">⚠️ 통풍 위험</div>
-        </div>
-        <div class="risk-box">
-          <div class="risk-num warn" id="wk-salt">0</div>
-          <div class="risk-lbl">🧂 나트륨 폭탄</div>
-        </div>
-        <div class="risk-box">
-          <div class="risk-num warn" id="wk-fat">0</div>
-          <div class="risk-lbl">🥓 포화지방</div>
-        </div>
-        <div class="risk-box">
-          <div class="risk-num good" id="wk-good">0</div>
-          <div class="risk-lbl">✅ 도움됨</div>
-        </div>
-      </div>
+    <div class="card">
+      <div class="card-title">🔖 최근 7일 예외</div>
+      <div id="weekly-exc"></div>
     </div>
+    <div class="card">
+      <div class="card-title">💧 최근 7일 습관</div>
+      <div id="weekly-habit"></div>
+    </div>
+  </div>
 
-    <div class="insight-card">
-      <div class="insight-title">🔁 자주 먹은 음식 TOP 5</div>
-      <div id="freq-list">
-        <div class="empty-state">아직 데이터가 부족해요</div>
-      </div>
+  <!-- ════ 식단표 ════ -->
+  <div id="view-plan" style="display:none">
+    <div class="principle" id="plan-principle"></div>
+    <div class="toggle-section">
+      <button class="toggle-btn on" id="pw-A" onclick="showPlanWeek('A')">A주</button>
+      <button class="toggle-btn" id="pw-B" onclick="showPlanWeek('B')">B주</button>
+    </div>
+    <div class="card">
+      <div class="card-title" id="plan-title">A주 식단표</div>
+      <table class="plan-table" id="plan-table"></table>
+    </div>
+    <div class="card">
+      <div class="card-title">🍱 점심 — 도시락 / 학식 3원칙</div>
+      <div id="l3-guide"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">👶 만 2세 안전 수칙</div>
+      <div id="safety-guide"></div>
     </div>
   </div>
 
 </div>
 
-<!-- ════ 음식 선택 모달 ════ -->
+<!-- 음식 선택 모달 -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalIfOverlay(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -846,483 +519,420 @@ body {
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="search-bar">
-      <input type="text" class="search-input" id="search-input" placeholder="음식 이름 검색 (예: 라면, 닭가슴살)" oninput="filterFoods()" onfocus="onSearchFocus()" onblur="onSearchBlur()">
+      <input type="text" class="search-input" id="search-input" placeholder="음식 이름 검색 (없으면 아래에서 직접 추가)" oninput="filterFoods()" onfocus="onSearchFocus()" onblur="onSearchBlur()">
     </div>
     <div class="cat-tabs" id="cat-tabs"></div>
     <div class="food-list" id="food-list"></div>
+    <div class="custom-box">
+      <div class="custom-title">➕ 목록에 없나요? 직접 추가</div>
+      <input type="text" class="search-input" id="custom-name" placeholder="음식 이름" maxlength="24">
+      <div class="custom-tags" id="custom-tags"></div>
+      <button class="custom-save" onclick="saveCustomFood()">추가하고 기록하기</button>
+    </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// 한국인 음식 데이터베이스 (약 150종)
-// 태그: gout(통풍위험), salt(나트륨), fat(포화지방), proc(가공), alc(술), good(도움), protein(단백질)
-// ═══════════════════════════════════════════
-var FOODS = [
-  // === 한식 주식 ===
-  { c: '한식 주식', n: '흰밥', t: [] },
-  { c: '한식 주식', n: '현미밥', t: ['good'] },
-  { c: '한식 주식', n: '잡곡밥', t: ['good'] },
-  { c: '한식 주식', n: '고구마 (찐·구운)', t: ['good'] },
-  { c: '한식 주식', n: '단호박', t: ['good'] },
-  { c: '한식 주식', n: '찐감자·삶은감자', t: ['good'] },
-  { c: '한식 주식', n: '감자전', t: ['fat'] },
-  { c: '한식 주식', n: '감자튀김 (프렌치프라이)', t: ['fat', 'proc', 'salt'] },
-  { c: '한식 주식', n: '감자조림', t: ['salt'] },
-  { c: '한식 주식', n: '죽 (흰)', t: [] },
-  { c: '한식 주식', n: '귀리죽', t: ['good'] },
-  { c: '한식 주식', n: '비빔밥', t: ['good'] },
-  { c: '한식 주식', n: '김밥', t: ['salt'] },
-  { c: '한식 주식', n: '김치볶음밥', t: ['salt'] },
-  { c: '한식 주식', n: '제육덮밥', t: ['salt', 'fat'] },
-  { c: '한식 주식', n: '돈까스 덮밥', t: ['salt', 'fat', 'proc'] },
-  { c: '한식 주식', n: '닭갈비 덮밥', t: ['salt', 'fat'] },
-  { c: '한식 주식', n: '오므라이스', t: ['salt'] },
-  { c: '한식 주식', n: '카레라이스', t: [] },
-  { c: '한식 주식', n: '하이라이스', t: ['salt'] },
-  { c: '한식 주식', n: '볶음밥 (계란)', t: [] },
-  { c: '한식 주식', n: '날치알 비빔밥', t: ['salt', 'good'] },
-  { c: '한식 주식', n: '곤드레밥', t: ['good'] },
-  { c: '한식 주식', n: '쌈밥', t: ['good'] },
-  { c: '한식 주식', n: '주먹밥', t: ['salt'] },
-  { c: '한식 주식', n: '누룽지', t: [] },
-  { c: '한식 주식', n: '전복죽', t: ['good'] },
-  { c: '한식 주식', n: '잣죽·호박죽', t: ['good'] },
-  { c: '한식 주식', n: '닭죽', t: ['protein', 'good'] },
-  { c: '한식 주식', n: '소고기 미역죽', t: ['salt'] },
-  { c: '한식 주식', n: '단팥죽', t: [] },
-  { c: '한식 주식', n: '쌀국수 (베트남식)', t: ['salt'] },
-  { c: '한식 주식', n: '떡국·만둣국', t: ['salt'] },
-  { c: '한식 주식', n: '국밥 (소·돼지)', t: ['salt', 'gout'] },
-  { c: '한식 주식', n: '비빔국수', t: ['salt'] },
-  { c: '한식 주식', n: '돌솥비빔밥', t: ['salt'] },
-  { c: '한식 주식', n: '회덮밥', t: ['protein', 'good'] },
-  { c: '한식 주식', n: '연어덮밥', t: ['protein', 'good'] },
-  { c: '한식 주식', n: '낙지·오징어덮밥', t: ['salt', 'gout'] },
-  { c: '한식 주식', n: '소고기 덮밥', t: ['salt'] },
-  { c: '한식 주식', n: '계란 덮밥', t: ['protein'] },
-  { c: '한식 주식', n: '참치마요 덮밥', t: ['protein'] },
-  { c: '한식 주식', n: '곱창전골', t: ['salt', 'gout', 'fat'] },
-  { c: '한식 주식', n: '버섯전골', t: ['salt'] },
-  { c: '한식 주식', n: '비빔밥 (채소)', t: ['good'] },
+// ═══════════════════════════════════════════════════════════
+// 식단 — 계획 체크리스트 + 자유 기록
+// 아침·점심·저녁 모두 계획. 점심은 '학식' 옵션 선택 가능.
+// 가족(아이 포함) 공용 식단 + 토요일 저녁 자유일.
+// ═══════════════════════════════════════════════════════════
 
-  // === 국·찌개·탕 ===
-  { c: '국·찌개', n: '미역국', t: [] },
-  { c: '국·찌개', n: '된장국', t: ['salt'] },
-  { c: '국·찌개', n: '두부된장국', t: ['salt', 'good'] },
-  { c: '국·찌개', n: '콩나물국', t: [] },
-  { c: '국·찌개', n: '무국', t: [] },
-  { c: '국·찌개', n: '김치찌개', t: ['salt', 'fat'] },
-  { c: '국·찌개', n: '된장찌개', t: ['salt'] },
-  { c: '국·찌개', n: '부대찌개', t: ['salt', 'fat', 'proc'] },
-  { c: '국·찌개', n: '순두부찌개', t: ['salt'] },
-  { c: '국·찌개', n: '설렁탕', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '곰탕', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '갈비탕', t: ['salt', 'gout', 'fat'] },
-  { c: '국·찌개', n: '삼계탕', t: ['salt'] },
-  { c: '국·찌개', n: '추어탕', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '육개장', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '해장국', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '북엇국', t: ['salt', 'protein'] },
-  { c: '국·찌개', n: '황태해장국', t: ['salt', 'protein'] },
-  { c: '국·찌개', n: '시래기국', t: [] },
-  { c: '국·찌개', n: '오징어국', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '청국장찌개', t: ['salt'] },
-  { c: '국·찌개', n: '동태탕·매운탕', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '닭곰탕', t: ['salt'] },
-  { c: '국·찌개', n: '닭개장', t: ['salt'] },
-  { c: '국·찌개', n: '소고기무국', t: ['salt'] },
-  { c: '국·찌개', n: '시금치된장국', t: ['salt', 'good'] },
-  { c: '국·찌개', n: '아욱국', t: [] },
-  { c: '국·찌개', n: '근대국', t: [] },
-  { c: '국·찌개', n: '갈치조림', t: ['salt'] },
-  { c: '국·찌개', n: '고등어조림', t: ['salt', 'gout'] },
-  { c: '국·찌개', n: '꽃게탕', t: ['salt', 'gout'] },
+var STORAGE_KEY = 'aokc2026_diet';
+var PLAN_START = new Date(2026, 4, 1);
+var COMP_START = new Date(2026, 11, 6);
+// A/B주 기준 월요일 (이 날이 속한 주가 A주)
+var WEEK_ANCHOR = new Date(2026, 7, 17);
 
-  // === 면류 ===
-  { c: '면류', n: '라면', t: ['salt', 'proc', 'fat'] },
-  { c: '면류', n: '짜장면', t: ['salt', 'fat'] },
-  { c: '면류', n: '짬뽕', t: ['salt', 'gout'] },
-  { c: '면류', n: '칼국수', t: ['salt'] },
-  { c: '면류', n: '잔치국수', t: ['salt'] },
-  { c: '면류', n: '냉면 (물)', t: ['salt'] },
-  { c: '면류', n: '비빔냉면', t: ['salt'] },
-  { c: '면류', n: '우동', t: ['salt'] },
-  { c: '면류', n: '쫄면', t: ['salt'] },
-  { c: '면류', n: '메밀국수', t: [] },
-  { c: '면류', n: '파스타 (토마토)', t: [] },
-  { c: '면류', n: '파스타 (크림)', t: ['fat'] },
-  { c: '면류', n: '파스타 (오일·바질)', t: [] },
-  { c: '면류', n: '파스타 (해산물)', t: ['gout', 'salt'] },
-  { c: '면류', n: '라면 (저염·건강)', t: ['salt'] },
-  { c: '면류', n: '비빔라면', t: ['salt', 'proc'] },
-  { c: '면류', n: '짜파게티', t: ['salt', 'fat', 'proc'] },
-  { c: '면류', n: '너구리', t: ['salt', 'proc'] },
-  { c: '면류', n: '신라면', t: ['salt', 'proc', 'fat'] },
-  { c: '면류', n: '국수전골', t: ['salt'] },
-  { c: '면류', n: '유부우동', t: ['salt'] },
-  { c: '면류', n: '잡채', t: ['salt'] },
-  { c: '면류', n: '소바 (메밀)', t: [] },
-  { c: '면류', n: '라멘 (일본)', t: ['salt', 'fat'] },
-  { c: '면류', n: '소면 (잔치국수용)', t: [] },
-  { c: '면류', n: '쌀국수 (집·간편식)', t: ['salt'] },
-  { c: '면류', n: '곤약면', t: ['good'] },
+var WEEK_DAYS = ['일','월','화','수','목','금','토'];
 
-  // === 고기·구이 ===
-  { c: '고기·구이', n: '닭가슴살 (구이)', t: ['protein', 'good'] },
-  { c: '고기·구이', n: '닭다리 (껍질제거)', t: ['protein', 'good'] },
-  { c: '고기·구이', n: '닭다리 (껍질포함)', t: ['protein', 'fat'] },
-  { c: '고기·구이', n: '치킨 (튀김)', t: ['fat', 'proc', 'salt'] },
-  { c: '고기·구이', n: '치킨 (양념)', t: ['fat', 'salt', 'proc'] },
-  { c: '고기·구이', n: '돼지 안심', t: ['protein', 'good'] },
-  { c: '고기·구이', n: '삼겹살', t: ['fat'] },
-  { c: '고기·구이', n: '목살', t: ['fat'] },
-  { c: '고기·구이', n: '소불고기', t: ['salt'] },
-  { c: '고기·구이', n: '소갈비', t: ['salt', 'fat', 'gout'] },
-  { c: '고기·구이', n: '곱창·막창', t: ['gout', 'fat'] },
-  { c: '고기·구이', n: '간 (소·돼지)', t: ['gout'] },
-  { c: '고기·구이', n: '족발', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '보쌈', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '햄·소시지', t: ['proc', 'salt', 'fat'] },
-  { c: '고기·구이', n: '베이컨', t: ['proc', 'salt', 'fat'] },
-  { c: '고기·구이', n: '닭가슴살 (찐·삶은)', t: ['protein', 'good'] },
-  { c: '고기·구이', n: '닭가슴살 (훈제)', t: ['protein', 'proc'] },
-  { c: '고기·구이', n: '닭가슴살 소시지', t: ['protein', 'proc'] },
-  { c: '고기·구이', n: '닭안심', t: ['protein', 'good'] },
-  { c: '고기·구이', n: '닭볶음탕', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '찜닭', t: ['salt'] },
-  { c: '고기·구이', n: '닭갈비', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '소고기 안심·등심', t: ['protein'] },
-  { c: '고기·구이', n: '소고기 채끝', t: ['fat'] },
-  { c: '고기·구이', n: '소불고기 (양념)', t: ['salt'] },
-  { c: '고기·구이', n: '돼지 등심', t: ['protein'] },
-  { c: '고기·구이', n: '돼지 갈비찜', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '닭꼬치', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '양꼬치', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '닭발', t: ['salt', 'fat'] },
-  { c: '고기·구이', n: '오리고기', t: ['protein'] },
-  { c: '고기·구이', n: '소고기 육회', t: ['protein', 'gout'] },
-  { c: '고기·구이', n: '돼지 등갈비 (BBQ)', t: ['salt', 'fat'] },
+// ─────────────────────────────────────────────
+// 주간 식단 계획
+// b=아침 l=점심 d=저녁 / kid=아이 팁 / adult=어른 조정 / carb=탄수단계
+// 평일 점심은 학식이 기본. school:true 인 끼니는 '학식' 버튼이 먼저 강조됨.
+// ─────────────────────────────────────────────
+var CARB_LABEL = { high:'탄수 넉넉히', mid:'탄수 보통', low:'탄수 적게', free:'자유 식사' };
 
-  // === 생선·해산물 ===
-  { c: '생선·해산물', n: '연어 (구이)', t: ['protein', 'good'] },
-  { c: '생선·해산물', n: '대구·도미 (흰살)', t: ['protein', 'good'] },
-  { c: '생선·해산물', n: '고등어 (구이)', t: ['protein', 'gout'] },
-  { c: '생선·해산물', n: '꽁치·삼치', t: ['protein', 'gout'] },
-  { c: '생선·해산물', n: '참치회', t: ['gout', 'protein'] },
-  { c: '생선·해산물', n: '생선회 (흰살)', t: ['protein'] },
-  { c: '생선·해산물', n: '연어회', t: ['protein', 'good'] },
-  { c: '생선·해산물', n: '오징어', t: ['gout', 'protein'] },
-  { c: '생선·해산물', n: '낙지·문어', t: ['gout', 'protein'] },
-  { c: '생선·해산물', n: '조개·홍합', t: ['gout'] },
-  { c: '생선·해산물', n: '굴', t: ['gout'] },
-  { c: '생선·해산물', n: '새우', t: ['gout', 'protein'] },
-  { c: '생선·해산물', n: '게·꽃게', t: ['gout', 'salt'] },
-  { c: '생선·해산물', n: '멸치 (반찬)', t: ['gout', 'salt'] },
-  { c: '생선·해산물', n: '북어·황태', t: ['protein'] },
-  { c: '생선·해산물', n: '명란·창란젓', t: ['salt', 'gout'] },
-  { c: '생선·해산물', n: '갈치 (구이)', t: ['protein'] },
-  { c: '생선·해산물', n: '임연수 (구이)', t: ['protein'] },
-  { c: '생선·해산물', n: '조기 (구이)', t: ['protein'] },
-  { c: '생선·해산물', n: '장어 (구이)', t: ['fat', 'protein'] },
-  { c: '생선·해산물', n: '오징어 볶음', t: ['salt', 'gout'] },
-  { c: '생선·해산물', n: '낙지볶음', t: ['salt', 'gout'] },
-  { c: '생선·해산물', n: '쥐포·오징어채', t: ['salt', 'gout'] },
-  { c: '생선·해산물', n: '어묵', t: ['salt', 'proc'] },
-  { c: '생선·해산물', n: '어묵탕', t: ['salt', 'proc'] },
-  { c: '생선·해산물', n: '게장 (간장)', t: ['salt', 'gout'] },
-  { c: '생선·해산물', n: '미역·다시마', t: ['good'] },
-  { c: '생선·해산물', n: '김 (조미)', t: ['salt'] },
-  { c: '생선·해산물', n: '김 (생·구운)', t: ['good'] },
-  { c: '생선·해산물', n: '톳·매생이', t: ['good'] },
-  { c: '생선·해산물', n: '참치 (캔)', t: ['protein', 'proc'] },
-  { c: '생선·해산물', n: '연어 (캔·통조림)', t: ['protein', 'proc'] },
+var PLAN = {
+A: {
+  1: { // 월 — R 회복성 근력
+    b:{ menu:'그릭요거트 + 블루베리 + 아몬드 10알 + 삶은달걀 2',
+        alt:'플레인요거트 + 바나나 + 삶은달걀',
+        k6:'요거트에 꿀 조금, 아몬드는 잘게 부숴서',
+        k2:'통아몬드 금지 — 갈아서 요거트에 섞기. 블루베리는 반으로 자르기',
+        adult:'달걀 2개는 어른 몫 — 아침 단백질 30g 확보' },
+    l:{ menu:'닭가슴살 + 현미밥 + 방울토마토 + 삶은달걀', box:true, school:true,
+        alt:'포케·샐러드볼' },
+    d:{ menu:'닭가슴살·닭안심 구이 + 구운채소(파프리카·애호박·양파) + 계란찜', carb:'low',
+        alt:'닭다리살(껍질 제거) 구이',
+        k6:'닭은 먹기 좋게 썰고 케첩 조금',
+        k2:'닭은 아주 잘게 찢어서. 채소는 푹 익혀 부드럽게, 방울토마토는 세로 4등분',
+        adult:'밥 1/2공기까지. 내일 도시락용 닭가슴살 한 덩이 더 구워두기' } },
 
-  // === 채소·반찬 ===
-  { c: '채소·반찬', n: '시금치 나물', t: ['good'] },
-  { c: '채소·반찬', n: '브로콜리', t: ['good'] },
-  { c: '채소·반찬', n: '양배추', t: ['good'] },
-  { c: '채소·반찬', n: '당근', t: ['good'] },
-  { c: '채소·반찬', n: '파프리카', t: ['good'] },
-  { c: '채소·반찬', n: '오이', t: ['good'] },
-  { c: '채소·반찬', n: '방울토마토', t: ['good'] },
-  { c: '채소·반찬', n: '버섯류', t: ['gout', 'good'] },
-  { c: '채소·반찬', n: '콩나물', t: ['good'] },
-  { c: '채소·반찬', n: '김치', t: ['salt'] },
-  { c: '채소·반찬', n: '깍두기', t: ['salt'] },
-  { c: '채소·반찬', n: '단무지', t: ['salt', 'proc'] },
-  { c: '채소·반찬', n: '장아찌', t: ['salt'] },
-  { c: '채소·반찬', n: '나물 무침', t: ['good'] },
-  { c: '채소·반찬', n: '샐러드 (드레싱X)', t: ['good'] },
-  { c: '채소·반찬', n: '샐러드 (드레싱O)', t: [] },
-  { c: '채소·반찬', n: '깻잎 (생)', t: ['good'] },
-  { c: '채소·반찬', n: '깻잎 장아찌', t: ['salt'] },
-  { c: '채소·반찬', n: '상추·청경채', t: ['good'] },
-  { c: '채소·반찬', n: '쌈채소', t: ['good'] },
-  { c: '채소·반찬', n: '미나리', t: ['good'] },
-  { c: '채소·반찬', n: '부추', t: ['good'] },
-  { c: '채소·반찬', n: '쑥갓·쑥', t: ['good'] },
-  { c: '채소·반찬', n: '가지나물·가지구이', t: ['good'] },
-  { c: '채소·반찬', n: '애호박 볶음', t: ['good'] },
-  { c: '채소·반찬', n: '연근조림', t: ['salt'] },
-  { c: '채소·반찬', n: '우엉조림', t: ['salt'] },
-  { c: '채소·반찬', n: '도라지나물', t: ['good'] },
-  { c: '채소·반찬', n: '고사리나물', t: ['good'] },
-  { c: '채소·반찬', n: '취나물', t: ['good'] },
-  { c: '채소·반찬', n: '무생채', t: ['good'] },
-  { c: '채소·반찬', n: '무말랭이', t: ['salt'] },
-  { c: '채소·반찬', n: '오이무침', t: ['good'] },
-  { c: '채소·반찬', n: '파김치', t: ['salt'] },
-  { c: '채소·반찬', n: '열무김치', t: ['salt'] },
-  { c: '채소·반찬', n: '백김치·물김치', t: [] },
-  { c: '채소·반찬', n: '계란말이', t: ['protein'] },
-  { c: '채소·반찬', n: '계란찜', t: ['protein', 'good'] },
-  { c: '채소·반찬', n: '돼지고기 장조림', t: ['salt', 'protein'] },
-  { c: '채소·반찬', n: '메추리알 장조림', t: ['salt', 'protein'] },
-  { c: '채소·반찬', n: '셀러리', t: ['good'] },
-  { c: '채소·반찬', n: '아스파라거스', t: ['gout', 'good'] },
-  { c: '채소·반찬', n: '비트', t: ['good'] },
-  { c: '채소·반찬', n: '루꼴라·라디치오', t: ['good'] },
-  { c: '채소·반찬', n: '콘 (스위트콘)', t: [] },
-  { c: '채소·반찬', n: '완두콩', t: ['good'] },
+  2: { // 화 — S 회복
+    b:{ menu:'현미+백미 섞은 밥 + 달걀말이 + 구운김 + 방울토마토',
+        alt:'주먹밥 + 삶은달걀 2',
+        k6:'달걀말이에 당근·파 다져 넣기',
+        k2:'밥은 백미 위주로 무르게. 방울토마토 세로 4등분, 김은 무염으로',
+        adult:'밥 2/3공기, 현미 비율 높게' },
+    l:{ menu:'참치(기름 뺀) 현미주먹밥 + 오이 + 삶은달걀 2', box:true, school:true,
+        alt:'백반 (국물 남기기)' },
+    d:{ menu:'대구·도미 구이(올리브유) + 양배추 샐러드(레몬) + 연두부', carb:'low',
+        alt:'닭안심 구이',
+        k6:'생선살 발라주고 간장 아주 조금',
+        k2:'가시 꼼꼼히 제거하고 잘게. 양배추는 생것 말고 익혀서. 연두부는 그대로 잘 먹어요',
+        adult:'밥 생략 또는 1/3. 생선 한 토막 더' } },
 
-  // === 단백질 (계란·콩) ===
-  { c: '단백질', n: '삶은 달걀', t: ['protein', 'good'] },
-  { c: '단백질', n: '달걀 스크램블', t: ['protein', 'good'] },
-  { c: '단백질', n: '달걀프라이', t: ['protein'] },
-  { c: '단백질', n: '두부 (찜·구이)', t: ['protein', 'good'] },
-  { c: '단백질', n: '두부 (튀김)', t: ['protein', 'fat'] },
-  { c: '단백질', n: '청국장', t: ['salt'] },
-  { c: '단백질', n: '낫토', t: ['protein', 'good'] },
-  { c: '단백질', n: '에그인헬', t: ['protein', 'good'] },
-  { c: '단백질', n: '연두부', t: ['protein', 'good'] },
-  { c: '단백질', n: '순두부', t: ['protein', 'good'] },
-  { c: '단백질', n: '병아리콩 (찐·삶은)', t: ['protein', 'good'] },
-  { c: '단백질', n: '강낭콩·검은콩', t: ['protein', 'good'] },
-  { c: '단백질', n: '렌틸콩', t: ['protein', 'good'] },
-  { c: '단백질', n: '메추리알', t: ['protein'] },
-  { c: '단백질', n: '두부면', t: ['protein', 'good'] },
-  { c: '단백질', n: '두유 단백질음료', t: ['protein', 'good'] },
-  { c: '단백질', n: '카제인 단백질', t: ['protein'] },
-  { c: '단백질', n: '계란 흰자', t: ['protein', 'good'] },
-  { c: '단백질', n: '비건 프로틴', t: ['protein'] },
+  3: { // 수 — A 파워
+    b:{ menu:'오트밀 40g(우유 200ml) + 바나나 + 견과',
+        alt:'무가당 시리얼 + 우유 + 과일',
+        k6:'꿀 반 스푼, 견과는 잘게 부숴서',
+        k2:'견과는 반드시 갈아서. 우유는 일반 우유로(저지방은 어른 몫). 바나나는 잘라서',
+        adult:'프로틴 1스쿱 추가 · 없으면 삶은달걀 2개로 대신' },
+    l:{ menu:'닭가슴살 + 잡곡밥 + 브로콜리 + 방울토마토', box:true, school:true,
+        alt:'현미 도시락 + 닭가슴살' },
+    d:{ menu:'돼지 안심 수육 + 쌈채소 + 잡곡밥 + 미역국(건더기)', carb:'mid',
+        alt:'돼지 등심 구이',
+        k6:'수육 잘게 썰고 쌈장 대신 간장 조금',
+        k2:'아주 잘게 찢어 밥에 비벼주기. 국은 아이 몫만 물 타서 따로',
+        adult:'밥 2/3공기, 국물은 남기기. 내일 도시락용으로 수육 남겨두기' } },
 
-  // === 빵·간식 ===
-  { c: '빵·간식', n: '통밀빵', t: ['good'] },
-  { c: '빵·간식', n: '식빵', t: [] },
-  { c: '빵·간식', n: '어니언 베이글', t: [] },
-  { c: '빵·간식', n: '플레인 베이글', t: [] },
-  { c: '빵·간식', n: '크루아상', t: ['fat'] },
-  { c: '빵·간식', n: '단팥빵·크림빵', t: ['fat'] },
-  { c: '빵·간식', n: '도넛', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '케이크', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '과자 (스낵)', t: ['proc', 'fat', 'salt'] },
-  { c: '빵·간식', n: '초콜릿', t: ['fat'] },
-  { c: '빵·간식', n: '아이스크림', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '떡', t: [] },
-  { c: '빵·간식', n: '떡볶이', t: ['salt'] },
-  { c: '빵·간식', n: '순대', t: ['salt', 'gout'] },
-  { c: '빵·간식', n: '튀김 (분식)', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '딸기잼·과일잼', t: ['proc'] },
-  { c: '빵·간식', n: '땅콩버터', t: ['protein', 'proc'] },
-  { c: '빵·간식', n: '꿀', t: [] },
-  { c: '빵·간식', n: '소금빵', t: ['salt'] },
-  { c: '빵·간식', n: '식빵 (잼·버터)', t: ['fat'] },
-  { c: '빵·간식', n: '베이글 (블루베리)', t: [] },
-  { c: '빵·간식', n: '마카롱·디저트류', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '쿠키·과자', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '와플', t: ['fat'] },
-  { c: '빵·간식', n: '핫도그·소시지빵', t: ['proc', 'salt', 'fat'] },
-  { c: '빵·간식', n: '붕어빵', t: [] },
-  { c: '빵·간식', n: '호떡', t: ['fat'] },
-  { c: '빵·간식', n: '계란빵', t: ['protein'] },
-  { c: '빵·간식', n: '꽈배기·도넛', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '고구마 라떼·고구마 케이크', t: [] },
-  { c: '빵·간식', n: '약과·한과', t: ['fat'] },
-  { c: '빵·간식', n: '엿·캐러멜', t: ['proc'] },
-  { c: '빵·간식', n: '젤리·구미', t: ['proc'] },
-  { c: '빵·간식', n: '곤약젤리', t: [] },
-  { c: '빵·간식', n: '에너지바·곡물바', t: ['proc'] },
-  { c: '빵·간식', n: '단백질바', t: ['protein', 'proc'] },
-  { c: '빵·간식', n: '호두과자', t: ['fat'] },
-  { c: '빵·간식', n: '앙버터', t: ['fat'] },
-  { c: '빵·간식', n: '슈크림빵', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '앙금슈크림빵', t: ['fat', 'proc'] },
-  { c: '빵·간식', n: '오트밀 쿠키', t: [] },
-  { c: '빵·간식', n: '그래놀라', t: ['good'] },
-  { c: '빵·간식', n: '시리얼 (단맛)', t: ['proc'] },
-  { c: '빵·간식', n: '시리얼 (무가당)', t: ['good'] },
-  { c: '빵·간식', n: '죽엽청·치즈볼', t: ['fat', 'proc'] },
+  4: { // 목 — B 근력
+    b:{ menu:'통밀토스트 2쪽 + 스크램블에그 + 아보카도 + 우유',
+        alt:'식빵 + 땅콩버터 + 우유 + 삶은달걀',
+        k6:'잼 조금 발라주기',
+        k2:'토스트는 손가락 크기로 자르기. 아보카도는 으깨서 발라주면 잘 먹어요',
+        adult:'아보카도 1/2, 달걀 2개' },
+    l:{ menu:'어제 수육 + 잡곡밥 + 나물 + 삶은달걀', box:true, school:true,
+        alt:'백반 (국물 남기기)' },
+    d:{ menu:'저염 찜닭(껍질 제거, 다시마 육수) + 브로콜리 + 잡곡밥', carb:'mid',
+        alt:'닭볶음탕(고춧가루 최소)',
+        k6:'매운 양념 빼고 간장 베이스로 따로 덜기',
+        k2:'양념 넣기 전에 닭·감자를 따로 덜어두기. 뼈 없는 살코기만 잘게',
+        adult:'밥 2/3공기, 국물 최소' } },
 
-  // === 과일·견과 ===
-  { c: '과일·견과', n: '바나나', t: ['good'] },
-  { c: '과일·견과', n: '사과', t: ['good'] },
-  { c: '과일·견과', n: '배', t: ['good'] },
-  { c: '과일·견과', n: '감', t: ['good'] },
-  { c: '과일·견과', n: '단감·홍시', t: ['good'] },
-  { c: '과일·견과', n: '귤·오렌지', t: ['good'] },
-  { c: '과일·견과', n: '한라봉·천혜향', t: ['good'] },
-  { c: '과일·견과', n: '딸기', t: ['good'] },
-  { c: '과일·견과', n: '블루베리', t: ['good'] },
-  { c: '과일·견과', n: '체리', t: ['good'] },
-  { c: '과일·견과', n: '키위', t: ['good'] },
-  { c: '과일·견과', n: '복숭아', t: ['good'] },
-  { c: '과일·견과', n: '자두', t: ['good'] },
-  { c: '과일·견과', n: '참외', t: ['good'] },
-  { c: '과일·견과', n: '수박', t: ['good'] },
-  { c: '과일·견과', n: '멜론', t: [] },
-  { c: '과일·견과', n: '포도·청포도', t: [] },
-  { c: '과일·견과', n: '망고', t: [] },
-  { c: '과일·견과', n: '파인애플', t: [] },
-  { c: '과일·견과', n: '아보카도', t: ['good'] },
-  { c: '과일·견과', n: '견과류 (혼합)', t: ['good'] },
-  { c: '과일·견과', n: '말린 과일·트레일믹스', t: ['proc'] },
-  { c: '과일·견과', n: '두리안·코코넛', t: ['fat'] },
-  { c: '과일·견과', n: '석류', t: ['good'] },
-  { c: '과일·견과', n: '레몬·라임', t: ['good'] },
-  { c: '과일·견과', n: '자몽', t: ['good'] },
-  { c: '과일·견과', n: '무화과', t: ['good'] },
-  { c: '과일·견과', n: '오디·산딸기', t: ['good'] },
-  { c: '과일·견과', n: '대추 (말린)', t: [] },
-  { c: '과일·견과', n: '곶감', t: [] },
-  { c: '과일·견과', n: '밤 (군밤·삶은)', t: ['good'] },
-  { c: '과일·견과', n: '오미자·복분자', t: ['good'] },
-  { c: '과일·견과', n: '땅콩 (볶은)', t: ['good'] },
-  { c: '과일·견과', n: '잣', t: ['good'] },
-  { c: '과일·견과', n: '피칸·마카다미아', t: ['good'] },
-  { c: '과일·견과', n: '해바라기씨·호박씨', t: ['good'] },
-  { c: '과일·견과', n: '치아씨드·아마씨', t: ['good'] },
+  5: { // 금 — K 코프볼 훈련
+    b:{ menu:'계란찜 + 밥 + 구운김 + 오이',
+        alt:'두부 스크램블 + 밥',
+        k6:'계란찜 부드럽게, 김에 밥 싸주기',
+        k2:'계란찜은 이 나이에 가장 좋은 아침이에요. 오이는 스틱 말고 얇게 저며서',
+        adult:'훈련일 — 소화 편한 구성. 밥 2/3공기' },
+    l:{ menu:'김밥(단무지 줄이기) + 삶은달걀 2', box:true, school:true,
+        alt:'김밥 + 삶은달걀 (훈련 전 소화 편하게)' },
+    d:{ menu:'연어 스테이크 + 잡곡밥 + 나물 2종', carb:'high',
+        alt:'소고기 안심 구이 (연어는 주 2회 이하)',
+        k6:'연어에 데리야키 소스 조금 발라 구우면 잘 먹어요',
+        k2:'연어는 수은이 낮아 아이도 안전합니다. 가시 확인 후 잘게 부수어서',
+        adult:'훈련 후 회복 — 밥 한 공기 채우기' } },
 
-  // === 음료 ===
-  { c: '음료', n: '물', t: ['good'] },
-  { c: '음료', n: '보리차·옥수수차', t: ['good'] },
-  { c: '음료', n: '플레인요거트', t: ['protein', 'good'] },
-  { c: '음료', n: '저지방우유', t: ['protein', 'good'] },
-  { c: '음료', n: '두유', t: ['good'] },
-  { c: '음료', n: '블랙커피', t: ['good'] },
-  { c: '음료', n: '카페라떼', t: [] },
-  { c: '음료', n: '믹스커피', t: ['fat', 'proc'] },
-  { c: '음료', n: '녹차', t: ['good'] },
-  { c: '음료', n: '탄산음료 (콜라)', t: ['proc'] },
-  { c: '음료', n: '주스 (가공)', t: ['proc'] },
-  { c: '음료', n: '에너지드링크', t: ['proc'] },
-  { c: '음료', n: '단백질쉐이크', t: ['protein'] },
-  { c: '음료', n: '아메리카노', t: ['good'] },
-  { c: '음료', n: '카푸치노', t: [] },
-  { c: '음료', n: '바닐라라떼·시럽커피', t: ['proc'] },
-  { c: '음료', n: '아이스 아메리카노', t: ['good'] },
-  { c: '음료', n: '말차라떼', t: [] },
-  { c: '음료', n: '초콜릿 음료·코코아', t: ['fat', 'proc'] },
-  { c: '음료', n: '홍차·얼그레이', t: ['good'] },
-  { c: '음료', n: '캐모마일·허브차', t: ['good'] },
-  { c: '음료', n: '율무차·생강차', t: [] },
-  { c: '음료', n: '식혜·수정과', t: [] },
-  { c: '음료', n: '제로 콜라·제로 사이다', t: [] },
-  { c: '음료', n: '오렌지주스 (생착즙)', t: [] },
-  { c: '음료', n: '스무디 (과일)', t: [] },
-  { c: '음료', n: '아몬드 우유·오트밀크', t: ['good'] },
-  { c: '음료', n: 'BCAA·전해질음료', t: ['proc'] },
-  { c: '음료', n: '코코넛 워터', t: ['good'] },
-  { c: '음료', n: '비타민 워터', t: ['proc'] },
-  { c: '음료', n: '레모네이드', t: ['proc'] },
-  { c: '음료', n: '아이스티 (무가당)', t: [] },
-  { c: '음료', n: '아이스티 (가당)', t: ['proc'] },
+  6: { // 토 — 가족 자유일
+    b:{ menu:'통밀 바나나 팬케이크 + 달걀 + 제철과일 (가족 브런치)',
+        alt:'오트밀 + 그릭요거트 + 과일',
+        k6:'메이플시럽 조금',
+        k2:'팬케이크는 손가락 크기로. 포도·방울토마토는 반드시 세로 4등분',
+        adult:'달걀 2개로 단백질 챙기기' },
+    l:{ menu:'닭가슴살 채소 볶음밥 + 계란국',
+        alt:'비빔밥 (고추장 따로)',
+        k6:'케첩 조금, 채소는 잘게',
+        k2:'밥은 무르게, 간은 거의 없이 먼저 덜어두기',
+        adult:'밥 줄이고 채소·닭가슴살 더' },
+    d:{ menu:'가족 자유 식사 — 외식·배달 무엇이든', carb:'free',
+        alt:'',
+        k6:'먹고 싶은 것으로',
+        k2:'매운 것·질긴 것·통째 견과만 피하면 자유롭게',
+        adult:'두 가지만 지키기 — ① 술은 피하기 ② 국물·소스는 남기기' } },
 
-  // === 술 ===
-  { c: '술', n: '맥주', t: ['alc', 'gout', 'proc'] },
-  { c: '술', n: '소주', t: ['alc', 'gout'] },
-  { c: '술', n: '막걸리', t: ['alc', 'gout'] },
-  { c: '술', n: '와인', t: ['alc'] },
-  { c: '술', n: '위스키·양주', t: ['alc'] },
-  { c: '술', n: '하이볼·칵테일', t: ['alc'] },
+  0: { // 일 — K 팀 훈련
+    b:{ menu:'바나나 + 통밀토스트 2쪽 + 삶은달걀 2 (훈련 2~3시간 전)',
+        alt:'흰죽 + 달걀 (속이 불편한 날)',
+        k6:'평소대로',
+        k2:'토스트는 손가락 크기, 바나나는 동그랗게 말고 길게 잘라서',
+        adult:'지방 최소·소화 빠르게. 훈련 1시간 전 바나나 하나 더' },
+    l:{ menu:'소고기 채소 비빔밥 (고추장 따로) + 미역국',
+        alt:'김밥 + 계란국',
+        k6:'고추장 빼고 참기름·간장으로',
+        k2:'고추장 없이 참기름만. 채소는 잘게 썰어 익혀서',
+        adult:'훈련 전후 — 밥 한 공기 채우기' },
+    d:{ menu:'소불고기(배·양파로 단맛, 저염) + 고구마 + 잡곡밥 + 나물', carb:'high',
+        alt:'닭가슴살 스테이크 + 고구마',
+        k6:'불고기는 아이들 최애 메뉴 — 간장 양만 줄이기',
+        k2:'국물 자작한 불고기는 부드러워 좋아요. 고기는 가위로 잘게',
+        adult:'훈련 후 회복. 단백질 넉넉히' } }
+},
+B: {
+  1: {
+    b:{ menu:'낫토 + 현미밥 + 구운김 + 삶은달걀',
+        alt:'두부 스크램블 + 밥',
+        k6:'낫토를 싫어하면 계란밥으로',
+        k2:'낫토는 끈적여서 어려울 수 있어요 — 계란밥 + 김으로 대신',
+        adult:'달걀 2개, 밥 2/3공기' },
+    l:{ menu:'닭가슴살 + 현미밥 + 브로콜리 + 삶은달걀', box:true, school:true,
+        alt:'포케·샐러드볼' },
+    d:{ menu:'두부 스테이크 + 파프리카·양배추 볶음 + 계란찜', carb:'low',
+        alt:'닭안심 구이',
+        k6:'두부에 전분 묻혀 노릇하게 구우면 잘 먹어요',
+        k2:'두부는 부드러워 아주 좋아요. 채소는 푹 익혀서 작게',
+        adult:'밥 1/2공기까지' } },
 
-  // === 외식·기타 ===
-  { c: '외식·기타', n: '햄버거 (패스트푸드)', t: ['proc', 'salt', 'fat'] },
-  { c: '외식·기타', n: '피자', t: ['salt', 'fat', 'proc'] },
-  { c: '외식·기타', n: '파스타 (까르보)', t: ['fat', 'salt'] },
-  { c: '외식·기타', n: '초밥', t: ['salt'] },
-  { c: '외식·기타', n: '뷔페·과식', t: ['fat', 'salt'] },
-  { c: '외식·기타', n: '편의점 도시락', t: ['salt', 'proc'] },
-  { c: '외식·기타', n: '편의점 김밥', t: ['salt', 'proc'] },
-  { c: '외식·기타', n: '편의점 샌드위치', t: ['salt', 'proc'] },
-  { c: '외식·기타', n: '샌드위치 (햄·치즈)', t: ['salt', 'fat', 'proc'] },
-  { c: '외식·기타', n: '샌드위치 (에그·참치)', t: ['protein'] },
-  { c: '외식·기타', n: '샌드위치 (베이컨·BLT)', t: ['salt', 'fat', 'proc'] },
-  { c: '외식·기타', n: '샌드위치 (채소·닭가슴살)', t: ['protein', 'good'] },
-  { c: '외식·기타', n: '클럽 샌드위치', t: ['salt', 'fat', 'proc'] },
-  { c: '외식·기타', n: '컵라면', t: ['salt', 'proc', 'fat'] },
-  { c: '외식·기타', n: '마라탕', t: ['salt', 'fat'] },
-  { c: '외식·기타', n: '마라샹궈', t: ['salt', 'fat', 'gout'] },
-  { c: '외식·기타', n: '훠궈·샤브샤브', t: ['salt'] },
-  { c: '외식·기타', n: '쌀국수 (외식)', t: ['salt'] },
-  { c: '외식·기타', n: '팟타이', t: ['salt', 'fat'] },
-  { c: '외식·기타', n: '카오팟·태국 볶음밥', t: ['salt'] },
-  { c: '외식·기타', n: '쉑쉑·수제버거', t: ['proc', 'salt', 'fat'] },
-  { c: '외식·기타', n: '서브웨이 (채소)', t: ['protein', 'good'] },
-  { c: '외식·기타', n: '포케·샐러드볼', t: ['protein', 'good'] },
-  { c: '외식·기타', n: '브리또·타코', t: ['salt', 'fat'] },
-  { c: '외식·기타', n: '딤섬·만두', t: ['salt'] },
-  { c: '외식·기타', n: '탕수육·깐풍기', t: ['fat', 'proc', 'salt'] },
-  { c: '외식·기타', n: '마파두부', t: ['salt'] },
-  { c: '외식·기타', n: '뼈해장국', t: ['salt', 'gout'] },
-  { c: '외식·기타', n: '국밥 (외식)', t: ['salt', 'gout'] },
-  { c: '외식·기타', n: '편의점 도시락 (단백질)', t: ['salt', 'proc', 'protein'] },
-  { c: '외식·기타', n: '편의점 닭가슴살', t: ['protein', 'proc'] },
-  { c: '외식·기타', n: '편의점 삼각김밥', t: ['salt', 'proc'] },
-  { c: '외식·기타', n: '편의점 컵과일', t: ['good'] },
-  { c: '외식·기타', n: '편의점 샐러드', t: ['good'] },
-  { c: '외식·기타', n: '편의점 컵누들', t: ['salt', 'proc'] },
-  { c: '외식·기타', n: '편의점 핫바·소시지', t: ['proc', 'salt', 'fat'] },
-  { c: '외식·기타', n: '편의점 우유·요거트', t: ['protein'] },
-  { c: '외식·기타', n: '회전초밥 (일반)', t: ['salt'] },
-  { c: '외식·기타', n: '오마카세·사시미', t: ['protein', 'gout'] },
-  { c: '외식·기타', n: '한정식', t: ['salt'] },
-  { c: '외식·기타', n: '백반 (한식 일반)', t: ['salt'] }
+  2: {
+    b:{ menu:'사과 + 우유 200ml + 삶은달걀 2 + 아몬드',
+        alt:'요거트 + 과일 + 삶은달걀',
+        k6:'사과는 껍질 벗겨 얇게, 아몬드는 잘게',
+        k2:'사과는 갈거나 아주 얇게(생사과 조각은 질식 위험). 아몬드는 갈아서만',
+        adult:'저지방우유 + 달걀 2개' },
+    l:{ menu:'참치 현미주먹밥 + 오이 + 삶은달걀 2', box:true, school:true,
+        alt:'백반 (국물 남기기)' },
+    d:{ menu:'닭안심 구이 + 샐러드(발사믹) + 맑은 콩나물국', carb:'low',
+        alt:'흰살생선 구이',
+        k6:'닭안심에 빵가루 살짝 입혀 에어프라이',
+        k2:'닭안심은 가장 부드러운 부위예요. 콩나물은 잘게 썰어서',
+        adult:'밥 생략 또는 1/3' } },
+
+  3: {
+    b:{ menu:'프로틴 스무디(두유 200 + 바나나) + 삶은달걀 2',
+        alt:'우유 + 바나나 + 삶은달걀',
+        k6:'스무디에 딸기 추가',
+        k2:'프로틴은 아이에게 주지 마세요 — 우유 + 바나나만으로',
+        adult:'프로틴 없으면 두유 + 달걀 1개 더' },
+    l:{ menu:'닭가슴살 + 잡곡밥 + 방울토마토 + 삶은달걀', box:true, school:true,
+        alt:'현미 도시락 + 닭가슴살' },
+    d:{ menu:'대구·도미 구이 + 고구마 + 브로콜리 + 두부', carb:'mid',
+        alt:'연어 구이 (주 2회 이하)',
+        k6:'생선살 발라 밥에 비벼주기',
+        k2:'가시 제거 필수. 고구마는 으깨서, 브로콜리는 푹 익혀 작은 송이로',
+        adult:'고구마 1개 + 단백질 넉넉히' } },
+
+  4: {
+    b:{ menu:'계란찜 + 현미밥 + 구운김 + 오이',
+        alt:'달걀말이 + 밥',
+        k6:'계란찜에 치즈 조금',
+        k2:'계란찜 넉넉히. 밥은 백미 섞어 무르게',
+        adult:'밥 2/3공기' },
+    l:{ menu:'어제 저녁 남긴 단백질 + 잡곡밥 + 나물', box:true, school:true,
+        alt:'백반' },
+    d:{ menu:'돼지 안심 구이 + 쌈채소 + 잡곡밥 + 무국', carb:'mid',
+        alt:'닭다리살(껍질 제거) 구이',
+        k6:'고기 잘게 썰고 쌈은 상추만',
+        k2:'쌈은 아직 어려워요 — 고기와 밥만 잘게. 국은 물 타서 따로',
+        adult:'밥 2/3공기, 국물 남기기. 내일 도시락 몫 남겨두기' } },
+
+  5: {
+    b:{ menu:'통밀빵 2쪽 + 땅콩버터 + 우유 + 삶은달걀',
+        alt:'오트밀 + 우유 + 바나나',
+        k6:'땅콩버터에 바나나 슬라이스',
+        k2:'땅콩버터는 얇게만 (덩어리는 질식 위험). 빵은 손가락 크기로',
+        adult:'훈련일 — 밥 대신 빵으로 가볍게, 달걀 2개' },
+    l:{ menu:'김밥(단무지 줄이기) + 삶은달걀 2', box:true, school:true,
+        alt:'김밥 + 삶은달걀' },
+    d:{ menu:'소고기 안심 구이 + 잡곡밥 + 구운채소 + 나물', carb:'high',
+        alt:'닭가슴살 스테이크',
+        k6:'고기 구워서 밥이랑, 채소는 달게 구우면 잘 먹어요',
+        k2:'소고기는 가위로 잘게. 구운 채소는 부드러워서 좋아요',
+        adult:'훈련 후 — 밥 한 공기' } },
+
+  6: {
+    b:{ menu:'오트밀 + 그릭요거트 + 블루베리 + 호두 (가족 브런치)',
+        alt:'팬케이크 + 달걀 + 과일',
+        k6:'요거트에 꿀, 호두는 잘게',
+        k2:'호두는 갈아서. 블루베리는 반으로',
+        adult:'달걀 2개 추가' },
+    l:{ menu:'닭가슴살 샐러드볼 + 병아리콩 + 방울토마토 + 통밀빵',
+        alt:'포케볼',
+        k6:'통밀빵에 닭가슴살 끼워 샌드위치로',
+        k2:'병아리콩은 으깨서, 방울토마토는 세로 4등분',
+        adult:'빵은 반만' },
+    d:{ menu:'가족 자유 식사 — 외식·배달 무엇이든', carb:'free',
+        alt:'',
+        k6:'먹고 싶은 것으로',
+        k2:'매운 것·질긴 것·통째 견과만 피하면 자유롭게',
+        adult:'두 가지만 — ① 술은 피하기 ② 국물·소스는 남기기' } },
+
+  0: {
+    b:{ menu:'바나나 2 + 꿀 통밀토스트 + 삶은달걀 2 (훈련 2~3시간 전)',
+        alt:'흰죽 + 달걀',
+        k6:'평소대로',
+        k2:'토스트는 손가락 크기, 바나나는 길게 잘라서',
+        adult:'지방 최소·소화 빠르게' },
+    l:{ menu:'닭가슴살 김밥 + 계란국',
+        alt:'비빔밥 (고추장 따로)',
+        k6:'김밥은 아이들 최애 — 단무지 줄이기',
+        k2:'김밥은 한 알씩 반으로 잘라서 (통째는 질식 위험)',
+        adult:'훈련 전후 탄수 확보' },
+    d:{ menu:'닭가슴살·닭다리 구이 + 잡곡밥 + 나물 + 미역국', carb:'high',
+        alt:'소불고기 (저염)',
+        k6:'닭다리는 아이 몫으로',
+        k2:'뼈는 반드시 발라내고 잘게. 미역은 가위로 짧게 자르기',
+        adult:'훈련 후 회복. 단백질 넉넉히' } }
+}
+};
+
+var L3 = [
+  { k:'soup',    label:'국물은 건더기만',    sub:'국·찌개 국물이 하루 나트륨의 절반입니다' },
+  { k:'protein', label:'튀김 대신 단백질 반찬', sub:'고기·생선·달걀·두부 중 하나는 꼭' },
+  { k:'veg',     label:'채소 한 번 더',       sub:'나물·샐러드 코너를 한 번 더 들르기' }
 ];
 
-// 카테고리 자동 추출
-var CATEGORIES = [];
-(function() {
-  var seen = {};
-  for (var i = 0; i < FOODS.length; i++) {
-    if (!seen[FOODS[i].c]) {
-      seen[FOODS[i].c] = true;
-      CATEGORIES.push(FOODS[i].c);
-    }
-  }
-})();
+var SAFETY = [
+  { t:'질식 위험 — 만 4세 미만은 특히 주의', x:'통째 견과류·포도·방울토마토·떡·단단한 생채소 스틱·통김밥. 견과는 <b>갈아서</b>, 둥근 것은 <b>세로 4등분</b>, 김밥은 <b>반으로</b>.' },
+  { t:'우유', x:'만 2세는 <b>일반 우유</b>가 기본입니다. 저지방 전환 시점은 소아과와 상의하세요. 저지방우유는 어른 몫으로 따로.' },
+  { t:'간', x:'양념·국물은 <b>넣기 전에 아이 몫을 먼저 덜어두기</b>. 어른 저염 식단이라 원래 간이 약하지만, 만 2세 기준으로는 그것도 짭니다.' },
+  { t:'매운 것', x:'고추장·쌈장·김치·고춧가루는 만 2세에겐 이릅니다. 간장·참기름 베이스로 따로 조리하세요.' },
+  { t:'생선', x:'연어·대구·도미는 수은이 낮아 아이도 안전합니다. <b>가시는 반드시 확인</b>. 참치회·큰 생선회는 주지 않습니다.' },
+  { t:'단백질 보충제', x:'프로틴 파우더는 어른 전용입니다. 아이는 우유·달걀·두부로 충분합니다.' }
+];
 
-// 태그 라벨
-var TAG_LABEL = {
-  gout: '통풍위험',
-  salt: '나트륨↑',
-  fat: '포화지방',
-  proc: '가공식품',
-  alc: '술',
-  good: '도움',
-  protein: '단백질'
-};
+var EXCEPTIONS = [
+  { k:'alc',  label:'🍺 술' },
+  { k:'out',  label:'🍽 외식' },
+  { k:'late', label:'🌙 야식' },
+  { k:'over', label:'🍚 과식' },
+  { k:'skip', label:'⏭ 끼니 거름' }
+];
+
+var PRINCIPLE_TEXT =
+  '<b>가족 공용 식단입니다.</b> 평일 아침·저녁과 주말 세 끼를 온 가족이 같이 먹습니다. 같은 요리를 만들고 접시에서만 갈라집니다 — 어른은 밥을 줄이고 단백질·채소를 늘리고, <b>만 2세 몫은 양념 넣기 전에 먼저 덜어냅니다.</b><br><br>'
+  + '<b>탄수는 3단계로 순환합니다.</b> 훈련일(금·일)엔 넉넉히, 근력·파워일(수·목)엔 보통, 회복일(월·화)엔 적게. 감량과 근육량을 동시에 잡는 장치예요.<br><br>'
+  + '<b>토요일 저녁은 계획된 자유일입니다.</b> 외식하든 배달을 시키든 그날은 이탈이 아니라 준수입니다. 완벽하지 않아도 되는 자리를 계획 안에 만들어 둔 것.<br><br>'
+  + '<b>맛은 소금이 아니라 산미·향·불로.</b> 레몬·식초·발사믹 / 마늘·생강·대파 / 후추·훈제파프리카 / 들기름·올리브유 1작은술 / 센 불에 노릇하게.';
+
+// ─────────────────────────────────────────────
+// 음식 DB (자유 기록용)
+// 태그: gout 통풍위험 / salt 나트륨 / fat 포화지방 / proc 가공 / alc 술 / good 도움 / protein 단백질
+// ─────────────────────────────────────────────
+var FOODS = [
+  {c:'밥·주식',n:'흰밥',t:[]},{c:'밥·주식',n:'현미밥',t:['good']},{c:'밥·주식',n:'잡곡밥',t:['good']},
+  {c:'밥·주식',n:'고구마 (찐·구운)',t:['good']},{c:'밥·주식',n:'단호박',t:['good']},{c:'밥·주식',n:'찐감자',t:['good']},
+  {c:'밥·주식',n:'감자튀김',t:['fat','proc','salt']},{c:'밥·주식',n:'흰죽',t:[]},{c:'밥·주식',n:'귀리죽·오트밀',t:['good']},
+  {c:'밥·주식',n:'비빔밥',t:['good']},{c:'밥·주식',n:'김밥',t:['salt']},{c:'밥·주식',n:'김치볶음밥',t:['salt']},
+  {c:'밥·주식',n:'제육덮밥',t:['salt','fat']},{c:'밥·주식',n:'돈까스',t:['salt','fat','proc']},
+  {c:'밥·주식',n:'오므라이스',t:['salt']},{c:'밥·주식',n:'카레라이스',t:[]},{c:'밥·주식',n:'볶음밥 (계란)',t:[]},
+  {c:'밥·주식',n:'회덮밥',t:['protein','good']},{c:'밥·주식',n:'연어덮밥',t:['protein','good']},
+  {c:'밥·주식',n:'국밥 (소·돼지)',t:['salt','gout']},{c:'밥·주식',n:'떡국·만둣국',t:['salt']},{c:'밥·주식',n:'누룽지',t:[]},
+
+  {c:'국·찌개',n:'미역국',t:[]},{c:'국·찌개',n:'된장국',t:['salt']},{c:'국·찌개',n:'두부된장국',t:['salt','good']},
+  {c:'국·찌개',n:'콩나물국',t:[]},{c:'국·찌개',n:'무국',t:[]},{c:'국·찌개',n:'김치찌개',t:['salt','fat']},
+  {c:'국·찌개',n:'된장찌개',t:['salt']},{c:'국·찌개',n:'부대찌개',t:['salt','fat','proc']},
+  {c:'국·찌개',n:'순두부찌개',t:['salt']},{c:'국·찌개',n:'설렁탕·곰탕',t:['salt','gout']},
+  {c:'국·찌개',n:'갈비탕',t:['salt','gout','fat']},{c:'국·찌개',n:'삼계탕',t:['salt']},
+  {c:'국·찌개',n:'육개장',t:['salt','gout']},{c:'국·찌개',n:'해장국·뼈해장국',t:['salt','gout']},
+  {c:'국·찌개',n:'북엇국·황태국',t:['salt','protein']},{c:'국·찌개',n:'청국장찌개',t:['salt']},
+  {c:'국·찌개',n:'동태탕·매운탕',t:['salt','gout']},{c:'국·찌개',n:'시래기국',t:[]},{c:'국·찌개',n:'닭곰탕',t:['salt']},
+  {c:'국·찌개',n:'계란국',t:['protein']},
+
+  {c:'면류',n:'라면',t:['salt','proc','fat']},{c:'면류',n:'컵라면',t:['salt','proc','fat']},
+  {c:'면류',n:'짜장면',t:['salt','fat']},{c:'면류',n:'짬뽕',t:['salt','gout']},{c:'면류',n:'칼국수',t:['salt']},
+  {c:'면류',n:'잔치국수',t:['salt']},{c:'면류',n:'냉면 (물)',t:['salt']},{c:'면류',n:'비빔냉면',t:['salt']},
+  {c:'면류',n:'우동',t:['salt']},{c:'면류',n:'메밀국수·소바',t:[]},{c:'면류',n:'파스타 (토마토)',t:[]},
+  {c:'면류',n:'파스타 (크림)',t:['fat']},{c:'면류',n:'파스타 (오일)',t:[]},{c:'면류',n:'라멘',t:['salt','fat']},
+  {c:'면류',n:'잡채',t:['salt']},{c:'면류',n:'곤약면·두부면',t:['good']},{c:'면류',n:'쌀국수',t:['salt']},
+
+  {c:'고기',n:'닭가슴살 (구이)',t:['protein','good']},{c:'고기',n:'닭가슴살 (찐·삶은)',t:['protein','good']},
+  {c:'고기',n:'닭안심',t:['protein','good']},{c:'고기',n:'닭다리 (껍질제거)',t:['protein','good']},
+  {c:'고기',n:'닭다리 (껍질포함)',t:['protein','fat']},{c:'고기',n:'치킨 (튀김)',t:['fat','proc','salt']},
+  {c:'고기',n:'치킨 (양념)',t:['fat','salt','proc']},{c:'고기',n:'돼지 안심',t:['protein','good']},
+  {c:'고기',n:'돼지 등심',t:['protein']},{c:'고기',n:'삼겹살',t:['fat']},{c:'고기',n:'목살',t:['fat']},
+  {c:'고기',n:'수육·보쌈',t:['salt','fat']},{c:'고기',n:'소불고기',t:['salt']},{c:'고기',n:'소갈비',t:['salt','fat','gout']},
+  {c:'고기',n:'소고기 안심·등심',t:['protein']},{c:'고기',n:'곱창·막창',t:['gout','fat']},
+  {c:'고기',n:'간·내장류',t:['gout']},{c:'고기',n:'족발',t:['salt','fat']},
+  {c:'고기',n:'햄·소시지',t:['proc','salt','fat']},{c:'고기',n:'베이컨',t:['proc','salt','fat']},
+  {c:'고기',n:'찜닭',t:['salt']},{c:'고기',n:'닭갈비',t:['salt','fat']},{c:'고기',n:'닭볶음탕',t:['salt','fat']},
+  {c:'고기',n:'오리고기',t:['protein']},{c:'고기',n:'장조림',t:['salt','protein']},
+
+  {c:'생선·해산물',n:'연어 (구이)',t:['protein','good']},{c:'생선·해산물',n:'대구·도미 (흰살)',t:['protein','good']},
+  {c:'생선·해산물',n:'고등어 (구이)',t:['protein','gout']},{c:'생선·해산물',n:'꽁치·삼치',t:['protein','gout']},
+  {c:'생선·해산물',n:'갈치 (구이)',t:['protein']},{c:'생선·해산물',n:'조기·임연수 (구이)',t:['protein']},
+  {c:'생선·해산물',n:'참치회',t:['gout','protein']},{c:'생선·해산물',n:'생선회 (흰살)',t:['protein']},
+  {c:'생선·해산물',n:'연어회',t:['protein','good']},{c:'생선·해산물',n:'오징어',t:['gout','protein']},
+  {c:'생선·해산물',n:'낙지·문어',t:['gout','protein']},{c:'생선·해산물',n:'조개·홍합',t:['gout']},
+  {c:'생선·해산물',n:'굴',t:['gout']},{c:'생선·해산물',n:'새우',t:['gout','protein']},
+  {c:'생선·해산물',n:'게·꽃게',t:['gout','salt']},{c:'생선·해산물',n:'멸치 (반찬)',t:['gout','salt']},
+  {c:'생선·해산물',n:'북어·황태',t:['protein']},{c:'생선·해산물',n:'어묵',t:['salt','proc']},
+  {c:'생선·해산물',n:'미역·다시마',t:['good']},{c:'생선·해산물',n:'김 (구운)',t:['good']},
+  {c:'생선·해산물',n:'김 (조미)',t:['salt']},{c:'생선·해산물',n:'참치 (캔)',t:['protein','proc']},
+  {c:'생선·해산물',n:'장어 (구이)',t:['fat','protein']},{c:'생선·해산물',n:'명란·젓갈',t:['salt','gout']},
+
+  {c:'채소·반찬',n:'시금치 나물',t:['good']},{c:'채소·반찬',n:'브로콜리',t:['good']},{c:'채소·반찬',n:'양배추',t:['good']},
+  {c:'채소·반찬',n:'당근',t:['good']},{c:'채소·반찬',n:'파프리카',t:['good']},{c:'채소·반찬',n:'오이',t:['good']},
+  {c:'채소·반찬',n:'방울토마토',t:['good']},{c:'채소·반찬',n:'버섯류',t:['gout','good']},{c:'채소·반찬',n:'콩나물',t:['good']},
+  {c:'채소·반찬',n:'김치',t:['salt']},{c:'채소·반찬',n:'깍두기',t:['salt']},{c:'채소·반찬',n:'단무지',t:['salt','proc']},
+  {c:'채소·반찬',n:'장아찌',t:['salt']},{c:'채소·반찬',n:'나물 무침',t:['good']},
+  {c:'채소·반찬',n:'샐러드 (드레싱X)',t:['good']},{c:'채소·반찬',n:'샐러드 (드레싱O)',t:[]},
+  {c:'채소·반찬',n:'상추·쌈채소',t:['good']},{c:'채소·반찬',n:'미나리·부추',t:['good']},
+  {c:'채소·반찬',n:'가지 요리',t:['good']},{c:'채소·반찬',n:'애호박 볶음',t:['good']},
+  {c:'채소·반찬',n:'연근·우엉조림',t:['salt']},{c:'채소·반찬',n:'무생채',t:['good']},
+  {c:'채소·반찬',n:'계란말이',t:['protein']},{c:'채소·반찬',n:'계란찜',t:['protein','good']},
+  {c:'채소·반찬',n:'아스파라거스',t:['gout','good']},{c:'채소·반찬',n:'완두콩',t:['good']},
+
+  {c:'단백질',n:'삶은 달걀',t:['protein','good']},{c:'단백질',n:'달걀 스크램블',t:['protein','good']},
+  {c:'단백질',n:'달걀프라이',t:['protein']},{c:'단백질',n:'두부 (찜·구이)',t:['protein','good']},
+  {c:'단백질',n:'두부 (튀김)',t:['protein','fat']},{c:'단백질',n:'낫토',t:['protein','good']},
+  {c:'단백질',n:'연두부·순두부',t:['protein','good']},{c:'단백질',n:'병아리콩',t:['protein','good']},
+  {c:'단백질',n:'검은콩·강낭콩',t:['protein','good']},{c:'단백질',n:'렌틸콩',t:['protein','good']},
+  {c:'단백질',n:'메추리알',t:['protein']},{c:'단백질',n:'계란 흰자',t:['protein','good']},
+  {c:'단백질',n:'단백질 파우더',t:['protein']},{c:'단백질',n:'코티지치즈',t:['protein','good']},
+
+  {c:'빵·간식',n:'통밀빵',t:['good']},{c:'빵·간식',n:'식빵',t:[]},{c:'빵·간식',n:'베이글',t:[]},
+  {c:'빵·간식',n:'크루아상',t:['fat']},{c:'빵·간식',n:'단팥빵·크림빵',t:['fat']},{c:'빵·간식',n:'도넛',t:['fat','proc']},
+  {c:'빵·간식',n:'케이크',t:['fat','proc']},{c:'빵·간식',n:'과자 (스낵)',t:['proc','fat','salt']},
+  {c:'빵·간식',n:'초콜릿',t:['fat']},{c:'빵·간식',n:'아이스크림',t:['fat','proc']},{c:'빵·간식',n:'떡',t:[]},
+  {c:'빵·간식',n:'떡볶이',t:['salt']},{c:'빵·간식',n:'순대',t:['salt','gout']},{c:'빵·간식',n:'튀김 (분식)',t:['fat','proc']},
+  {c:'빵·간식',n:'땅콩버터',t:['protein','proc']},{c:'빵·간식',n:'그래놀라',t:['good']},
+  {c:'빵·간식',n:'시리얼 (무가당)',t:['good']},{c:'빵·간식',n:'시리얼 (단맛)',t:['proc']},
+  {c:'빵·간식',n:'단백질바',t:['protein','proc']},{c:'빵·간식',n:'에너지바·곡물바',t:['proc']},
+  {c:'빵·간식',n:'호떡·붕어빵',t:['fat']},{c:'빵·간식',n:'계란빵',t:['protein']},{c:'빵·간식',n:'쿠키',t:['fat','proc']},
+  {c:'빵·간식',n:'팬케이크',t:[]},
+
+  {c:'과일·견과',n:'바나나',t:['good']},{c:'과일·견과',n:'사과',t:['good']},{c:'과일·견과',n:'배',t:['good']},
+  {c:'과일·견과',n:'감·홍시',t:['good']},{c:'과일·견과',n:'귤·오렌지',t:['good']},{c:'과일·견과',n:'딸기',t:['good']},
+  {c:'과일·견과',n:'블루베리',t:['good']},{c:'과일·견과',n:'체리',t:['good']},{c:'과일·견과',n:'키위',t:['good']},
+  {c:'과일·견과',n:'복숭아·자두',t:['good']},{c:'과일·견과',n:'참외',t:['good']},{c:'과일·견과',n:'수박',t:['good']},
+  {c:'과일·견과',n:'멜론',t:[]},{c:'과일·견과',n:'포도',t:[]},{c:'과일·견과',n:'망고',t:[]},
+  {c:'과일·견과',n:'파인애플',t:[]},{c:'과일·견과',n:'아보카도',t:['good']},{c:'과일·견과',n:'아몬드',t:['good']},
+  {c:'과일·견과',n:'호두',t:['good']},{c:'과일·견과',n:'견과류 (혼합)',t:['good']},{c:'과일·견과',n:'밤',t:['good']},
+  {c:'과일·견과',n:'말린 과일',t:['proc']},
+
+  {c:'음료',n:'물',t:['good']},{c:'음료',n:'보리차·옥수수차',t:['good']},{c:'음료',n:'플레인요거트',t:['protein','good']},
+  {c:'음료',n:'그릭요거트',t:['protein','good']},{c:'음료',n:'저지방우유',t:['protein','good']},
+  {c:'음료',n:'우유',t:['protein']},{c:'음료',n:'두유',t:['good']},{c:'음료',n:'블랙커피·아메리카노',t:['good']},
+  {c:'음료',n:'카페라떼',t:[]},{c:'음료',n:'믹스커피',t:['fat','proc']},{c:'음료',n:'녹차·홍차',t:['good']},
+  {c:'음료',n:'탄산음료',t:['proc']},{c:'음료',n:'제로 탄산',t:[]},{c:'음료',n:'주스 (가공)',t:['proc']},
+  {c:'음료',n:'생착즙 주스',t:[]},{c:'음료',n:'에너지드링크',t:['proc']},{c:'음료',n:'단백질쉐이크',t:['protein']},
+  {c:'음료',n:'아몬드·오트밀크',t:['good']},{c:'음료',n:'스무디',t:[]},{c:'음료',n:'식혜·수정과',t:[]},
+
+  {c:'술',n:'맥주',t:['alc','gout','proc']},{c:'술',n:'소주',t:['alc','gout']},{c:'술',n:'막걸리',t:['alc','gout']},
+  {c:'술',n:'와인',t:['alc']},{c:'술',n:'위스키·양주',t:['alc']},{c:'술',n:'하이볼·칵테일',t:['alc']},
+
+  {c:'외식',n:'햄버거',t:['proc','salt','fat']},{c:'외식',n:'피자',t:['salt','fat','proc']},
+  {c:'외식',n:'초밥',t:['salt']},{c:'외식',n:'마라탕·마라샹궈',t:['salt','fat','gout']},
+  {c:'외식',n:'훠궈·샤브샤브',t:['salt']},{c:'외식',n:'팟타이',t:['salt','fat']},
+  {c:'외식',n:'딤섬·만두',t:['salt']},{c:'외식',n:'탕수육·깐풍기',t:['fat','proc','salt']},
+  {c:'외식',n:'마파두부',t:['salt']},{c:'외식',n:'브리또·타코',t:['salt','fat']},
+  {c:'외식',n:'편의점 도시락',t:['salt','proc']},{c:'외식',n:'편의점 김밥·삼각김밥',t:['salt','proc']},
+  {c:'외식',n:'편의점 샌드위치',t:['salt','proc']},{c:'외식',n:'샌드위치 (채소·닭가슴살)',t:['protein','good']},
+  {c:'외식',n:'포케·샐러드볼',t:['protein','good']},{c:'외식',n:'서브웨이 (채소)',t:['protein','good']},
+  {c:'외식',n:'뷔페·과식',t:['fat','salt']},{c:'외식',n:'백반 (한식 일반)',t:['salt']}
+];
+
+var TAG_LABEL = { gout:'통풍위험', salt:'나트륨↑', fat:'포화지방', proc:'가공식품', alc:'술', good:'도움', protein:'단백질' };
+var TAG_ORDER = ['protein','good','gout','salt','fat','proc','alc'];
 
 // ═══════════════════════════════════════════
 // 저장소
 // ═══════════════════════════════════════════
-var STORAGE_KEY = 'aokc2026_diet';
-
 function loadStore() {
-  try {
-    var raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {}
+  try { var raw = window.localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
   return { dates: {} };
-  // dates: { '2026-05-07': { breakfast: ['현미밥','삶은달걀'], lunch: [...], dinner: [...], snack: [...] } }
 }
-function saveStore(s) {
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
-}
+function saveStore(s) { try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {} }
 var store = loadStore();
+if (!store.dates) store.dates = {};
+if (!store.myFoods) store.myFoods = [];
+
+function allFoods() { return FOODS.concat(store.myFoods || []); }
 
 // ═══════════════════════════════════════════
-// 날짜 헬퍼
+// 날짜
 // ═══════════════════════════════════════════
 function dateKey(d) {
   var y = d.getFullYear();
@@ -1330,125 +940,97 @@ function dateKey(d) {
   var day = ('0' + d.getDate()).slice(-2);
   return y + '-' + m + '-' + day;
 }
-function todayDate() {
-  var t = new Date();
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
-}
-
+function todayDate() { var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); }
 var currentDate = todayDate();
-var currentMeal = 'breakfast';
-var currentCategory = '전체';
 
-// ═══════════════════════════════════════════
-// 데이터 추가/제거
-// ═══════════════════════════════════════════
+function mondayOf(d) {
+  var dow = d.getDay();
+  var off = (dow === 0) ? -6 : (1 - dow);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + off);
+}
+function weekLetter(d) {
+  var diff = Math.round((mondayOf(d) - mondayOf(WEEK_ANCHOR)) / 604800000);
+  return (((diff % 2) + 2) % 2 === 0) ? 'A' : 'B';
+}
+function planFor(d) { return PLAN[weekLetter(d)][d.getDay()]; }
+
 function getDayData() {
   var k = dateKey(currentDate);
-  if (!store.dates[k]) store.dates[k] = { breakfast: [], lunch: [], dinner: [], snack: [] };
-  return store.dates[k];
+  if (!store.dates[k]) store.dates[k] = {};
+  var dd = store.dates[k];
+  if (!dd.plan) dd.plan = {};
+  if (!dd.l3) dd.l3 = {};
+  if (!dd.exc) dd.exc = [];
+  return dd;
 }
-function addFood(name) {
-  var data = getDayData();
-  data[currentMeal].push(name);
-  saveStore(store);
-  render();
-}
-function removeFood(meal, idx) {
-  var data = getDayData();
-  data[meal].splice(idx, 1);
-  saveStore(store);
-  render();
-}
-
-// 약 복용 토글
-function toggleMed() {
-  var data = getDayData();
-  data.med = !data.med;
-  saveStore(store);
-  renderMed();
-  showSavedIndicator('med-saved');
-}
-
-function renderMed() {
-  var data = store.dates[dateKey(currentDate)] || {};
-  var box = document.getElementById('med-box');
-  var row = box.parentNode;
-  var label = document.getElementById('med-label');
-  if (data.med) {
-    box.classList.add('done');
-    row.classList.add('done');
-    label.textContent = '✓ 복용 완료';
-  } else {
-    box.classList.remove('done');
-    row.classList.remove('done');
-    label.textContent = '먹지 않음';
-  }
-}
-
-// 저장 표시
-var saveTimers = {};
-function showSavedIndicator(elId) {
-  var ind = document.getElementById(elId);
-  if (!ind) return;
-  if (saveTimers[elId]) {
-    clearTimeout(saveTimers[elId].t1);
-    clearTimeout(saveTimers[elId].t2);
-  }
-  saveTimers[elId] = {};
-  ind.textContent = '✓ 저장됨';
-  ind.className = 'save-indicator saved show';
-  saveTimers[elId].t2 = setTimeout(function() {
-    ind.classList.remove('show');
-  }, 2000);
+function dayDataOf(d) {
+  var dd = store.dates[dateKey(d)] || {};
+  return { plan: dd.plan || {}, l3: dd.l3 || {}, exc: dd.exc || [],
+           water: !!dd.water, med: !!dd.med,
+           breakfast: dd.breakfast || [], lunch: dd.lunch || [], dinner: dd.dinner || [], snack: dd.snack || [] };
 }
 
 // ═══════════════════════════════════════════
-// 분석 로직
+// 준수율
+// 아침 1 + 점심 1 + 저녁 1 + 물 1 + 약 1 = 5칸
+// 점심을 '학식'으로 고르면 3원칙 체크 비율이 그 칸의 점수
+// ═══════════════════════════════════════════
+function mealScore(v) { return (v === 'ok' || v === 'alt' || v === 'box') ? 1 : 0; }
+
+function dayScore(d) {
+  var dd = dayDataOf(d);
+  var got = 0, slots = 5, any = false;
+  got += mealScore(dd.plan.b); if (dd.plan.b) any = true;
+  if (dd.plan.l === 'school') {
+    var n = 0;
+    for (var i = 0; i < L3.length; i++) if (dd.l3[L3[i].k]) n++;
+    got += n / L3.length; any = true;
+  } else { got += mealScore(dd.plan.l); if (dd.plan.l) any = true; }
+  got += mealScore(dd.plan.d); if (dd.plan.d) any = true;
+  if (dd.water) { got += 1; any = true; }
+  if (dd.med) { got += 1; any = true; }
+  if (!any) return null;
+  return Math.round(got / slots * 100);
+}
+
+function scoreMessage(pct) {
+  if (pct === null) return { msg:'아직 체크 전이에요', cls:'' };
+  if (pct >= 95) return { msg:'완벽한 하루. 이 패턴이 12월을 만듭니다.', cls:'good' };
+  if (pct >= 80) return { msg:'아주 좋아요. 이대로만.', cls:'good' };
+  if (pct >= 60) return { msg:'괜찮습니다. 한 칸만 더 채워볼까요.', cls:'' };
+  if (pct >= 40) return { msg:'절반은 했어요. 내일은 한 칸만 늘려봐요.', cls:'' };
+  return { msg:'기록했다는 것만으로 오늘은 성공입니다.', cls:'' };
+}
+
+// ═══════════════════════════════════════════
+// 자유 기록 분석 (기존 로직 유지)
 // ═══════════════════════════════════════════
 function getFoodInfo(name) {
-  for (var i = 0; i < FOODS.length; i++) {
-    if (FOODS[i].n === name) return FOODS[i];
-  }
+  var arr = allFoods();
+  for (var i = 0; i < arr.length; i++) if (arr[i].n === name) return arr[i];
   return null;
 }
-
 function analyzeDay(d) {
-  var k = dateKey(d);
-  var data = store.dates[k];
-  if (!data) return null;
-  var counts = { gout: 0, salt: 0, fat: 0, proc: 0, alc: 0, good: 0, protein: 0 };
+  var dd = dayDataOf(d);
+  var counts = { gout:0, salt:0, fat:0, proc:0, alc:0, good:0, protein:0 };
+  var meals = ['breakfast','lunch','dinner','snack'];
   var total = 0;
-  var meals = ['breakfast', 'lunch', 'dinner', 'snack'];
-  var foodList = [];
   for (var i = 0; i < meals.length; i++) {
-    var arr = data[meals[i]] || [];
+    var arr = dd[meals[i]];
     for (var j = 0; j < arr.length; j++) {
       total++;
-      foodList.push({ meal: meals[i], name: arr[j] });
       var info = getFoodInfo(arr[j]);
-      if (info) {
-        for (var t = 0; t < info.t.length; t++) {
-          counts[info.t[t]] = (counts[info.t[t]] || 0) + 1;
-        }
-      }
+      if (info) for (var t = 0; t < info.t.length; t++) counts[info.t[t]] = (counts[info.t[t]] || 0) + 1;
     }
   }
-  return { counts: counts, total: total, foods: foodList };
+  if (total === 0) return null;
+  return { counts: counts, total: total };
 }
-
 function calcGrade(a) {
   if (!a || a.total === 0) return null;
   var c = a.counts;
-  // 점수 계산: 도움+단백질은 가산점, 나머지는 감점
-  // 0회 위험 + good 다수 = A
-  // 가벼운 1~2개 위험 = B
-  // 중간 위험 = C
-  // 술/통풍/가공 다수 = D
-  // 매우 나쁨 = F
   var bad = c.gout + c.salt * 0.7 + c.fat * 0.7 + c.proc * 0.5 + c.alc * 1.5;
-  var goodScore = c.good + c.protein * 0.5;
-  var net = goodScore - bad;
-
+  var net = (c.good + c.protein * 0.5) - bad;
   if (c.alc >= 1 && c.gout >= 2) return 'F';
   if (net >= 4) return 'A';
   if (net >= 2) return 'B';
@@ -1456,223 +1038,262 @@ function calcGrade(a) {
   if (net >= -3) return 'D';
   return 'F';
 }
-
-function getGradeMessage(grade, a) {
-  if (!grade) return { msg: '아직 입력된 음식이 없어요', cls: '' };
-  var c = a.counts;
-  var msgs = {
-    A: { msg: '훌륭한 하루예요. 16년 여정에 도움이 되는 식단입니다.', cls: 'good' },
-    B: { msg: '괜찮은 식단이에요. 한두 가지만 조심하면 더 좋겠어요.', cls: '' },
-    C: { msg: '평범한 식단. 운동 효과를 더 끌어올리려면 보완이 필요해요.', cls: '' },
-    D: { msg: '오늘은 운동에 도움이 안 되는 식단이었어요. 내일은 한 가지만 바꿔봐요.', cls: 'bad' },
-    F: { msg: '솔직히 말씀드리면, 오늘 식단은 통풍 발작 위험이 있는 수준이에요.', cls: 'bad' }
-  };
-  return msgs[grade] || { msg: '', cls: '' };
-}
-
+var GRADE_MSG = {
+  A:'훌륭한 구성이에요.', B:'괜찮습니다. 한두 가지만 조심하면 더 좋겠어요.',
+  C:'평범한 하루. 단백질과 채소를 한 번 더 챙겨보세요.',
+  D:'오늘은 회복에 도움이 덜 되는 구성이었어요. 다음 한 끼만 바꿔봐요.',
+  F:'통풍 쪽으로 부담이 큰 조합입니다. 물을 충분히 드시고 다음 끼니를 가볍게.'
+};
 function getInsights(a) {
-  if (!a || a.total === 0) return [];
-  var c = a.counts;
-  var ins = [];
-
-  // 통풍 위험
-  if (c.alc >= 1 && c.gout >= 1) {
-    ins.push({ type: 'bad', text: '⚠️ <strong>통풍 발작 위험 매우 높음</strong> — 술과 고퓨린 식품을 함께 먹으면 요산 수치가 급증해요. 12월 대회 전 절대 피해야 합니다.' });
-  } else if (c.alc >= 1) {
-    ins.push({ type: 'bad', text: '🍺 <strong>음주 기록</strong> — 알코올은 요산 배출을 막아요. 운동 효과도 회복도 모두 떨어집니다.' });
-  } else if (c.gout >= 3) {
-    ins.push({ type: 'bad', text: '⚠️ <strong>고퓨린 식품 ' + c.gout + '회</strong> — 통풍 이력이 있다면 하루 1~2회 이내로 제한하세요.' });
-  } else if (c.gout >= 1) {
-    ins.push({ type: 'warn', text: '⚠️ 고퓨린 식품 ' + c.gout + '회 — 적정 수준이지만 물을 충분히 드세요(2L+).' });
-  }
-
-  // 나트륨
-  if (c.salt >= 4) {
-    ins.push({ type: 'bad', text: '🧂 <strong>나트륨 폭탄 ' + c.salt + '회</strong> — 혈압에 직접 영향. 국물은 건더기만, 김치는 한 종류만으로 줄여보세요.' });
-  } else if (c.salt >= 2) {
-    ins.push({ type: 'warn', text: '🧂 나트륨 식품 ' + c.salt + '회 — 다음 끼니는 국·찌개 빼고 가보세요.' });
-  }
-
-  // 포화지방
-  if (c.fat >= 3) {
-    ins.push({ type: 'bad', text: '🥓 <strong>포화지방 ' + c.fat + '회</strong> — 고지혈증에 직격. 운동 회복에도 방해돼요.' });
-  } else if (c.fat >= 2) {
-    ins.push({ type: 'warn', text: '🥓 포화지방 ' + c.fat + '회 — 내일은 닭가슴살·생선·두부로 대체해보세요.' });
-  }
-
-  // 가공식품
-  if (c.proc >= 3) {
-    ins.push({ type: 'warn', text: '🏭 가공식품 ' + c.proc + '회 — 운동 효과를 떨어뜨려요. 신선식품 비중 늘리기.' });
-  }
-
-  // 도움 식품
-  if (c.good >= 5) {
-    ins.push({ type: 'good', text: '✅ <strong>계획 식품 ' + c.good + '회</strong> — 매우 좋아요! 이 패턴을 유지하세요.' });
-  } else if (c.good >= 3) {
-    ins.push({ type: 'good', text: '✅ 계획 식품 ' + c.good + '회 — 좋은 흐름이에요.' });
-  } else if (c.good === 0 && a.total >= 3) {
-    ins.push({ type: 'warn', text: '계획 식품이 0회예요. 현미밥·달걀·채소·견과 중 하나라도 추가해보세요.' });
-  }
-
-  // 단백질
-  if (c.protein === 0 && a.total >= 4) {
-    ins.push({ type: 'warn', text: '🥚 단백질 식품이 없어요 — 운동 회복엔 단백질이 필수예요. 달걀이라도 챙기세요.' });
-  }
-
-  // 아무 신호도 없을 때
-  if (ins.length === 0) {
-    ins.push({ type: 'neutral', text: '오늘은 평이한 식단이에요. 운동에 도움이 되는 식품(현미밥·달걀·생선·채소·견과)을 더 추가해보세요.' });
-  }
-
-  // 코프볼·운동 연관 코멘트 (위험이 있을 때만)
-  if (c.alc >= 1 || c.gout >= 2 || c.fat >= 3) {
-    ins.push({ type: 'neutral', text: '💭 12월 6일까지 D-' + dDayCount() + '일. 16년 여정의 마지막 무대를 위해, 오늘의 한 끼가 다음 훈련 컨디션을 결정해요.' });
-  }
-
+  if (!a) return [];
+  var c = a.counts, ins = [];
+  if (c.alc >= 1 && c.gout >= 1) ins.push({ t:'bad', x:'⚠️ <b>술 + 고퓨린 조합</b> — 요산 배출이 막힙니다. 물을 충분히 드세요.' });
+  else if (c.alc >= 1) ins.push({ t:'bad', x:'🍺 음주 기록 — 회복과 수면의 질에 직접 영향을 줍니다.' });
+  else if (c.gout >= 3) ins.push({ t:'warn', x:'⚠️ 고퓨린 식품 ' + c.gout + '회 — 물 2L 이상 챙기세요.' });
+  if (c.salt >= 4) ins.push({ t:'bad', x:'🧂 <b>나트륨 ' + c.salt + '회</b> — 다음 끼니는 국·찌개를 빼보세요.' });
+  else if (c.salt >= 2) ins.push({ t:'warn', x:'🧂 나트륨 ' + c.salt + '회 — 국물은 건더기만.' });
+  if (c.fat >= 3) ins.push({ t:'warn', x:'🥓 포화지방 ' + c.fat + '회 — 내일은 닭가슴살·생선·두부로.' });
+  if (c.good >= 5) ins.push({ t:'good', x:'✅ <b>도움 식품 ' + c.good + '회</b> — 아주 좋은 흐름이에요.' });
+  if (c.protein === 0 && a.total >= 4) ins.push({ t:'warn', x:'🥚 단백질이 비었어요 — 달걀이라도 하나.' });
+  if (ins.length === 0) ins.push({ t:'neutral', x:'특별한 신호 없는 하루예요.' });
   return ins;
 }
 
-function dDayCount() {
-  var comp = new Date(2026, 11, 6);
-  return Math.round((comp - todayDate()) / 86400000);
-}
+// ═══════════════════════════════════════════
+// 렌더 — 오늘
+// ═══════════════════════════════════════════
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function jsq(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-// ═══════════════════════════════════════════
-// 렌더링
-// ═══════════════════════════════════════════
+var MEAL_META = [
+  { k:'b', icon:'🌅', label:'아침', free:'breakfast' },
+  { k:'l', icon:'☀️', label:'점심', free:'lunch' },
+  { k:'d', icon:'🌙', label:'저녁', free:'dinner' }
+];
+
 function render() {
-  // 날짜 텍스트
   var t = todayDate();
-  var weekDays = ['일','월','화','수','목','금','토'];
-  var dayText = '';
+  var dayText;
   if (dateKey(currentDate) === dateKey(t)) dayText = '오늘';
   else if (dateKey(currentDate) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()-1))) dayText = '어제';
-  else if (dateKey(currentDate) === dateKey(new Date(t.getFullYear(), t.getMonth(), t.getDate()+1))) dayText = '내일';
   else dayText = (currentDate.getMonth()+1) + '월 ' + currentDate.getDate() + '일';
   document.getElementById('date-text').firstChild.nodeValue = dayText;
-  document.getElementById('date-sub').textContent = (currentDate.getMonth()+1) + '월 ' + currentDate.getDate() + '일 (' + weekDays[currentDate.getDay()] + ')';
+  document.getElementById('date-sub').textContent =
+    (currentDate.getMonth()+1) + '월 ' + currentDate.getDate() + '일 (' + WEEK_DAYS[currentDate.getDay()] + ')';
 
-  // 분석
-  var a = analyzeDay(currentDate);
-  var grade = calcGrade(a);
-  var gradeEl = document.getElementById('grade');
-  var gradeMsgEl = document.getElementById('grade-msg');
+  document.getElementById('week-tag').textContent = weekLetter(currentDate) + '주';
 
-  if (!grade) {
-    gradeEl.textContent = '—';
-    gradeEl.className = 'mirror-grade';
-    gradeMsgEl.textContent = '아직 입력된 음식이 없어요';
-    gradeMsgEl.className = 'mirror-msg';
-  } else {
-    gradeEl.textContent = grade;
-    gradeEl.className = 'mirror-grade lvl-' + grade;
-    var gm = getGradeMessage(grade, a);
-    gradeMsgEl.innerHTML = gm.msg;
-    gradeMsgEl.className = 'mirror-msg ' + gm.cls;
-  }
+  renderScore();
+  renderMeals();
+  renderFlags();
+  renderExceptions();
+  renderFree();
+}
 
-  // 위험 카운트
-  var c = a ? a.counts : { gout: 0, salt: 0, fat: 0, proc: 0, alc: 0, good: 0 };
-  var goutTotal = c.gout + (c.alc || 0);
-  setRiskBox('gout', goutTotal, [0, 1, 2]);
-  setRiskBox('salt', c.salt, [0, 2, 4]);
-  setRiskBox('fat', c.fat, [0, 2, 3]);
-  setRiskBoxGood('good', c.good);
+function renderScore() {
+  var pct = dayScore(currentDate);
+  var el = document.getElementById('score-num');
+  var v = (pct === null) ? 0 : pct;
+  el.innerHTML = v + '<span class="pct">%</span>';
+  el.className = 'score-num' + (v >= 80 ? '' : (v >= 40 ? ' mid' : ' low'));
+  document.getElementById('score-fill').style.width = v + '%';
+  var m = scoreMessage(pct);
+  var msgEl = document.getElementById('score-msg');
+  msgEl.textContent = m.msg;
+  msgEl.className = 'score-msg ' + m.cls;
+}
 
-  // 식사별 칩
-  var meals = ['breakfast', 'lunch', 'dinner', 'snack'];
-  var data = a ? store.dates[dateKey(currentDate)] : null;
-  for (var i = 0; i < meals.length; i++) {
-    var meal = meals[i];
-    var arr = data ? (data[meal] || []) : [];
-    var area = document.getElementById('chips-' + meal);
-    var cnt = document.getElementById('cnt-' + meal);
-    cnt.textContent = arr.length + '개';
-    if (arr.length === 0) {
-      area.innerHTML = '';
-      area.className = 'chip-area empty';
+function renderMeals() {
+  var p = planFor(currentDate);
+  var dd = dayDataOf(currentDate);
+  var html = '';
+
+  for (var i = 0; i < MEAL_META.length; i++) {
+    var mm = MEAL_META[i];
+    var meal = p[mm.k];
+    var cur = dd.plan[mm.k] || '';
+    var isFree = (meal.carb === 'free');
+    var done = (cur === 'ok' || cur === 'alt' || cur === 'school');
+
+    html += '<div class="meal-card' + (isFree ? ' free' : (done ? ' done' : '')) + '">';
+    html += '<div class="meal-head"><div class="meal-title">' + mm.icon + ' ' + mm.label + '</div>';
+    if (meal.carb) html += '<span class="carb-tag ' + meal.carb + '">' + CARB_LABEL[meal.carb] + '</span>';
+    else if (meal.box) html += '<span class="carb-tag box">도시락 또는 학식</span>';
+    html += '</div>';
+
+    html += '<div class="meal-menu">' + esc(meal.menu) + '</div>';
+    if (meal.k6) html += '<div class="meal-note kid">🧒 <b>6세</b> · ' + esc(meal.k6) + '</div>';
+    if (meal.k2) html += '<div class="meal-note kid2">👶 <b>2세</b> · ' + esc(meal.k2) + '</div>';
+    if (meal.adult) html += '<div class="meal-note adult">💪 <b>어른</b> · ' + esc(meal.adult) + '</div>';
+    if (meal.alt) html += '<div class="meal-note">↺ 대체 · ' + esc(meal.alt) + '</div>';
+
+    html += '<div class="pick-row">';
+    if (mm.k === 'l' && meal.box) {
+      html += '<button class="pick-btn' + (cur === 'box' ? ' on' : '') + '" onclick="pickMeal(\'l\',\'box\')">🍱 도시락</button>';
+      html += '<button class="pick-btn school' + (cur === 'school' ? ' on school' : '') + '" onclick="pickMeal(\'l\',\'school\')">🏫 학식</button>';
     } else {
-      area.className = 'chip-area';
-      var html = '';
-      for (var j = 0; j < arr.length; j++) {
-        var info = getFoodInfo(arr[j]);
-        var cls = '';
-        if (info) {
-          if (info.t.indexOf('alc') >= 0 || info.t.indexOf('gout') >= 0) cls = 'danger';
-          else if (info.t.indexOf('salt') >= 0 || info.t.indexOf('fat') >= 0 || info.t.indexOf('proc') >= 0) cls = 'warn';
-          else if (info.t.indexOf('good') >= 0) cls = 'good';
-        }
-        html += '<span class="chip ' + cls + '">' + arr[j] + '<button class="chip-x" onclick="removeFood(\'' + meal + '\',' + j + ')">✕</button></span>';
+      html += '<button class="pick-btn' + (cur === 'ok' ? ' on' : '') + '" onclick="pickMeal(\'' + mm.k + '\',\'ok\')">✓ 계획대로</button>';
+    }
+    html += '<button class="pick-btn' + (cur === 'alt' ? ' on' : '') + '" onclick="pickMeal(\'' + mm.k + '\',\'alt\')">↺ 다른 걸로</button>';
+    html += '<button class="pick-btn skip' + (cur === 'skip' ? ' on skip' : '') + '" onclick="pickMeal(\'' + mm.k + '\',\'skip\')">– 거름</button>';
+    html += '</div>';
+
+    if (mm.k === 'l' && cur === 'school') {
+      html += '<div class="l3-box"><div class="l3-title">🍱 학식에서 지킬 3가지</div>';
+      for (var j = 0; j < L3.length; j++) {
+        var c = L3[j], on = !!dd.l3[c.k];
+        html += '<div class="check-row' + (on ? ' done' : '') + '" onclick="toggleL3(\'' + c.k + '\')">';
+        html += '<div class="checkbox' + (on ? ' done' : '') + '"></div>';
+        html += '<div class="check-text">' + c.label + '<span class="sub">' + c.sub + '</span></div></div>';
       }
-      area.innerHTML = html;
+      html += '</div>';
     }
+    html += '</div>';
   }
-
-  // 인사이트
-  var ins = getInsights(a);
-  var card = document.getElementById('insight-card');
-  if (ins.length === 0) {
-    card.style.display = 'none';
-  } else {
-    card.style.display = '';
-    var html = '';
-    for (var i = 0; i < ins.length; i++) {
-      html += '<div class="insight-row ' + ins[i].type + '">' + ins[i].text + '</div>';
-    }
-    document.getElementById('insight-list').innerHTML = html;
-  }
-
-  // 약 복용 상태
-  renderMed();
+  document.getElementById('meal-cards').innerHTML = html;
 }
 
-function setRiskBox(key, value, thresholds) {
-  // thresholds: [zero, warn시작, alert시작]
-  var num = document.getElementById('cnt-' + key);
-  var box = document.getElementById('risk-' + key + '-box');
-  num.textContent = value;
-  box.className = 'risk-box';
-  num.className = 'risk-num';
-  if (value === 0) {
-    num.classList.add('zero');
-  } else if (value >= thresholds[2]) {
-    box.classList.add('alert');
-    num.classList.add('alert');
-  } else if (value >= thresholds[1]) {
-    box.classList.add('warn');
-    num.classList.add('warn');
-  } else {
-    num.classList.add('warn');
-  }
+function renderFlags() {
+  var dd = dayDataOf(currentDate);
+  var w = document.getElementById('mini-water');
+  var m = document.getElementById('mini-med');
+  if (dd.water) w.classList.add('on'); else w.classList.remove('on');
+  if (dd.med) m.classList.add('on'); else m.classList.remove('on');
 }
-function setRiskBoxGood(key, value) {
-  var num = document.getElementById('cnt-' + key);
-  var box = document.getElementById('risk-' + key + '-box');
-  num.textContent = value;
-  box.className = 'risk-box';
-  num.className = 'risk-num';
-  if (value === 0) {
-    num.classList.add('zero');
-  } else if (value >= 3) {
-    box.classList.add('good');
-    num.classList.add('good');
-  } else {
-    num.classList.add('good');
+
+function renderExceptions() {
+  var dd = dayDataOf(currentDate);
+  var html = '';
+  for (var i = 0; i < EXCEPTIONS.length; i++) {
+    var e = EXCEPTIONS[i];
+    var on = dd.exc.indexOf(e.k) >= 0;
+    html += '<button class="exc-chip' + (on ? ' on' : '') + '" onclick="toggleExc(\'' + e.k + '\')">' + e.label + '</button>';
   }
+  document.getElementById('exc-chips').innerHTML = html;
+  var n = dd.exc.length;
+  document.getElementById('exc-meta').textContent = (n === 0 ? '없음' : n + '개') + ' ▾';
+}
+
+function renderFree() {
+  var dd = dayDataOf(currentDate);
+  var a = analyzeDay(currentDate);
+  var g = calcGrade(a);
+  var line = document.getElementById('grade-line');
+  if (g) {
+    line.style.display = '';
+    var b = document.getElementById('free-grade');
+    b.textContent = g; b.className = 'grade-badge ' + g;
+    document.getElementById('free-grade-txt').textContent = GRADE_MSG[g];
+  } else line.style.display = 'none';
+
+  var html = '';
+  var meals = [['breakfast','🌅 아침'],['lunch','☀️ 점심'],['dinner','🌙 저녁'],['snack','🍪 간식·음료']];
+  for (var i = 0; i < meals.length; i++) {
+    var key = meals[i][0], arr = dd[key];
+    html += '<div class="sub-label">' + meals[i][1] + '</div>';
+    html += '<div class="chip-area' + (arr.length ? '' : ' empty') + '">';
+    for (var j = 0; j < arr.length; j++) {
+      var info = getFoodInfo(arr[j]);
+      var cls = '';
+      if (info) {
+        if (info.t.indexOf('alc') >= 0 || info.t.indexOf('gout') >= 0) cls = 'danger';
+        else if (info.t.indexOf('salt') >= 0 || info.t.indexOf('fat') >= 0 || info.t.indexOf('proc') >= 0) cls = 'warn';
+        else if (info.t.indexOf('good') >= 0) cls = 'good';
+      }
+      html += '<span class="chip ' + cls + '">' + esc(arr[j]) +
+              '<button class="chip-x" onclick="removeFood(\'' + key + '\',' + j + ')">✕</button></span>';
+    }
+    html += '</div>';
+    html += '<button class="add-food-btn" onclick="openModal(\'' + key + '\')">+ 음식 추가</button>';
+  }
+  document.getElementById('free-meals').innerHTML = html;
+
+  var ins = getInsights(a), ih = '';
+  for (var i = 0; i < ins.length; i++) ih += '<div class="insight-row ' + ins[i].t + '">' + ins[i].x + '</div>';
+  document.getElementById('free-insights').innerHTML = a ? ih : '';
 }
 
 // ═══════════════════════════════════════════
-// 모달
+// 액션
 // ═══════════════════════════════════════════
-var mealLabels = { breakfast: '🌅 아침', lunch: '☀️ 점심', dinner: '🌙 저녁', snack: '🍪 간식' };
+function syncPct() {
+  var k = dateKey(currentDate);
+  if (!store.dates[k]) return;
+  var s = dayScore(currentDate);
+  store.dates[k].pct = (s === null) ? 0 : s;
+  saveStore(store);
+}
 
+function pickMeal(mealKey, val) {
+  var dd = getDayData();
+  if (dd.plan[mealKey] === val) delete dd.plan[mealKey];
+  else dd.plan[mealKey] = val;
+  saveStore(store);
+  syncPct();
+  renderScore(); renderMeals();
+}
+function toggleL3(k) {
+  var dd = getDayData();
+  dd.l3[k] = !dd.l3[k];
+  saveStore(store);
+  syncPct();
+  renderScore(); renderMeals();
+}
+function toggleFlag(k) {
+  var dd = getDayData();
+  dd[k] = !dd[k];
+  saveStore(store);
+  syncPct();
+  renderScore(); renderFlags();
+}
+function toggleExc(k) {
+  var dd = getDayData();
+  var i = dd.exc.indexOf(k);
+  if (i >= 0) dd.exc.splice(i, 1); else dd.exc.push(k);
+  saveStore(store);
+  renderExceptions();
+}
+function toggleFold(which) {
+  var body = document.getElementById('fold-' + which);
+  body.style.display = (body.style.display === 'none') ? 'block' : 'none';
+}
+function removeFood(meal, idx) {
+  var dd = getDayData();
+  if (!dd[meal]) return;
+  dd[meal].splice(idx, 1);
+  saveStore(store);
+  renderFree();
+}
+function addFood(name) {
+  var dd = getDayData();
+  if (!dd[currentMeal]) dd[currentMeal] = [];
+  dd[currentMeal].push(name);
+  saveStore(store);
+  renderFree();
+}
+
+// ═══════════════════════════════════════════
+// 모달 — 검색 + 직접 추가
+// ═══════════════════════════════════════════
+var currentMeal = 'breakfast';
+var currentCategory = '전체';
+var customTags = {};
+var MEAL_LABEL = { breakfast:'🌅 아침', lunch:'☀️ 점심', dinner:'🌙 저녁', snack:'🍪 간식' };
+
+function categories() {
+  var seen = {}, out = [];
+  var arr = allFoods();
+  for (var i = 0; i < arr.length; i++) if (!seen[arr[i].c]) { seen[arr[i].c] = 1; out.push(arr[i].c); }
+  return out;
+}
 function openModal(meal) {
   currentMeal = meal;
-  document.getElementById('modal-meal-label').textContent = '· ' + mealLabels[meal];
-  document.getElementById('search-input').value = '';
   currentCategory = '전체';
-  renderCatTabs();
-  renderFoodList();
+  customTags = {};
+  document.getElementById('modal-meal-label').textContent = '· ' + MEAL_LABEL[meal];
+  document.getElementById('search-input').value = '';
+  document.getElementById('custom-name').value = '';
+  renderCatTabs(); renderFoodList(); renderCustomTags();
   document.getElementById('modal-overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
   enableKeyboardHandler();
@@ -1681,33 +1302,78 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('on');
   document.body.style.overflow = '';
   disableKeyboardHandler();
-  // 검색 input blur 처리 (키보드 내리기)
-  var si = document.getElementById('search-input');
-  if (si) si.blur();
+  var si = document.getElementById('search-input'); if (si) si.blur();
 }
-function closeModalIfOverlay(e) {
-  if (e.target.id === 'modal-overlay') closeModal();
+function closeModalIfOverlay(e) { if (e.target.id === 'modal-overlay') closeModal(); }
+
+function renderCatTabs() {
+  var cats = categories();
+  var html = '<button class="cat-tab' + (currentCategory === '전체' ? ' on' : '') + '" onclick="selectCat(\'전체\')">전체</button>';
+  html += '<button class="cat-tab' + (currentCategory === '내 음식' ? ' on' : '') + '" onclick="selectCat(\'내 음식\')">⭐ 내 음식</button>';
+  for (var i = 0; i < cats.length; i++)
+    html += '<button class="cat-tab' + (currentCategory === cats[i] ? ' on' : '') + '" onclick="selectCat(\'' + jsq(cats[i]) + '\')">' + esc(cats[i]) + '</button>';
+  document.getElementById('cat-tabs').innerHTML = html;
+}
+function selectCat(c) { currentCategory = c; renderCatTabs(); renderFoodList(); }
+
+function renderFoodList() {
+  var q = document.getElementById('search-input').value.trim().toLowerCase();
+  var arr = (currentCategory === '내 음식') ? (store.myFoods || []) : allFoods();
+  var html = '';
+  for (var i = 0; i < arr.length; i++) {
+    var f = arr[i];
+    if (currentCategory !== '전체' && currentCategory !== '내 음식' && f.c !== currentCategory) continue;
+    if (q && f.n.toLowerCase().indexOf(q) < 0) continue;
+    var tags = '';
+    for (var j = 0; j < f.t.length; j++) tags += '<span class="tag ' + f.t[j] + '">' + TAG_LABEL[f.t[j]] + '</span>';
+    html += '<div class="food-item" onclick="addFood(\'' + jsq(f.n) + '\');closeModal()">';
+    html += '<div><div class="food-name">' + esc(f.n) + '</div>';
+    if (tags) html += '<div class="food-tags">' + tags + '</div>';
+    html += '</div><button class="food-add-btn">+</button></div>';
+  }
+  if (!html) html = '<div class="empty-state">검색 결과가 없어요<br><span style="font-size:11px">아래에서 직접 추가할 수 있습니다</span></div>';
+  var el = document.getElementById('food-list');
+  el.innerHTML = html; el.scrollTop = 0;
+}
+function filterFoods() { renderFoodList(); }
+
+function renderCustomTags() {
+  var html = '';
+  for (var i = 0; i < TAG_ORDER.length; i++) {
+    var k = TAG_ORDER[i];
+    var on = !!customTags[k];
+    html += '<button class="tag pick ' + (on ? k + ' on' : '') + '" onclick="toggleCustomTag(\'' + k + '\')">' +
+            (on ? '✓ ' : '') + TAG_LABEL[k] + '</button>';
+  }
+  document.getElementById('custom-tags').innerHTML = html;
+}
+function toggleCustomTag(k) { customTags[k] = !customTags[k]; renderCustomTags(); }
+
+function saveCustomFood() {
+  var name = document.getElementById('custom-name').value.trim();
+  if (!name) { window.alert('음식 이름을 입력해 주세요'); return; }
+  var t = [];
+  for (var i = 0; i < TAG_ORDER.length; i++) if (customTags[TAG_ORDER[i]]) t.push(TAG_ORDER[i]);
+  if (!store.myFoods) store.myFoods = [];
+  var exists = false;
+  for (var i = 0; i < store.myFoods.length; i++) if (store.myFoods[i].n === name) { exists = true; break; }
+  if (!exists) store.myFoods.push({ c:'내 음식', n:name, t:t });
+  saveStore(store);
+  addFood(name);
+  closeModal();
 }
 
-// 키보드 등장 감지 — 모달을 키보드 위로 끌어올림
+// 키보드 대응
 function handleViewportResize() {
   if (!window.visualViewport) return;
   var vv = window.visualViewport;
-  var vh = vv.height;
-  var fullH = window.innerHeight;
-  var keyboardH = Math.max(0, fullH - vh);
+  var keyboardH = Math.max(0, window.innerHeight - vv.height);
   var root = document.documentElement;
-
   if (keyboardH > 100) {
-    // 키보드 떠 있음
-    // 모달 높이: 키보드 위에서 사용 가능한 공간의 약 90%
-    var modalH = Math.floor(vh * 0.9);
-    // 모달이 화면 바닥(align-end)에 붙어 있으므로 키보드 높이만큼 위로 끌어올림
-    root.style.setProperty('--modal-h', modalH + 'px');
+    root.style.setProperty('--modal-h', Math.floor(vv.height * 0.9) + 'px');
     root.style.setProperty('--modal-offset', '-' + keyboardH + 'px');
   } else {
-    // 키보드 닫힘 — 원래대로
-    root.style.setProperty('--modal-h', '75vh');
+    root.style.setProperty('--modal-h', '78vh');
     root.style.setProperty('--modal-offset', '0px');
   }
 }
@@ -1722,174 +1388,123 @@ function disableKeyboardHandler() {
     window.visualViewport.removeEventListener('resize', handleViewportResize);
     window.visualViewport.removeEventListener('scroll', handleViewportResize);
   }
-  document.documentElement.style.setProperty('--modal-h', '75vh');
+  document.documentElement.style.setProperty('--modal-h', '78vh');
   document.documentElement.style.setProperty('--modal-offset', '0px');
 }
-
-// 검색 input 포커스 — visualViewport 이벤트가 늦게 발화하는 경우 보조 트리거
-function onSearchFocus() {
-  // 살짝 지연 후 viewport 재계산 (키보드 애니메이션 완료 대기)
-  setTimeout(handleViewportResize, 100);
-  setTimeout(handleViewportResize, 350);
-}
-function onSearchBlur() {
-  setTimeout(handleViewportResize, 100);
-}
-
-function renderCatTabs() {
-  var html = '<button class="cat-tab' + (currentCategory === '전체' ? ' on' : '') + '" onclick="selectCat(\'전체\')">전체</button>';
-  for (var i = 0; i < CATEGORIES.length; i++) {
-    html += '<button class="cat-tab' + (currentCategory === CATEGORIES[i] ? ' on' : '') + '" onclick="selectCat(\'' + CATEGORIES[i] + '\')">' + CATEGORIES[i] + '</button>';
-  }
-  document.getElementById('cat-tabs').innerHTML = html;
-}
-function selectCat(c) {
-  currentCategory = c;
-  renderCatTabs();
-  renderFoodList();
-}
-
-function renderFoodList() {
-  var query = document.getElementById('search-input').value.trim().toLowerCase();
-  var html = '';
-  for (var i = 0; i < FOODS.length; i++) {
-    var f = FOODS[i];
-    if (currentCategory !== '전체' && f.c !== currentCategory) continue;
-    if (query && f.n.toLowerCase().indexOf(query) < 0) continue;
-
-    var tagsHtml = '';
-    for (var j = 0; j < f.t.length; j++) {
-      tagsHtml += '<span class="tag ' + f.t[j] + '">' + TAG_LABEL[f.t[j]] + '</span>';
-    }
-    html += '<div class="food-item" onclick="addFood(\'' + f.n.replace(/'/g, "\\'") + '\');closeModal()">';
-    html += '<div><div class="food-name">' + f.n + '</div>';
-    if (tagsHtml) html += '<div class="food-tags">' + tagsHtml + '</div>';
-    html += '</div>';
-    html += '<button class="food-add-btn">+</button>';
-    html += '</div>';
-  }
-  if (!html) html = '<div class="empty-state">검색 결과가 없어요</div>';
-  var listEl = document.getElementById('food-list');
-  listEl.innerHTML = html;
-  listEl.scrollTop = 0;
-}
-function filterFoods() { renderFoodList(); }
+function onSearchFocus() { setTimeout(handleViewportResize, 100); setTimeout(handleViewportResize, 350); }
+function onSearchBlur() { setTimeout(handleViewportResize, 100); }
 
 // ═══════════════════════════════════════════
-// 날짜 이동
+// 날짜 이동 / 뷰
 // ═══════════════════════════════════════════
 function changeDate(delta) {
   var d = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + delta);
-  var t = todayDate();
-  var min = new Date(2026, 4, 1);
-  var max = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-  if (d < min) return;
-  if (d > max) return; // 미래는 의미 없음
+  if (d < PLAN_START) return;
+  if (d > todayDate()) return;
   currentDate = d;
   render();
 }
 
-// ═══════════════════════════════════════════
-// 뷰 전환
-// ═══════════════════════════════════════════
 function switchView(v) {
-  if (v === 'day') {
-    document.getElementById('view-day').style.display = '';
-    document.getElementById('view-week').style.display = 'none';
-    document.getElementById('view-day-btn').classList.add('on');
-    document.getElementById('view-week-btn').classList.remove('on');
-  } else {
-    document.getElementById('view-day').style.display = 'none';
-    document.getElementById('view-week').style.display = '';
-    document.getElementById('view-day-btn').classList.remove('on');
-    document.getElementById('view-week-btn').classList.add('on');
-    renderWeekly();
+  var ids = ['day','week','plan'];
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById('view-' + ids[i]).style.display = (ids[i] === v) ? '' : 'none';
+    var b = document.getElementById('v-' + ids[i] + '-btn');
+    if (ids[i] === v) b.classList.add('on'); else b.classList.remove('on');
   }
+  if (v === 'week') renderWeekly();
+  if (v === 'plan') renderPlanView();
   window.scrollTo(0, 0);
 }
 
 function renderWeekly() {
-  var weekDays = ['일','월','화','수','목','금','토'];
   var t = todayDate();
-  var html = '';
-  var totals = { gout: 0, salt: 0, fat: 0, proc: 0, alc: 0, good: 0, protein: 0 };
-  var foodCount = {};
-
+  var html = '', sum = 0, n = 0;
   for (var i = 6; i >= 0; i--) {
     var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
-    var a = analyzeDay(d);
-    var grade = calcGrade(a);
-    var pct;
-    if (grade === 'A') pct = 100;
-    else if (grade === 'B') pct = 80;
-    else if (grade === 'C') pct = 60;
-    else if (grade === 'D') pct = 40;
-    else if (grade === 'F') pct = 20;
-    else pct = 0;
-
-    var label = (d.getMonth()+1) + '/' + d.getDate();
-    if (i === 0) label = '오늘';
-    else if (i === 1) label = '어제';
-
-    html += '<div class="weekly-bar-row">';
-    html += '<div class="weekly-day">' + label + '</div>';
+    var pct = dayScore(d);
+    var label = (i === 0) ? '오늘' : (i === 1 ? '어제' : (d.getMonth()+1) + '/' + d.getDate());
+    if (pct !== null) { sum += pct; n++; }
+    html += '<div class="weekly-row"><div class="weekly-day">' + label + '</div>';
     html += '<div class="weekly-bar-track">';
-    if (grade) html += '<div class="weekly-bar-fill ' + grade + '" style="width:' + pct + '%"></div>';
-    html += '</div>';
-    html += '<div class="weekly-grade">' + (grade || '—') + '</div>';
-    html += '</div>';
-
-    if (a) {
-      var keys = ['gout','salt','fat','proc','alc','good','protein'];
-      for (var k = 0; k < keys.length; k++) totals[keys[k]] += a.counts[keys[k]] || 0;
-      for (var f = 0; f < a.foods.length; f++) {
-        var n = a.foods[f].name;
-        foodCount[n] = (foodCount[n] || 0) + 1;
-      }
-    }
+    if (pct) html += '<div class="weekly-bar-fill" style="width:' + pct + '%"></div>';
+    html += '</div><div class="weekly-pct">' + (pct === null ? '—' : pct + '%') + '</div></div>';
   }
+  html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--c-border);font-size:12px;color:var(--c-muted)">' +
+          '7일 평균 <b style="color:var(--c-accent)">' + (n ? Math.round(sum/n) + '%' : '—') + '</b> · 기록한 날 ' + n + '일</div>';
   document.getElementById('weekly-list').innerHTML = html;
 
-  // 7일 합계 (통풍은 alc 합산)
-  document.getElementById('wk-gout').textContent = totals.gout + totals.alc;
-  document.getElementById('wk-salt').textContent = totals.salt;
-  document.getElementById('wk-fat').textContent = totals.fat;
-  document.getElementById('wk-good').textContent = totals.good;
+  // 예외 집계
+  var cnt = {};
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
+    var ex = dayDataOf(d).exc;
+    for (var j = 0; j < ex.length; j++) cnt[ex[j]] = (cnt[ex[j]] || 0) + 1;
+  }
+  var eh = '', any = false;
+  for (var i = 0; i < EXCEPTIONS.length; i++) {
+    var e = EXCEPTIONS[i];
+    if (!cnt[e.k]) continue;
+    any = true;
+    eh += '<div class="weekly-row"><div class="weekly-day" style="width:auto;-webkit-flex:1;flex:1;font-size:12px">' +
+          e.label + '</div><div class="weekly-pct">' + cnt[e.k] + '회</div></div>';
+  }
+  document.getElementById('weekly-exc').innerHTML = any ? eh :
+    '<div class="empty-state">기록된 예외가 없어요</div>';
 
-  // 자주 먹은 음식 TOP 5
-  var sorted = [];
-  for (var n in foodCount) {
-    if (foodCount.hasOwnProperty(n)) sorted.push([n, foodCount[n]]);
+  // 습관
+  var w = 0, m = 0;
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(t.getFullYear(), t.getMonth(), t.getDate() - i);
+    var dd = dayDataOf(d);
+    if (dd.water) w++;
+    if (dd.med) m++;
   }
-  sorted.sort(function(a, b) { return b[1] - a[1]; });
-  var fHtml = '';
-  if (sorted.length === 0) {
-    fHtml = '<div class="empty-state">아직 데이터가 부족해요</div>';
-  } else {
-    for (var i = 0; i < Math.min(5, sorted.length); i++) {
-      var info = getFoodInfo(sorted[i][0]);
-      var icon = '';
-      if (info) {
-        if (info.t.indexOf('alc') >= 0 || info.t.indexOf('gout') >= 0) icon = '⚠️ ';
-        else if (info.t.indexOf('good') >= 0) icon = '✅ ';
-        else if (info.t.indexOf('salt') >= 0 || info.t.indexOf('fat') >= 0) icon = '🧂 ';
-      }
-      fHtml += '<div class="freq-row"><div class="freq-name">' + icon + sorted[i][0] + '</div><div class="freq-count">' + sorted[i][1] + '회</div></div>';
-    }
-  }
-  document.getElementById('freq-list').innerHTML = fHtml;
+  document.getElementById('weekly-habit').innerHTML =
+    '<div class="weekly-row"><div class="weekly-day" style="width:auto;-webkit-flex:1;flex:1;font-size:12px">💧 물 2L</div><div class="weekly-pct">' + w + '/7일</div></div>' +
+    '<div class="weekly-row"><div class="weekly-day" style="width:auto;-webkit-flex:1;flex:1;font-size:12px">💊 약 복용</div><div class="weekly-pct">' + m + '/7일</div></div>';
 }
 
-function goHome() {
-  // 같은 디렉토리의 index.html로 이동 (깃허브 페이지 구조)
-  window.location.href = 'index.html';
+var planWeekShown = null;
+function showPlanWeek(w) {
+  planWeekShown = w;
+  document.getElementById('pw-A').classList.toggle('on', w === 'A');
+  document.getElementById('pw-B').classList.toggle('on', w === 'B');
+  document.getElementById('plan-title').textContent = w + '주 식단표';
+  var order = [1,2,3,4,5,6,0];
+  var html = '<tr><th></th><th>아침</th><th>점심</th><th>저녁</th></tr>';
+  var todayDow = todayDate().getDay();
+  var isCurWeek = (weekLetter(todayDate()) === w);
+  for (var i = 0; i < order.length; i++) {
+    var dow = order[i], p = PLAN[w][dow];
+    var cls = (isCurWeek && dow === todayDow) ? ' class="today-row"' : '';
+    html += '<tr' + cls + '><td class="dow">' + WEEK_DAYS[dow] + '</td>';
+    html += '<td>' + esc(p.b.menu) + '</td>';
+    html += '<td>' + (p.l.box ? '🍱 ' : '') + esc(p.l.menu) + (p.l.box ? '<br><span style="color:var(--c-muted);font-size:10px">또는 학식</span>' : '') + '</td>';
+    html += '<td>' + esc(p.d.menu) + (p.d.carb ? '<br><span style="color:var(--c-muted);font-size:10px">' + CARB_LABEL[p.d.carb] + '</span>' : '') + '</td>';
+    html += '</tr>';
+  }
+  document.getElementById('plan-table').innerHTML = html;
+}
+function renderPlanView() {
+  document.getElementById('plan-principle').innerHTML = PRINCIPLE_TEXT;
+  if (!planWeekShown) planWeekShown = weekLetter(todayDate());
+  showPlanWeek(planWeekShown);
+  var lh = '';
+  for (var i = 0; i < L3.length; i++)
+    lh += '<div class="meal-note" style="margin-bottom:6px"><b>' + (i+1) + '. ' + L3[i].label + '</b><br>' + L3[i].sub + '</div>';
+  lh += '<div class="exc-note">대학원 수업이 있는 날은 도시락, 아닌 날은 학식. 학식은 통제하기 어려운 끼니라 메뉴를 정하는 대신 <b>고르는 법</b>만 지키면 충분합니다.</div>';
+  document.getElementById('l3-guide').innerHTML = lh;
+  var sh = '';
+  for (var i = 0; i < SAFETY.length; i++)
+    sh += '<div class="safety-item"><b class="h">' + SAFETY[i].t + '</b>' + SAFETY[i].x + '</div>';
+  sh += '<div class="exc-note">연령별 식이·알레르기 판단은 소아과 진료 범위입니다. 위 내용은 일반적인 주의사항이니 아이 상태에 맞게 조정하세요.</div>';
+  document.getElementById('safety-guide').innerHTML = sh;
 }
 
-// ═══════════════════════════════════════════
-// 초기화
-// ═══════════════════════════════════════════
+function goHome() { window.location.href = 'index.html'; }
+
 render();
-
 </script>
 </body>
 </html>
