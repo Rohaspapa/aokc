@@ -731,7 +731,7 @@ var CAL_MAX = new Date(2026, 11, 1);
 
 var WEIGHTS = { diet: 0.4, workout: 0.4, mental: 0.2 };
 var KEYS = { diet:'aokc2026_diet', workout:'aokc2026_workout', mental:'aokc2026_mental' };
-var EXTRA_KEYS = ['aokc2026_manual_phase', 'aokc2026_rehab', 'aokc2026_rehab_collapsed'];
+var EXTRA_KEYS = ['aokc2026_manual_phase', 'aokc2026_rehab', 'aokc2026_rehab_collapsed', 'aokc2026_env'];
 var BACKUP_AT_KEY = 'aokc2026_backup_at';
 
 var WEEK_DAYS = ['일','월','화','수','목','금','토'];
@@ -1278,6 +1278,7 @@ function exportData() {
   b.manual_phase = window.localStorage.getItem(EXTRA_KEYS[0]) || null;
   b.rehab = window.localStorage.getItem(EXTRA_KEYS[1]) || null;
   b.rehab_collapsed = window.localStorage.getItem(EXTRA_KEYS[2]) || null;
+  b.env = window.localStorage.getItem(EXTRA_KEYS[3]) || null;
   area.style.display = 'block';
   area.value = JSON.stringify(b);
   area.select();
@@ -1313,6 +1314,7 @@ function importData() {
     if (p.manual_phase) window.localStorage.setItem(EXTRA_KEYS[0], p.manual_phase);
     if (p.rehab) window.localStorage.setItem(EXTRA_KEYS[1], p.rehab);
     if (p.rehab_collapsed) window.localStorage.setItem(EXTRA_KEYS[2], p.rehab_collapsed);
+    if (p.env) window.localStorage.setItem(EXTRA_KEYS[3], p.env);
     area.value = ''; area.style.display = 'none';
     msg.innerHTML = '✓ 복원 완료';
     msg.style.color = 'var(--c-accent)';
