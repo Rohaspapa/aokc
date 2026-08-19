@@ -45,7 +45,7 @@ html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
   background: var(--c-bg); color: var(--c-text); min-height: 100vh;
-  font-size: 14px; line-height: 1.5; padding-bottom: calc(20px + var(--safe-bottom));
+  font-size: 14px; line-height: 1.5; padding-bottom: calc(32px + var(--safe-bottom));
 }
 .header {
   background: -webkit-linear-gradient(180deg, #0F4C36 0%, #1D6B47 100%);
@@ -278,7 +278,7 @@ body {
 .modal-overlay.on { display: -webkit-flex; display: flex; }
 .modal {
   background: var(--c-surface); width: 100%; max-width: 500px;
-  height: var(--modal-h, 78vh); max-height: var(--modal-h, 78vh);
+  height: var(--modal-h, 78vh); max-height: var(--modal-h, 78vh); min-height: 260px;
   -webkit-transform: translateY(var(--modal-offset, 0px)); transform: translateY(var(--modal-offset, 0px));
   border-radius: 18px 18px 0 0;
   display: -webkit-flex; display: flex;
@@ -317,7 +317,10 @@ body {
   -webkit-flex-shrink: 0; flex-shrink: 0;
 }
 .cat-tab.on { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
-.food-list { -webkit-flex: 1; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; }
+.food-list {
+  -webkit-flex: 1 1 auto; flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 0;
+}
 .food-item {
   padding: 10px 16px; border-bottom: 1px solid var(--c-border);
   display: -webkit-flex; display: flex;
@@ -345,12 +348,38 @@ body {
   border-radius: 50%; font-size: 18px; line-height: 1; font-weight: 600;
   cursor: pointer; font-family: inherit; -webkit-flex-shrink: 0; flex-shrink: 0;
 }
-.custom-box { padding: 12px 16px; background: var(--c-surface-2); border-top: 1px solid var(--c-border); }
-.custom-title { font-size: 12px; font-weight: 700; margin-bottom: 7px; }
-.custom-tags { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+/* 접힌 상태 — 한 줄짜리 바 */
+.custom-bar {
+  -webkit-flex-shrink: 0; flex-shrink: 0; width: 100%;
+  padding: 12px 16px; background: var(--c-surface-2);
+  border: none; border-top: 1px solid var(--c-border);
+  font-size: 12.5px; font-weight: 700; font-family: inherit;
+  color: var(--c-accent); text-align: left; cursor: pointer;
+}
+.custom-bar:active { background: var(--c-accent-light); }
+/* 펼친 상태 — 목록 자리를 대신 차지하며 스크롤 */
+.custom-box {
+  -webkit-flex: 1 1 auto; flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 12px 16px 16px; background: var(--c-surface-2); border-top: 1px solid var(--c-border);
+}
+.custom-title { font-size: 13px; font-weight: 800; margin-bottom: 8px; }
+.custom-hint { font-size: 10.5px; color: var(--c-muted); margin-top: 8px; }
+.custom-tags { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 5px; margin: 6px 0 12px; }
+.custom-btns { display: -webkit-flex; display: flex; gap: 8px; }
 .custom-save {
-  width: 100%; background: var(--c-accent); color: #fff; border: none; padding: 10px;
+  -webkit-flex: 2; flex: 2; background: var(--c-accent); color: #fff; border: none; padding: 12px;
   border-radius: 8px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
+}
+.custom-cancel {
+  -webkit-flex: 1; flex: 1; background: #fff; color: var(--c-muted);
+  border: 1px solid var(--c-border); padding: 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
+}
+.empty-add {
+  margin-top: 10px; background: var(--c-accent); color: #fff; border: none;
+  padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
 }
 
 /* 주간 */
@@ -523,11 +552,16 @@ body {
     </div>
     <div class="cat-tabs" id="cat-tabs"></div>
     <div class="food-list" id="food-list"></div>
-    <div class="custom-box">
-      <div class="custom-title">➕ 목록에 없나요? 직접 추가</div>
+    <button class="custom-bar" id="custom-bar" onclick="openCustom()">➕ 목록에 없나요? 직접 추가</button>
+    <div class="custom-box" id="custom-box" style="display:none">
+      <div class="custom-title">➕ 직접 추가</div>
       <input type="text" class="search-input" id="custom-name" placeholder="음식 이름" maxlength="24">
+      <div class="custom-hint">해당하는 것만 골라 주세요 (없으면 안 골라도 됩니다)</div>
       <div class="custom-tags" id="custom-tags"></div>
-      <button class="custom-save" onclick="saveCustomFood()">추가하고 기록하기</button>
+      <div class="custom-btns">
+        <button class="custom-cancel" onclick="closeCustom()">취소</button>
+        <button class="custom-save" onclick="saveCustomFood()">추가하고 기록하기</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1286,6 +1320,25 @@ function categories() {
   for (var i = 0; i < arr.length; i++) if (!seen[arr[i].c]) { seen[arr[i].c] = 1; out.push(arr[i].c); }
   return out;
 }
+function openCustom() {
+  var q = document.getElementById('search-input').value.trim();
+  document.getElementById('custom-name').value = q;
+  document.getElementById('custom-bar').style.display = 'none';
+  document.getElementById('food-list').style.display = 'none';
+  document.getElementById('cat-tabs').style.display = 'none';
+  document.getElementById('custom-box').style.display = 'block';
+  customTags = {};
+  renderCustomTags();
+  document.getElementById('custom-name').focus();
+}
+function closeCustom() {
+  document.getElementById('custom-box').style.display = 'none';
+  document.getElementById('custom-bar').style.display = '';
+  document.getElementById('food-list').style.display = '';
+  document.getElementById('cat-tabs').style.display = '';
+  document.getElementById('custom-name').blur();
+}
+
 function openModal(meal) {
   currentMeal = meal;
   currentCategory = '전체';
@@ -1294,6 +1347,7 @@ function openModal(meal) {
   document.getElementById('search-input').value = '';
   document.getElementById('custom-name').value = '';
   renderCatTabs(); renderFoodList(); renderCustomTags();
+  closeCustom();
   document.getElementById('modal-overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
   enableKeyboardHandler();
@@ -1331,7 +1385,11 @@ function renderFoodList() {
     if (tags) html += '<div class="food-tags">' + tags + '</div>';
     html += '</div><button class="food-add-btn">+</button></div>';
   }
-  if (!html) html = '<div class="empty-state">검색 결과가 없어요<br><span style="font-size:11px">아래에서 직접 추가할 수 있습니다</span></div>';
+  if (!html) {
+    html = '<div class="empty-state">검색 결과가 없어요'
+         + (q ? '<br><button class="empty-add" onclick="openCustom()">\'' + esc(document.getElementById('search-input').value.trim()) + '\' 직접 추가하기</button>' : '')
+         + '</div>';
+  }
   var el = document.getElementById('food-list');
   el.innerHTML = html; el.scrollTop = 0;
 }
@@ -1360,6 +1418,7 @@ function saveCustomFood() {
   if (!exists) store.myFoods.push({ c:'내 음식', n:name, t:t });
   saveStore(store);
   addFood(name);
+  closeCustom();
   closeModal();
 }
 

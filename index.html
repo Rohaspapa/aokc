@@ -35,15 +35,17 @@
   --c-line: #E0DCCF;
   --c-ink: #1A1916;
   --c-ink-soft: #7A7468;
-  --tab-h: 56px;
+  --tab-h: 60px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* 홈 인디케이터가 없는 환경(0px)에서도 최소 12px는 띄운다 */
+  --tab-pad: calc(env(safe-area-inset-bottom, 0px) + 12px);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
   background: var(--c-bg); color: var(--c-text); min-height: 100vh;
-  padding-bottom: calc(var(--tab-h) + 12px + var(--safe-bottom));
+  padding-bottom: calc(var(--tab-h) + var(--tab-pad) + 20px);
   font-size: 14px; line-height: 1.5;
 }
 
@@ -392,10 +394,12 @@ body {
 /* 탭바 */
 .tabbar {
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: calc(var(--tab-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom);
+  height: calc(var(--tab-h) + var(--tab-pad));
+  padding-bottom: var(--tab-pad);
   background: rgba(255,255,255,0.97);
-  -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px); backdrop-filter: saturate(180%) blur(14px);
   border-top: 1px solid var(--c-border);
+  -webkit-box-shadow: 0 -1px 8px rgba(0,0,0,0.04); box-shadow: 0 -1px 8px rgba(0,0,0,0.04);
   display: -webkit-flex; display: flex; z-index: 200;
 }
 .tab-btn {
@@ -404,11 +408,20 @@ body {
   -webkit-flex-direction: column; flex-direction: column;
   -webkit-align-items: center; align-items: center;
   -webkit-justify-content: center; justify-content: center;
-  color: var(--c-muted); font-size: 10px; font-weight: 600;
-  cursor: pointer; font-family: inherit; padding-top: 6px;
+  color: var(--c-muted); font-size: 10.5px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  height: var(--tab-h); padding: 0;
+  -webkit-transition: color 0.15s; transition: color 0.15s;
 }
-.tab-btn.on { color: var(--c-accent); }
-.tab-icon { font-size: 19px; margin-bottom: 2px; }
+.tab-btn.on { color: var(--c-accent); font-weight: 700; }
+.tab-btn:active { opacity: 0.6; }
+.tab-icon { font-size: 21px; line-height: 1; margin-bottom: 4px; }
+/* 선택된 탭 상단 표시 */
+.tab-btn { position: relative; }
+.tab-btn.on:before {
+  content: ''; position: absolute; top: 0; left: 50%; margin-left: -13px;
+  width: 26px; height: 3px; background: var(--c-accent); border-radius: 0 0 3px 3px;
+}
 </style>
 </head>
 <body>
