@@ -449,6 +449,23 @@ body {
 .eq.ok { background: var(--c-accent-light); color: var(--c-accent); }
 .eq.q { background: var(--c-surface-2); color: var(--c-muted); border: 1px dashed var(--c-border); }
 .eq.x { background: var(--c-surface-2); color: var(--c-muted); text-decoration: line-through; opacity: .75; }
+
+/* 권장 환경 힌트 */
+.env-hint { font-size: 11.5px; line-height: 1.5; margin-top: 8px; color: var(--c-muted); }
+.env-hint b { color: var(--c-text); }
+.env-hint.nudge { background: #FBF0DF; color: #8A5A16; border-radius: 9px; padding: 8px 10px; }
+.env-hint.nudge b { color: #6B4610; }
+/* 홈트 주의 */
+.home-line { display: -webkit-flex; display: flex; gap: 8px; font-size: 12px; line-height: 1.55; margin-bottom: 7px; }
+.home-line span:first-child { -webkit-flex: 0 0 16px; flex: 0 0 16px; }
+.home-line b { color: var(--c-text); }
+/* 강도 기준 */
+.rpe-row { display: -webkit-flex; display: flex; gap: 9px; font-size: 12px; line-height: 1.5; padding: 8px 0; border-bottom: 1px solid var(--c-border); }
+.rpe-row:last-child { border-bottom: 0; }
+.rpe-n { -webkit-flex: 0 0 52px; flex: 0 0 52px; font-weight: 800; font-size: 11.5px; }
+.rpe-row.here { background: var(--c-accent-light); border-radius: 9px; padding-left: 8px; padding-right: 8px; }
+.rpe-row.here .rpe-n { color: var(--c-accent); }
+.rpe-hd { font-size: 12px; font-weight: 800; color: var(--c-text); margin: 12px 0 4px; }
 .fold-head {
   display: -webkit-flex; display: flex;
   -webkit-justify-content: space-between; justify-content: space-between;
@@ -767,6 +784,7 @@ body {
         <button class="env-btn" id="env-home" onclick="toggleEnv('home')">🏠 홈트</button>
         <button class="env-btn" id="env-gym" onclick="toggleEnv('gym')">🏋️ 헬스장</button>
       </div>
+      <div class="env-hint" id="env-hint"></div>
 
       <div class="ctl-label" style="margin-top:14px">🔁 오늘 루틴 <span class="ctl-hint" id="rp-hint"></span></div>
       <div class="routine-picker-btns">
@@ -789,6 +807,31 @@ body {
       <div class="phase-manual-note" id="phase-note" style="display:none"></div>
     </div>
 
+    <!-- 강도 기준 -->
+    <div class="card" id="rpe-card" style="display:none">
+      <div class="fold-head" onclick="toggleRpe()">
+        <span class="card-title-text" style="font-size:13px;font-weight:700">🎚️ 오늘 얼마나 무겁게</span>
+        <span class="fold-meta" id="rpe-caret">▾</span>
+      </div>
+      <div id="rpe-body" style="display:none;margin-top:6px"></div>
+    </div>
+
+    <!-- 집에서 할 때 -->
+    <div class="card" id="home-note-card" style="display:none">
+      <div class="fold-head" onclick="toggleHomeNote()">
+        <span class="card-title-text" style="font-size:13px;font-weight:700">🏠 집에서 할 때</span>
+        <span class="fold-meta" id="home-caret">▾</span>
+      </div>
+      <div id="home-note-body" style="display:none;margin-top:10px">
+        <div class="home-line"><span>🧘</span><span><b>매트를 먼저 깝니다.</b> 점프 종목은 매트 위에서만 — 아파트라 착지 소음이 그대로 내려갑니다.</span></div>
+        <div class="home-line"><span>🔇</span><span><b>조용한 착지가 곧 기술입니다.</b> 소리가 크다는 건 충격을 근육이 아니라 관절로 받았다는 뜻입니다. 소음을 줄이려 애쓰는 것 자체가 이심성 조절 훈련이 됩니다.</span></div>
+        <div class="home-line"><span>📏</span><span><b>5m 직선과 4m² 를 먼저 확보</b>하고 시작합니다. 가속·셔틀 종목이 그 거리를 씁니다.</span></div>
+        <div class="home-line"><span>🕘</span><span>늦은 밤과 이른 아침에는 점프를 빼고 <b>발목 대체안</b>이나 밴드 종목으로 돌리세요. 그날 점수는 그대로 채워집니다.</span></div>
+        <div class="home-line"><span>👟</span><span>맨발보다 <b>실내용 운동화</b>가 발목에 낫습니다. 미끄러운 바닥에서 방향전환은 하지 마세요.</span></div>
+        <div class="home-line"><span>🧰</span><span>집 장비 — <b>덤벨 5kg×2 · 10kg×1 · 튜빙밴드(도어앵커) · 루프밴드 · 철봉.</b> 당기기는 철봉이 주 종목입니다.</span></div>
+      </div>
+    </div>
+
     <!-- 헬스장 기구 -->
     <div class="card" id="gym-equip-card" style="display:none">
       <div class="fold-head" onclick="toggleEquip()">
@@ -805,7 +848,7 @@ body {
           <span class="eq ok">체스트프레스 (DRAX)</span><span class="eq ok">백 익스텐션</span>
           <span class="eq ok">파워타워 (풀업·딥스·레그레이즈)</span><span class="eq ok">거꾸리 (Z-UP)</span>
           <span class="eq ok">케틀벨 16kg</span>
-          <span class="eq ok">트레드밀 5대</span><span class="eq ok">업라이트·리컴번트 자전거 4대</span>
+          <span class="eq ok">트레드밀 5대 (경사 X)</span><span class="eq ok">업라이트·리컴번트 자전거 4대</span>
           <span class="eq ok">DRAX 스텝밀 2대</span>
           <span class="eq x">플라이오 박스 없음</span><span class="eq x">메디신볼 없음</span>
         </div>
@@ -978,7 +1021,7 @@ recovery: {
   A: { home:{ name:'A · 파워 (엄지 무부하)', sub:'하체 폭발력만, 손 지지 없음', min:'40분', items:[
     { k:'r0a1', name:'점핑 스쿼트', target:'15회 × 4', rpe:'RPE 7', detail:'손은 가슴 앞 고정. 착지 시 무릎 정렬',
       ankle:{ name:'밴드 힙힌지 파워', target:'15회 × 4', detail:'도어앵커에 밴드 걸고 힙으로 밀기. 착지 충격 0' },
-      alts:['스플릿 점프 좌우 10회×4','계단 오르기 인터벌 30초×6'] },
+      alts:['스플릿 점프 좌우 10회×4','제자리 하이니 30초×6'] },
     { k:'r0a2', name:'스케이터 점프', target:'좌우 12회 × 3', detail:'착지 후 1초 정지',
       ankle:{ name:'루프밴드 사이드 스텝 + 클램쉘', target:'20보 × 3', detail:'측면 근육은 쓰되 착지 없음' },
       alts:['밴드 사이드 워크','사이드 런지 좌우 12회×3'] },
@@ -1014,8 +1057,8 @@ rebuild: {
     home:{ name:'A · 파워 재건', sub:'착지 기술 + 점프 파워 · 세트 사이 90초', min:'40분', items:[
       { k:'r1a1', name:'스쿼트 점프', target:'10회 × 4', rpe:'RPE 7', detail:'매 회 최대 높이. 착지는 소리 없이 — 착지 기술이 이 국면의 핵심',
         ankle:{ name:'밴드 저항 힙힌지 파워', target:'12회 × 4', detail:'도어앵커 + 밴드를 골반에 걸고 폭발적으로. 착지 충격 0' },
-        alts:['브로드 점프 6회×4','계단 2칸 뛰어오르기 8회×4','점프 런지 좌우 8회×4'] },
-      { k:'r1a2', name:'덤벨 익스플로시브 스텝업', target:'양발 10회 × 4', rpe:'RPE 7', detail:'5kg 덤벨 양손. 계단·의자 활용. 올라설 때 폭발적으로', ss:'A1',
+        alts:['브로드 점프 6회×4 (5m 구간)','점프 런지 좌우 8회×4','스플릿 점프 좌우 8회×4'] },
+      { k:'r1a2', name:'덤벨 익스플로시브 스텝업', target:'양발 10회 × 4', rpe:'RPE 7', detail:'5kg 덤벨 양손. <b>튼튼한 의자나 소파 앞부분</b>에. 올라설 때 폭발적으로, 내려올 땐 천천히', ss:'A1',
         ankle:{ name:'싱글레그 힙 쓰러스트', target:'양발 15회 × 4', detail:'발목 부하 없이 편측 둔근' },
         alts:['스플릿 스쿼트 점프','런지 워크 20보×4'] },
       { k:'r1a3', name:'플라이오 푸시업', target:'8회 × 4', rpe:'RPE 8', detail:'손이 바닥에서 떨어질 만큼. 그립 통증 있으면 손바닥 넓게', ss:'A2', grip:true,
@@ -1058,8 +1101,8 @@ rebuild: {
         alts:['싱글레그 RDL 양발 10회×4','굿모닝 20회×4'] },
       { k:'r1b4', name:'덤벨 숄더프레스 (5kg×2)', target:'12회 × 4', detail:'머리 위 안정성 — 리바운드 경합에 쓰인다', ss:'B2', grip:true,
         alts:['파이크 푸시업 12회×4','밴드 오버헤드프레스 15회×4'] },
-      { k:'r1b5', name:'밴드 랫풀다운', target:'15회 × 3', detail:'도어앵커 높은 위치. 광배로 당기기', ss:'C1', grip:true,
-        alts:['인버티드 로우','밴드 풀오버 15회×3'] },
+      { k:'r1b5', name:'풀업 (철봉)', target:'최대 × 4', rpe:'RPE 8', detail:'집 철봉에서. 안 되면 <b>밴드 보조</b>나 <b>이심성만</b>(점프해서 올라가 5초에 걸쳐 내려오기). <b>엄지 통증이 있으면 오늘은 밴드 랫풀다운으로</b> — 그립 부하가 가장 큰 종목이다', ss:'C1', grip:true,
+        alts:['밴드 보조 풀업 8회×4','이심성 풀업 (5초 하강) 5회×4','밴드 랫풀다운 15회×3','인버티드 로우 12회×4'] },
       { k:'r1b6', name:'팔로프 프레스 + 사이드플랭크', target:'좌우 12회 × 3 / 40초 × 3', detail:'회전에 저항하는 코어 — 컷팅 안정성', ss:'C2', grip:true,
         alts:['데드버그 좌우 15회×3'] }
     ]},
@@ -1084,7 +1127,7 @@ rebuild: {
   R: {
     home:{ name:'R · 회복성 근력', sub:'일요일 여파. 하체는 건드리지 않음', min:'25분', items:[
       { k:'r1r1', name:'폼롤러', target:'5분', detail:'흉추 · 둔근 · 햄스트링 · 종아리' },
-      { k:'r1r2', name:'밴드 시티드 로우', target:'20회 × 3', detail:'가볍게. 견갑 모으기' },
+      { k:'r1r2', name:'밴드 시티드 로우', target:'20회 × 3', detail:'가볍게. 견갑 모으기. <b>회복일이라 철봉은 쓰지 않는다</b>' },
       { k:'r1r3', name:'밴드 페이스풀', target:'20회 × 3', detail:'후면 어깨. 슈팅 자세 유지에 필요' },
       { k:'r1r4', name:'글루트 브릿지 (5kg)', target:'20회 × 3', detail:'정점 1초 정지. 혈류 촉진이 목적' },
       { k:'r1r5', name:'데드버그 + 사이드플랭크', target:'각 40초 × 2', detail:'코어 안정성' },
@@ -1105,9 +1148,9 @@ rebuild: {
 strength: {
   A: {
     home:{ name:'A · 파워 / 플라이오', sub:'주중 가장 신선한 날. 질이 떨어지면 세트를 끊는다', min:'40분', items:[
-      { k:'r2a1', name:'뎁스 점프 → 5m 스프린트', target:'6회 × 5', rpe:'RPE 9', detail:'계단 2~3칸(30~40cm)에서 내려와 즉시 점프 후 스프린트. 접지 시간 최소화',
-        ankle:{ name:'자전거 스프린트', target:'10초 전력 × 8', detail:'저항 높게. 착지 충격 없이 하체 파워' },
-        alts:['제자리 점프 최대 8회×5','스텝업 점프 좌우 8회×4'] },
+      { k:'r2a1', name:'반응 점프 → 5m 가속', target:'6회 × 5', rpe:'RPE 9', detail:'매트 위에서 <b>제자리 반응 점프 3회</b>(무릎을 깊게 굽히지 말고 발목으로 튕기기, 접지 시간 최소) → 곧바로 <b>5m 전력 가속</b>. 코프볼에서 결정적인 건 첫 3보라 5m면 충분하다. 세트 사이 2분 완전 회복',
+        ankle:{ name:'힙 쓰러스트 폭발 (10kg)', target:'12회 × 5', detail:'정점에서 1초. 착지 충격 없이 가속 근육만' },
+        alts:['제자리 반응 점프 10회×5','브로드 점프 4회×5 (5m 구간)','스플릿 점프 좌우 8회×4'] },
       { k:'r2a2', name:'하중 점프 스쿼트 (10kg)', target:'6회 × 5', rpe:'RPE 8', detail:'덤벨 한 개 가슴 앞. 가볍게 느껴져도 <b>최대 속도로</b>', ss:'A1', grip:true,
         ankle:{ name:'힙 쓰러스트 폭발 (10kg)', target:'10회 × 5', detail:'정점에서 1초' },
         alts:['백팩 점프 스쿼트','밴드 저항 점프 스쿼트'] },
@@ -1122,9 +1165,9 @@ strength: {
         alts:['하프 니 슛 30구','이미지 트레이닝 5분'] }
     ]},
     gym:{ name:'A · 파워 / 플라이오 (헬스장)', sub:'최대 출력. 속도가 떨어지면 세트 종료', min:'60분', items:[
-      { k:'r2a1g', name:'드롭 점프 → 5m 스프린트', target:'6회 × 5', rpe:'RPE 9', detail:'플라이오 박스가 없어 <b>올림픽 플랫벤치</b>를 씁니다. 올라서기 전 <b>벤치가 흔들리지 않는지 확인</b>. 내려와 즉시 점프 → 스프린트. 불안하면 제자리 반응 점프로. <b>세트 사이 2분</b> 완전 회복',
+      { k:'r2a1g', name:'드롭 점프 → 가속', target:'6회 × 5', rpe:'RPE 9', detail:'플라이오 박스가 없어 <b>올림픽 플랫벤치</b>를 씁니다. 올라서기 전 <b>벤치가 흔들리지 않는지 확인</b>. 내려와 즉시 점프 → 5m 가속. <b>사람이 많아 뛸 자리가 없으면 스텝밀 전력</b>이나 제자리 반응 점프로. 세트 사이 2분 완전 회복',
         ankle:{ name:'자전거 스프린트', target:'10초 전력 × 10', detail:'저항 최대. 업라이트 자전거로. 착지 충격 0인데 하체 파워는 그대로 간다' },
-        alts:['제자리 반응 점프 8회×5','스미스 점프 스쿼트 6회×5','케틀벨 스윙 (16kg) 25회×4'] },
+        alts:['스텝밀 전력 20초×8 (계단 = 경사 대용)','제자리 반응 점프 8회×5','스미스 점프 스쿼트 6회×5','케틀벨 스윙 (16kg) 25회×4'] },
       { k:'r2a2g', name:'스미스 점프 스쿼트 (40%)', target:'6회 × 5', rpe:'RPE 8', detail:'고정 궤도라 <b>혼자서도 안전하게</b> 하중 점프가 된다. 착지가 부담되면 발목 대체로', ss:'A1', grip:true,
         ankle:{ name:'스미스 힙 쓰러스트 (폭발)', target:'10회 × 5', detail:'정점 1초. 둔근 파워, 착지 없음' },
         alts:['덤벨 하중 점프 스쿼트 6회×5','덤벨 스윙 20회×5'] },
@@ -1152,11 +1195,11 @@ strength: {
         alts:['싱글레그 RDL 양발 12회×4','굿모닝 (밴드) 20회×4'] },
       { k:'r2b4', name:'덤벨 플로어 프레스 (5kg×2)', target:'15회 × 4', detail:'바닥에 누워. 어깨 부담 적고 상체 밀기 유지', ss:'B2', grip:true,
         alts:['체스트프레스 머신 (폭발) 10회×4','플라이오 푸시업','밴드 체스트프레스 20회×4'] },
-      { k:'r2b5', name:'밴드 랫풀다운 + 한손 로우', target:'15회 × 4 / 좌우 12회 × 3', detail:'상체 당김 볼륨 확보', ss:'C1', grip:true,
-        alts:['인버티드 로우 15회×4','밴드 페이스풀 20회×4'] },
+      { k:'r2b5', name:'풀업 (가중 가능)', target:'최대 × 4', rpe:'RPE 9', detail:'8회 이상 되면 <b>배낭에 덤벨을 넣어</b> 가중. 최대근력 국면이라 <b>5~8회 구간</b>이 맞다. 엄지에 통증이 오면 즉시 중단', ss:'C1', grip:true,
+        alts:['가중 풀업 (배낭 5kg) 6회×4','이심성 풀업 (5초 하강) 5회×4','밴드 랫풀다운 + 한손 로우 15회×4'] },
       { k:'r2b6', name:'이심성 카프 레이즈', target:'15회 × 4', detail:'3초에 걸쳐 천천히 내리기. <b>발목 건 강화에 근거가 가장 좋은 종목</b> — 통증 없는 범위에서', ss:'C2',
         ankle:{ name:'좌식 카프 + 밴드 4방향 발목', target:'20회 × 3 / 각 15회', detail:'체중 부하 없이. 통증 있으면 중단하고 의료진 확인' },
-        alts:['한발 카프 레이즈 12회×4','계단 끝 카프 드롭'] }
+        alts:['한발 카프 레이즈 12회×4','벽 짚고 한발 카프 레이즈 (3초 하강) 12회×3'] }
     ]},
     gym:{ name:'B · 최대근력 (헬스장)', sub:'이 국면의 핵심 — 매주 증량이 목표', min:'60분', items:[
       { k:'r2b1g', name:'스미스 스쿼트', target:'5회 × 5', rpe:'RPE 8', detail:'<b>이 국면에서 가장 중요한 종목.</b> 발을 반 발짝 앞에. 램프업 2세트 후 본세트. 안전바 걸쇠를 최저점보다 조금 아래로 세팅하면 혼자서도 한계까지 갈 수 있다', ss:'A1',
@@ -1201,15 +1244,15 @@ strength: {
 convert: {
   A: {
     home:{ name:'A · 스피드 / 방향전환', sub:'경기 속도 재현. 완전 회복하며 질만 남긴다', min:'45분', items:[
-      { k:'r3a1', name:'5-10-5 셔틀', target:'8회 (세트 사이 90초)', rpe:'RPE 9', detail:'감속 → 재가속. <b>방향전환에서 발목이 가장 위험</b>하니 웜업을 충분히',
-        ankle:{ name:'자전거 인터벌', target:'20초 전력 × 10', detail:'통증 있으면 이번 국면엔 방향전환을 피하세요' },
-        alts:['왕복 달리기 10m×10','래더 드릴 6패턴×2'] },
-      { k:'r3a2', name:'뎁스 점프 → 스프린트', target:'6회 × 4', rpe:'RPE 9', detail:'반응 파워. 접지 시간 최소',
+      { k:'r3a1', name:'미니 셔틀 (2.5-5-2.5m)', target:'8회 (세트 사이 90초)', rpe:'RPE 9', detail:'5m 구간을 반으로 접어 왕복. <b>거리가 짧아도 감속→재가속 자극은 그대로다.</b> 미끄러지지 않는 바닥에서. 방향 바꿀 때 발 바깥날로 버티지 말 것 — 발목이 가장 위험한 순간이다',
+        ankle:{ name:'루프밴드 사이드 스텝 + 클램쉘', target:'20보 × 5', detail:'방향전환 없이 측면 안정근만. 통증 있으면 이 국면엔 컷팅을 피하세요' },
+        alts:['섀도 디펜스 30초×6','제자리 감속 드릴 8회×4','래터럴 바운드 좌우 8회×4'] },
+      { k:'r3a2', name:'반응 점프 → 5m 가속', target:'6회 × 4', rpe:'RPE 9', detail:'접지 시간이 전부다. 매트 위에서 튕기듯 3회 → 즉시 5m 가속',
         ankle:{ name:'힙 쓰러스트 폭발', target:'10회 × 5', detail:'착지 없이 가속 근육만' },
-        alts:['제자리 반응 점프 8회×4'] },
+        alts:['제자리 반응 점프 10회×4','브로드 점프 4회×4'] },
       { k:'r3a3', name:'45도 컷팅 드릴', target:'좌우 8회 × 3', detail:'실전 컷인·컷아웃. 상체를 먼저 돌리지 말 것',
         ankle:{ name:'루프밴드 사이드 스텝 + 힙 어브덕션', target:'20보 × 4', detail:'측면 안정근만' },
-        alts:['지그재그 콘 드릴','섀도 디펜스 30초×6'] },
+        alts:['제자리 컷팅 풋워크 좌우 10회×3','섀도 디펜스 30초×6','래터럴 바운드 좌우 8회×3'] },
       { k:'r3a4', name:'하중 점프 스쿼트 (10kg)', target:'6회 × 4', detail:'파워 유지', grip:true,
         ankle:{ name:'힙 쓰러스트 폭발', target:'10회 × 4', detail:'' },
         alts:['백팩 점프 스쿼트'] },
@@ -1217,15 +1260,15 @@ convert: {
         alts:['하프 니 슛 30구','이미지 트레이닝'] }
     ]},
     gym:{ name:'A · 스피드 / 방향전환 (헬스장)', sub:'경기 속도 재현. 공간이 좁으면 홈트 쪽 권장', min:'50분', items:[
-      { k:'r3a1g', name:'왕복 스프린트 / 5-10-5 셔틀', target:'8회 (회복 90초)', rpe:'RPE 9', detail:'감속 → 재가속. 공간이 없으면 트레드밀 인터벌(20초×8)로. <b>방향전환에서 발목이 가장 위험</b>하니 웜업을 충분히',
+      { k:'r3a1g', name:'트레드밀 스프린트 / 셔틀', target:'8회 (회복 90초)', rpe:'RPE 9', detail:'감속 → 재가속. 공간이 없으면 스텝밀·자전거 인터벌로 — <b>평지 트레드밀은 감속 자극이 없어</b> 컨디셔닝 대용일 뿐이다. <b>방향전환에서 발목이 가장 위험</b>하니 웜업을 충분히',
         ankle:{ name:'자전거 인터벌', target:'20초 전력 × 10', detail:'착지 충격 없음. 저항을 높여 다리로만 밀어낸다' },
-        alts:['트레드밀 스프린트 20초×8','래더 드릴 6패턴×2','로잉 머신 250m×6'] },
-      { k:'r3a2g', name:'드롭 점프 → 스프린트', target:'6회 × 4', rpe:'RPE 9', detail:'반응 파워. 접지 시간 최소. <b>올림픽 플랫벤치</b>에서 내려온다 — 흔들리면 제자리 반응 점프로',
+        alts:['스텝밀 전력 30초×8','자전거 스프린트 (저항 최대) 20초×10','트레드밀 인터벌 20초×8 (평지)','제자리 감속 드릴 8회×4'] },
+      { k:'r3a2g', name:'드롭 점프 → 가속', target:'6회 × 4', rpe:'RPE 9', detail:'반응 파워. 접지 시간 최소. <b>올림픽 플랫벤치</b>에서 내려온다 — 흔들리면 제자리 반응 점프로. 뛸 자리가 없으면 스텝밀 전력으로',
         ankle:{ name:'스미스 힙 쓰러스트 (폭발)', target:'10회 × 5', detail:'' },
-        alts:['제자리 반응 점프 8회×4','케틀벨 스윙 (16kg) 20회×4'] },
-      { k:'r3a3g', name:'45도 컷팅 / 콘 드릴', target:'좌우 8회 × 3', detail:'실전 컷인·컷아웃 패턴. 상체를 먼저 돌리지 말 것',
+        alts:['스텝밀 전력 20초×6 (계단 = 경사 대용)','제자리 반응 점프 8회×4','케틀벨 스윙 (16kg) 20회×4'] },
+      { k:'r3a3g', name:'45도 컷팅 풋워크', target:'좌우 8회 × 3', detail:'실전 컷인·컷아웃 패턴. 상체를 먼저 돌리지 말 것. <b>콘이 없으니 바닥 표시나 기구 다리를 기준점</b>으로. 자리가 없으면 제자리 풋워크로',
         ankle:{ name:'케이블 힙 어브덕션 + 루프밴드 사이드 스텝', target:'15회 × 4 / 20보 × 3', detail:'측면 안정근만' },
-        alts:['지그재그 콘 드릴','섀도 디펜스 30초×6'] },
+        alts:['제자리 컷팅 풋워크 좌우 10회×3','섀도 디펜스 30초×6','루프밴드 사이드 스텝 20보×4'] },
       { k:'r3a4g', name:'스미스 점프 스쿼트 (40%)', target:'5회 × 4', detail:'근력을 파워로 전환. 속도 우선', grip:true,
         ankle:{ name:'케틀벨 스윙 (16kg)', target:'20회 × 5', detail:'힙 파워, 착지 충격 없음' },
         alts:['덤벨 하중 점프 스쿼트 6회×4'] },
@@ -1241,8 +1284,8 @@ convert: {
       { k:'r3b2', name:'불가리안 스플릿 스쿼트 (10kg)', target:'양발 8회 × 4', rpe:'RPE 8', detail:'편측 근력 유지', ss:'A2', grip:true,
         ankle:{ name:'싱글레그 힙 쓰러스트', target:'양발 15회 × 4', detail:'' },
         alts:['리버스 런지 (10kg)'] },
-      { k:'r3b3', name:'밴드 랫풀다운 / 풀업', target:'15회 × 4', detail:'상체 당김 유지', ss:'B1', grip:true,
-        alts:['인버티드 로우 15회×4'] },
+      { k:'r3b3', name:'풀업 (폭발적으로)', target:'6회 × 4', rpe:'RPE 8', detail:'올릴 때 <b>빠르게</b>, 내릴 때 통제. 리바운드 경합에 쓰이는 당김 속도', ss:'B1', grip:true,
+        alts:['밴드 보조 풀업 8회×4','이심성 풀업 5회×4','인버티드 로우 15회×4'] },
       { k:'r3b4', name:'덤벨 플로어 프레스', target:'12회 × 4', detail:'상체 밀기 유지', ss:'B2', grip:true,
         alts:['플라이오 푸시업 8회×4'] },
       { k:'r3b5', name:'이심성 카프 + 밴드 4방향 발목', target:'15회 × 3 / 각 15회', detail:'대회 전 발목 내구성 확보. 통증 없는 범위에서만', ss:'C',
@@ -1314,8 +1357,8 @@ taper: {
       { k:'r4b1', name:'불가리안 스플릿 (가볍게)', target:'양발 8회 × 2', detail:'감각 유지', grip:true,
         ankle:{ name:'싱글레그 힙 쓰러스트', target:'양발 12회 × 2', detail:'' },
         alts:['리버스 런지 양발 10회×2'] },
-      { k:'r4b2', name:'밴드 랫풀다운 / 풀업', target:'가볍게 × 2', detail:'상체 감각 유지', grip:true,
-        alts:['인버티드 로우 10회×2'] },
+      { k:'r4b2', name:'풀업 (가볍게)', target:'가볍게 × 2', detail:'상체 감각 유지. 테이퍼에선 절대 실패지점까지 가지 않는다', grip:true,
+        alts:['밴드 보조 풀업 8회×2','인버티드 로우 10회×2'] },
       { k:'r4b3', name:'밴드 4방향 발목 + 카프', target:'각 15회 / 15회 × 2', detail:'대회 직전 발목 내구성 마무리' }
     ]},
     gym:{ name:'B · 신경계 점화만 (헬스장)', sub:'가볍게, 피로 남기지 않기', min:'20~25분', items:[
@@ -1355,7 +1398,7 @@ var COMMON_ROUTINES = {
   S: { name:'S · 회복 / 컨디셔닝', sub:'비우는 것도 훈련입니다', min:'10~30분', items:[
     { k:'s1', name:'폼롤러', target:'5분', detail:'뭉친 곳만 골라서' },
     { k:'s2', name:'동적 가동성', target:'5분', detail:'고관절 · 발목 · 흉추' },
-    { k:'s3', name:'Zone2 러닝', target:'20~30분', detail:'대화 가능한 강도. 화요일은 선택, 토요일은 권장. 발목이 안 좋으면 자전거로',
+    { k:'s3', name:'Zone2 러닝', target:'20~30분', detail:'대화 가능한 강도. <b>헬스장 트레드밀 또는 단지 밖에서.</b> 화요일은 선택, 토요일은 권장. 발목이 안 좋으면 자전거로',
       ankle:{ name:'리컴번트 자전거', target:'25분', detail:'등받이가 있어 발목·허리 부담이 가장 적다. 통증 있으면 스텝밀은 피할 것' },
       alts:['자전거 25분','스텝밀 20분','수영 25분'] },
     { k:'s4', name:'정적 스트레칭', target:'10분', detail:'호흡과 함께 길게' }
@@ -1396,7 +1439,7 @@ var PHASE_WARMUP = {
   convert: [
     { k:'wu1', name:'동적 웜업 서킷', target:'3분', detail:'스킵 · 캐리오카 · A스킵' },
     { k:'wu2', name:'발목 4방향 + 한발 균형', target:'2분', detail:'방향전환 세션 전엔 필수' },
-    { k:'wu3', name:'스프린트 빌드업', target:'2분', detail:'50 → 70 → 85% 점진 가속' },
+    { k:'wu3', name:'5m 가속 빌드업', target:'2분', detail:'5m씩 50 → 70 → 85%로 3회. 짧아도 신경계는 충분히 깨어난다. <b>공간이 없으면 제자리 하이니 3×10초</b>로 대신' },
     { k:'wu4', name:'방향전환 프라이밍', target:'2분', detail:'가벼운 컷 · 셔플' },
     { k:'wu5', name:'반응 점프', target:'1분', detail:'신경계 최대 점화' }
   ],
@@ -1439,14 +1482,14 @@ var YT_TERMS = [
   ['라잉 레그컬','lying leg curl'], ['레그프레스 카프','leg press calf raise'],
   ['EZ바','ez bar press'],
   ['핵스쿼트','hack squat machine'], ['레그 컬','leg curl'], ['레그컬','leg curl'],
-  ['트레드밀','treadmill sprint interval'], ['로잉 머신','rowing machine'],
+  ['스텝밀','stair climber stepmill workout'], ['트레드밀','treadmill running form'], ['로잉 머신','rowing machine'],
   ['어시스트 풀업','assisted pull up machine'], ['체스트프레스','chest press machine'],
   ['숄더프레스 머신','shoulder press machine'], ['힙 어브덕션','hip abduction machine'],
   ['불가리안 스플릿','bulgarian split squat'], ['고블릿 스쿼트','goblet squat'],
   ['백스쿼트','barbell back squat'], ['박스 스쿼트','box squat'], ['점프 스쿼트','jump squat'],
   ['스쿼트 점프','squat jump'], ['점핑 스쿼트','squat jump'], ['밴드 스쿼트','band squat'],
   ['레그 프레스','leg press'], ['레그프레스','leg press'],
-  ['드롭 점프','drop jump plyometrics'], ['뎁스 점프','depth jump'], ['박스 점프','box jump'], ['케틀벨 스윙','kettlebell swing form'], ['브로드 점프','broad jump standing long jump'],
+  ['풀업 (철봉)','pull up form'], ['밴드 보조 풀업','band assisted pull up'], ['이심성 풀업','eccentric negative pull up'], ['가중 풀업','weighted pull up'], ['제자리 반응 점프','pogo jump reactive'], ['반응 점프','pogo jump reactive'], ['미니 셔틀','shuttle run agility drill'], ['제자리 컷팅 풋워크','cutting footwork drill'], ['드롭 점프','drop jump plyometrics'], ['뎁스 점프','depth jump'], ['박스 점프','box jump'], ['케틀벨 스윙','kettlebell swing form'], ['브로드 점프','broad jump standing long jump'],
   ['턱 점프','tuck jump'], ['스플릿 점프','split jump'], ['래터럴 바운드','lateral bound'],
   ['스케이터','skater jump'], ['싱글레그 홉','single leg hop'],
   ['트랩바 점프 데드','trap bar jump deadlift'], ['트랩바 데드','trap bar deadlift'],
@@ -1488,7 +1531,7 @@ var YT_TERMS = [
   ['밴드 체스트프레스','resistance band chest press'], ['체스트프레스','chest press'],
   ['덤벨 하이풀','dumbbell high pull'], ['밴드 풀오버','band pullover'],
   ['슈퍼맨','superman exercise'], ['스플릿 스쿼트','split squat'], ['불가리안','bulgarian split squat'],
-  ['백팩','weighted backpack workout'], ['계단','stair jump plyometric'],
+  ['백팩','weighted backpack workout'],
   ['지그재그','zig zag cone drill'], ['콘 드릴','cone agility drill'],
   ['섀도 디펜스','defensive shuffle drill'], ['자전거 인터벌','bike interval workout'],
   ['왕복 달리기','shuttle run'], ['제자리 점프','vertical jump'], ['반응 점프','reactive jump drill'],
@@ -1537,66 +1580,8 @@ function ytLink(name, label) {
 }
 
 // 국면 무관 공통 루틴
-var COMMON_ROUTINES = {
-  K: { name:'K · 코프볼 훈련', sub:'경기력이 실제로 만들어지는 날', min:'60~90분', items:[
-    { k:'k1', name:'훈련 전 동적 웜업', target:'10분', detail:'스킵·캐리오카·런지 회전 → 스프린트 빌드업. 발목 4방향 밴드 30초 포함' },
-    { k:'k2', name:'팀 훈련 참여', target:'본 훈련', detail:'오늘 집중할 키워드 하나를 정하고 들어가기' },
-    { k:'k3', name:'훈련 후 쿨다운', target:'10분', detail:'걷기 + 하체 정적 스트레칭. 바로 앉지 않기' },
-    { k:'k4', name:'오늘의 한 장면 남기기', target:'1분', detail:'멘탈 기록에 한 줄 — 자문화기술지 자료가 됩니다' }
-  ]},
-  S: { name:'S · 회복 / 컨디셔닝', sub:'비우는 것도 훈련입니다', min:'10~30분', items:[
-    { k:'s1', name:'폼롤러', target:'5분', detail:'뭉친 곳만 골라서' },
-    { k:'s2', name:'동적 가동성', target:'5분', detail:'고관절 · 발목 · 흉추' },
-    { k:'s3', name:'Zone2 러닝', target:'20~30분', detail:'대화 가능한 강도. 화요일은 선택, 토요일은 권장. 발목이 안 좋으면 자전거로' },
-    { k:'s4', name:'정적 스트레칭', target:'10분', detail:'호흡과 함께 길게' }
-  ]}
-};
-
 // 발목 관리 루틴 (발목 보호 모드에서 추가 노출)
-var ANKLE_CARE = [
-  { k:'ac1', name:'밴드 4방향 발목', target:'각 15회 × 2', detail:'배측굴곡 · 저측굴곡 · 내번 · 외번. 튜빙밴드를 발에 걸고 천천히' },
-  { k:'ac2', name:'이심성 카프 레이즈', target:'15회 × 3', detail:'3초에 걸쳐 내리기. 통증 3/10을 넘지 않는 범위에서만' },
-  { k:'ac3', name:'한발 균형', target:'30초 × 3', detail:'통증·불안정감 없을 때만. 눈 감으면 난도 상승' },
-  { k:'ac4', name:'발목 펌핑 + 거상', target:'2분', detail:'붓기가 있는 날. 심장보다 높게 올리고 발목만 위아래로' }
-];
-
 // 국면별 램프업 (A·B일)
-var PHASE_WARMUP = {
-  recovery: [
-    { k:'wu1', name:'제자리 스텝 + 팔 스윙', target:'2분', detail:'심박·체온. 엄지 힘 빼기' },
-    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
-    { k:'wu3', name:'고관절·발목·흉추 가동성', target:'3분', detail:'바닥 지지는 주먹·전완' },
-    { k:'wu4', name:'루프밴드 사이드 스텝', target:'1분', detail:'중둔근 점화' },
-    { k:'wu5', name:'스쿼트 → 점프 램프업', target:'2분', detail:'마지막만 80%' }
-  ],
-  rebuild: [
-    { k:'wu1', name:'제자리 스텝 / 줄넘기', target:'3분', detail:'심박·체온 올리기' },
-    { k:'wu2', name:'글루트 브릿지 + 데드버그', target:'2분', detail:'둔근·코어 활성화' },
-    { k:'wu3', name:'동적 가동성 서킷', target:'3분', detail:'고관절·발목·흉추 + 손목·그립 워밍업' },
-    { k:'wu4', name:'루프밴드 몬스터워크', target:'1분', detail:'중둔근 점화 — 발목 부담 분산' },
-    { k:'wu5', name:'점프 램프업 (50→70→85%)', target:'1분', detail:'신경계 점화' }
-  ],
-  strength: [
-    { k:'wu1', name:'유산소 + 관절 회전', target:'3분', detail:'자전거 또는 트레드밀 빠르게 걷기. 발목이 괜찮은 날만 줄넘기' },
-    { k:'wu2', name:'글루트·코어 활성화', target:'2분', detail:'브릿지 · 데드버그 · 루프밴드 워크' },
-    { k:'wu3', name:'발목 4방향 + 카프 워밍업', target:'2분', detail:'고질적 발목엔 이 단계를 절대 건너뛰지 말 것' },
-    { k:'wu4', name:'첫 종목 빈 무게 램프업', target:'2분', detail:'50% → 75% 2세트' },
-    { k:'wu5', name:'포인트 점프 5회', target:'1분', detail:'플라이오 점화' }
-  ],
-  convert: [
-    { k:'wu1', name:'동적 웜업 서킷', target:'3분', detail:'스킵 · 캐리오카 · A스킵' },
-    { k:'wu2', name:'발목 4방향 + 한발 균형', target:'2분', detail:'방향전환 세션 전엔 필수' },
-    { k:'wu3', name:'스프린트 빌드업', target:'2분', detail:'50 → 70 → 85% 점진 가속' },
-    { k:'wu4', name:'방향전환 프라이밍', target:'2분', detail:'가벼운 컷 · 셔플' },
-    { k:'wu5', name:'반응 점프', target:'1분', detail:'신경계 최대 점화' }
-  ],
-  taper: [
-    { k:'wu1', name:'가벼운 동적 웜업', target:'5분', detail:'충분히, 서두르지 않고' },
-    { k:'wu2', name:'발목 4방향', target:'2분', detail:'매일 습관으로' },
-    { k:'wu3', name:'점프 프라이밍', target:'2분', detail:'가볍게 신경계만 깨우기' }
-  ]
-};
-
 // ─────────────────────────────────────────────
 // 엄지 재활 체크포인트
 // ─────────────────────────────────────────────
@@ -2135,9 +2120,106 @@ function renderCardio() {
   body.innerHTML = html;
 }
 
+// ═══════════════════════════════════════════
+// 요일별 권장 환경
+//   집  = 점프·착지·방향전환 (헬스장은 사람이 있으면 동적 훈련이 어렵다)
+//   헬스장 = 스미스·바벨·머신 근력 + 유산소
+// ═══════════════════════════════════════════
+var REC_ENV = {
+  A: { env:'home', label:'집', why:'점프·착지·방향전환이 오늘의 본체입니다. 헬스장은 사람이 있으면 동적 훈련을 제대로 못 합니다.' },
+  B: { env:'gym',  label:'헬스장', why:'스미스·바벨·머신이 필요합니다. 집 덤벨은 18kg 아래라 이 국면의 무게가 안 나옵니다.' },
+  R: { env:'gym',  label:'헬스장', why:'혈류를 돌리는 날입니다. 자전거·스텝밀로 가볍게 푸는 쪽이 회복에 낫습니다.' },
+  S: { env:null,   label:null,     why:'러닝은 트레드밀이나 단지 밖에서, 스트레칭은 집에서. 편한 쪽으로 하세요.' },
+  K: { env:null,   label:null,     why:'' }
+};
+
+// ═══════════════════════════════════════════
+// 강도 기준 — RPE 를 '남은 횟수(RIR)'로 번역한다
+// ═══════════════════════════════════════════
+var RPE_SCALE = [
+  { n:'RPE 6', t:'4회 더 가능', d:'워밍업·회복일 수준. 본세트가 여기면 무게가 낮은 것이다.' },
+  { n:'RPE 7', t:'3회 더 가능', d:'몸이 풀리는 구간. 첫 세트는 여기서 시작해도 좋다.' },
+  { n:'RPE 8', t:'2회 더 가능', d:'<b>근력 세션의 기본값.</b> 마지막 한두 회에서 속도가 눈에 띄게 느려진다.' },
+  { n:'RPE 9', t:'1회 더 가능', d:'파워·최대근력 국면의 마지막 세트에서만.' },
+  { n:'RPE 10', t:'더 못 함', d:'이 프로그램에서는 쓰지 않는다. 다음날 훈련을 갉아먹는다.' }
+];
+var RPE_TARGET = {
+  A: { rpe:'RPE 8~9', line:'속도가 곧 목적이다. <b>속도가 떨어지면 무게가 아니라 세트를 끊는다.</b>' },
+  B: { rpe:'RPE 8', line:'마지막 세트에서 <b>2회 더 할 수 있을 것 같은</b> 지점. 그 이상은 금요일 코프볼 훈련을 깎아먹는다.' },
+  R: { rpe:'RPE 5~6', line:'혈류를 돌리는 게 목적이다. 여기서 힘들면 잘못하고 있는 것이다.' },
+  S: { rpe:'—', line:'회복일이다. 강도를 논하지 않는다.' },
+  K: { rpe:'—', line:'훈련 자체가 강도다.' }
+};
+
+function toggleRpe() {
+  var b = document.getElementById('rpe-body');
+  var open = (b.style.display === 'none');
+  b.style.display = open ? 'block' : 'none';
+  document.getElementById('rpe-caret').textContent = open ? '▴' : '▾';
+}
+
+function renderRpe() {
+  var card = document.getElementById('rpe-card');
+  if (!card) return;
+  var data = store.dates[dateKey(currentDate)] || {};
+  var type = data.routineType || DAY_TYPE[currentDate.getDay()];
+  var tgt = RPE_TARGET[type];
+  if (!tgt || tgt.rpe === '—') { card.style.display = 'none'; return; }
+  card.style.display = '';
+  document.getElementById('rpe-caret').innerHTML =
+    '<span style="font-weight:800;color:var(--c-accent)">' + tgt.rpe + '</span> '
+    + (document.getElementById('rpe-body').style.display === 'none' ? '▾' : '▴');
+
+  var html = '<div class="card-sub" style="margin:0 0 8px">' + tgt.line + '</div>';
+  for (var i = 0; i < RPE_SCALE.length; i++) {
+    var r = RPE_SCALE[i];
+    var here = (tgt.rpe.indexOf(r.n) >= 0);
+    html += '<div class="rpe-row' + (here ? ' here' : '') + '"><span class="rpe-n">' + r.n + '</span>'
+          + '<span><b>' + r.t + '</b> — ' + r.d + '</span></div>';
+  }
+  html += '<div class="rpe-hd">무게를 언제 올리나</div>';
+  html += '<div class="card-sub">정해진 횟수를 <b>모든 세트에서</b> 채웠고 마지막 세트가 RPE 8 이하였다면, 다음 세션에 올립니다. '
+        + '하체·등은 <b>+5kg</b>, 어깨·팔은 <b>+2.5kg</b>. 한 세트라도 못 채웠으면 같은 무게로 한 번 더.</div>';
+  html += '<div class="rpe-hd">기준이 흔들릴 때</div>';
+  html += '<div class="card-sub">세트를 마치고 <b>5분 뒤에 평소로 돌아와 있어야</b> 맞게 한 것입니다. '
+        + '다음 날 계단이 버겁거나 금요일 훈련에서 다리가 안 나가면 <b>지난 세션이 과했던 것</b>입니다. '
+        + '“털리는 느낌”은 이 프로그램의 목표가 아닙니다 — 12월까지 매주 쌓는 게 목표입니다.</div>';
+  document.getElementById('rpe-body').innerHTML = html;
+}
+
+function toggleHomeNote() {
+  var b = document.getElementById('home-note-body');
+  var open = (b.style.display === 'none');
+  b.style.display = open ? 'block' : 'none';
+  document.getElementById('home-caret').textContent = open ? '▴' : '▾';
+}
+
+function renderEnvHint() {
+  var el = document.getElementById('env-hint');
+  if (!el) return;
+  var data = store.dates[dateKey(currentDate)] || {};
+  var type = data.routineType || DAY_TYPE[currentDate.getDay()];
+  var rec = REC_ENV[type];
+  if (!rec || !rec.why) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  if (!rec.env) { el.className = 'env-hint'; el.innerHTML = rec.why; return; }
+  var cur = getEnv();
+  if (cur === rec.env) {
+    el.className = 'env-hint';
+    el.innerHTML = '<b>오늘은 ' + rec.label + '이 맞습니다.</b> ' + rec.why;
+  } else {
+    el.className = 'env-hint nudge';
+    el.innerHTML = '오늘은 <b>' + rec.label + '</b>을 권합니다 — ' + rec.why + ' 그래도 지금 환경으로 진행하셔도 됩니다.';
+  }
+}
+
 function renderEquip() {
   var c = document.getElementById('gym-equip-card');
   if (c) c.style.display = (getEnv() === 'gym') ? '' : 'none';
+  var hn = document.getElementById('home-note-card');
+  if (hn) hn.style.display = (getEnv() === 'home') ? '' : 'none';
+  renderEnvHint();
+  renderRpe();
 }
 
 function renderAnkleCare() {
