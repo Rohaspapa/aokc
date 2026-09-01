@@ -466,6 +466,37 @@ body {
 .rpe-row.here { background: var(--c-accent-light); border-radius: 9px; padding-left: 8px; padding-right: 8px; }
 .rpe-row.here .rpe-n { color: var(--c-accent); }
 .rpe-hd { font-size: 12px; font-weight: 800; color: var(--c-text); margin: 12px 0 4px; }
+
+/* 무게 기록 */
+.w-chip {
+  display: -webkit-inline-flex; display: inline-flex; -webkit-align-items: center; align-items: center; gap: 5px;
+  background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: 10px;
+  padding: 4px 9px; font-size: 11.5px; font-weight: 700; color: var(--c-text);
+  font-family: inherit; cursor: pointer; -webkit-user-select: none; user-select: none;
+}
+.w-chip.set { background: var(--c-accent-light); border-color: var(--c-accent); color: var(--c-accent); }
+.w-chip .w-delta { font-size: 10.5px; font-weight: 800; }
+.w-chip .w-delta.up { color: #1F7A4D; }
+.w-chip .w-delta.dn { color: #B8412A; }
+.w-pad { margin-top: 8px; background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: 12px; padding: 10px; }
+.w-pad-top { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; margin-bottom: 8px; }
+.w-val { -webkit-flex: 1; flex: 1; text-align: center; font-size: 19px; font-weight: 800; color: var(--c-text); }
+.w-val small { font-size: 12px; font-weight: 700; color: var(--c-muted); margin-left: 2px; }
+.w-btn {
+  width: 40px; height: 36px; border-radius: 9px; border: 1px solid var(--c-border);
+  background: var(--c-surface); font-size: 17px; font-weight: 800; color: var(--c-text);
+  font-family: inherit; cursor: pointer; -webkit-flex: 0 0 40px; flex: 0 0 40px;
+}
+.w-btn:active { -webkit-transform: scale(0.94); transform: scale(0.94); }
+.w-quick { display: -webkit-flex; display: flex; gap: 6px; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+.w-quick button {
+  -webkit-flex: 1; flex: 1; min-width: 58px; padding: 7px 4px; border-radius: 9px;
+  border: 1px solid var(--c-border); background: var(--c-surface);
+  font-size: 11.5px; font-weight: 700; color: var(--c-muted); font-family: inherit; cursor: pointer;
+}
+.w-quick button.prim { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+.w-hint { font-size: 11px; color: var(--c-muted); margin-top: 7px; line-height: 1.5; }
+.w-hint b { color: var(--c-text); }
 .fold-head {
   display: -webkit-flex; display: flex;
   -webkit-justify-content: space-between; justify-content: space-between;
@@ -2021,6 +2052,7 @@ function itemRow(item, idx, typeCls, gripGate) {
   h += '</div>';
   h += '<div class="workout-detail" onclick="toggleItem(\'' + item.k + '\')">' + v.detail +
        (warn ? ' <strong style="color:var(--c-coral)">— 재활 체크포인트 통과 전까지 무리한 그립 금지</strong>' : '') + '</div>';
+  h += weightBlock(item, v.name);
   var yl = ytLink(v.name);
   if (yl || alts.length) h += '<div class="row-links">';
   h += yl;
@@ -2038,6 +2070,167 @@ function itemRow(item, idx, typeCls, gripGate) {
   }
   h += '</div></div>';
   return h;
+}
+
+// ═══════════════════════════════════════════
+// 무게 기록
+//   저장: store.dates[k].w = { 항목키: 숫자 }
+//   ※ 새 저장소 키를 만들지 않는다 → 백업 번들 그대로
+//   ※ 준수율(pct)에는 절대 반영하지 않는다
+// ═══════════════════════════════════════════
+var BAND_LV = ['', '1 (가장 약함)', '2', '3 (중간)', '4', '5 (가장 강함)'];
+
+// onclick 문자열 안에 넣기 위한 이스케이프
+function jsq(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+// 이름으로 단위를 판정한다 — 항목마다 손으로 태그하지 않기 위함
+function weightUnit(name) {
+  if (!name) return null;
+  if (/밴드|튜빙|루프|팔로프/.test(name)) return 'band';
+  if (/풀업|딥스|인버티드 로우|플라이오 푸시업|파이크 푸시업/.test(name)) return 'bw';
+  if (/스미스|바벨|덤벨|케이블|랫풀다운|레그 ?프레스|레그컬|체스트프레스|프레스|고블릿|불가리안|카프|RDL|데드리프트|스쿼트|로우|스내치|하이풀|익스텐션|스윙|쓰러스트|브릿지/.test(name)) return 'kg';
+  return null;
+}
+function unitLabel(u) { return u === 'band' ? '단계' : 'kg'; }
+
+// 무엇을 적는 숫자인지 — 종목 종류마다 기준이 다르다
+function wNote(name, u) {
+  if (u === 'band') return '튜빙밴드는 <b>단계</b>로 기록합니다. 같은 밴드라도 <b>도어앵커에서 멀어질수록 저항이 커지니</b>, 발 위치도 같이 기억해 두면 재현이 됩니다.';
+  if (u === 'bw') return '<b>몸무게 외에 추가한 무게</b>만 적습니다. 맨몸이면 0, 배낭에 10kg 넣었으면 10.';
+  if (/스미스|바벨|EZ/.test(name))
+    return '<b>원판 합계만</b> 적습니다 (봉 무게 제외). 스미스 봉은 기종마다 6~20kg이고 상쇄식이면 사실상 0이라 정확히 알기 어렵습니다 — <b>절대값보다 기준을 하나로 정해 계속 쓰는 게 중요합니다.</b> GYMWORK 앱도 원판 기준이라 숫자가 맞아떨어집니다.';
+  if (/랫풀다운|레그 ?프레스|레그컬|체스트프레스|케이블/.test(name))
+    return '머신은 <b>핀에 꽂은 숫자 그대로</b> 적습니다. 기종마다 도르래 배율이 달라 다른 머신과 비교하지 말고 <b>이 기구 안에서만</b> 비교하세요.';
+  if (/덤벨|고블릿|스내치|스윙/.test(name))
+    return '덤벨은 <b>한쪽 무게</b>로 적습니다. 양손에 10kg씩 들면 10입니다. 고블릿처럼 한 개만 들면 그 무게 그대로.';
+  return '<b>기준을 하나로 정해 계속 쓰세요.</b> 절대값보다 지난주 대비 변화가 중요합니다.';
+}
+function wStep(u) { return u === 'band' ? 1 : 2.5; }
+
+// 이름 안의 (10kg) 같은 표기를 기본값으로 끌어온다
+function parseKg(name) {
+  var m = String(name).match(/(\d+(?:\.\d+)?)\s*kg/);
+  return m ? parseFloat(m[1]) : null;
+}
+// 대화로 정한 시작 무게 — 첫 세션에 조정하는 값이다
+var START_W = {
+  r1b1g: 45, r1b3g: 50, r1b4g: 30, r1b5g: 42, r1b6g: 40,
+  r2b1g: 50, r2b2g: 10, r2b3g: 55, r2b4g: 40, r2b6g: 40,
+  r3b1g: 40, r3b2g: 12, r3b4g: 35, r3b5g: 40,
+  r4b1g: 25,
+  r2a2g: 25, r3a4g: 25, r4a2g: 20,
+  // 집 — 덤벨 5kg×2 · 10kg×1 안에서
+  r1b1: 10, r1b3: 15, r1b4: 5,
+  r2b1: 10, r2b2: 10, r2b3: 15, r2b4: 5,
+  r3b1: 10, r3b2: 10, r3b4: 10,
+  r4b1: 10,
+  r1a2: 5, r2a2: 10, r2a3: 10, r3a4: 10, r4a2: 5,
+  r2a3g: 14, r1a2g: 10
+};
+
+function getWMap(d) { var x = store.dates[dateKey(d || currentDate)]; return (x && x.w) || {}; }
+function getW(item) {
+  var m = getWMap(currentDate);
+  return (typeof m[item.k] === 'number') ? m[item.k] : null;
+}
+// 가장 최근에 기록한 무게 (오늘 이전)
+function lastW(key) {
+  var todayK = dateKey(currentDate), best = null, bestK = null;
+  for (var k in store.dates) {
+    if (!store.dates.hasOwnProperty(k) || k >= todayK) continue;
+    var w = store.dates[k].w;
+    if (w && typeof w[key] === 'number') { if (bestK === null || k > bestK) { bestK = k; best = w[key]; } }
+  }
+  return (bestK === null) ? null : { v: best, date: bestK };
+}
+// 오늘 보여줄 기본값: 오늘 기록 > 지난 기록 > 시작값 > 이름 속 kg
+function defaultW(item, name) {
+  var cur = getW(item); if (cur !== null) return cur;
+  var lw = lastW(item.k); if (lw) return lw.v;
+  if (typeof START_W[item.k] === 'number') return START_W[item.k];
+  var pk = parseKg(name); if (pk !== null) return pk;
+  var u = weightUnit(name);
+  if (u === 'band') return 3;
+  if (u === 'bw') return 0;
+  return null;                 // 모르면 비워 둔다 — 0kg 를 기본값처럼 보이게 하지 않는다
+}
+function setW(key, val) {
+  var d = getDayData();
+  if (!d.w) d.w = {};
+  if (val === null) { try { delete d.w[key]; } catch (e) { d.w[key] = null; } }
+  else d.w[key] = Math.round(val * 10) / 10;
+  saveStore(store);            // pct 는 건드리지 않는다 — 무게는 점수가 아니다
+  renderWarmup(); renderRoutine();
+}
+var wOpen = {};
+function toggleW(k) { wOpen[k] = !wOpen[k]; renderWarmup(); renderRoutine(); }
+function bumpW(k, step, name) {
+  var item = { k: k };
+  var cur = getW(item); if (cur === null) cur = defaultW(item, name);
+  var u = weightUnit(name);
+  var v = cur + step;
+  if (u === 'band') { if (v < 1) v = 1; if (v > 5) v = 5; }
+  else if (v < 0) v = 0;
+  setW(k, v);
+}
+function clearW(k) { setW(k, null); }
+
+function wDisplay(u, v) {
+  if (u === 'band') return '밴드 ' + (BAND_LV[Math.round(v)] || v);
+  if (u === 'bw') return (v > 0 ? '+' + v + 'kg' : '맨몸');
+  return v + 'kg';
+}
+
+function weightBlock(item, name) {
+  var u = weightUnit(name);
+  if (!u) return '';
+  var rec = getW(item);
+  var val = defaultW(item, name);
+  var lw = lastW(item.k);
+  var open = !!wOpen[item.k];
+  var blank = (val === null);
+  if (blank) val = 0;
+
+  var chip = '<button class="w-chip' + (rec !== null ? ' set' : '') + '" onclick="toggleW(\'' + item.k + '\')">'
+           + '⚖️ ' + (blank && rec === null ? '무게 입력' : wDisplay(u, val));
+  if (rec !== null && lw && rec !== lw.v) {
+    var d = Math.round((rec - lw.v) * 10) / 10;
+    chip += '<span class="w-delta ' + (d > 0 ? 'up' : 'dn') + '">' + (d > 0 ? '▲' : '▼') + Math.abs(d) + '</span>';
+  }
+  chip += ' ' + (open ? '▴' : '▾') + '</button>';
+  if (!open) return '<div style="margin-top:6px">' + chip + '</div>';
+
+  var st = wStep(u);
+  var s = '<div style="margin-top:6px">' + chip + '</div><div class="w-pad">';
+  s += '<div class="w-pad-top">';
+  s += '<button class="w-btn" onclick="bumpW(\'' + item.k + '\',' + (-st) + ',\'' + jsq(name) + '\')">−</button>';
+  s += '<div class="w-val">' + wDisplay(u, val) + (u === 'band' ? '' : '<small>' + (u === 'bw' ? ' 가중' : '') + '</small>') + '</div>';
+  s += '<button class="w-btn" onclick="bumpW(\'' + item.k + '\',' + st + ',\'' + jsq(name) + '\')">+</button>';
+  s += '</div>';
+  s += '<div class="w-quick">';
+  if (u === 'band') {
+    s += '<button class="prim" onclick="setW(\'' + item.k + '\',' + val + ')">이 단계로 기록</button>';
+  } else {
+    s += '<button onclick="bumpW(\'' + item.k + '\',5,\'' + jsq(name) + '\')">+5</button>';
+    s += '<button onclick="bumpW(\'' + item.k + '\',-5,\'' + jsq(name) + '\')">−5</button>';
+    s += '<button class="prim" onclick="setW(\'' + item.k + '\',' + val + ')">이 무게로 기록</button>';
+  }
+  if (rec !== null) s += '<button onclick="clearW(\'' + item.k + '\')">지우기</button>';
+  s += '</div>';
+
+  var hint;
+  if (lw) {
+    var ago = lw.date.slice(5).replace('-', '/');
+    hint = '지난 기록 <b>' + wDisplay(u, lw.v) + '</b> (' + ago + ')';
+    if (rec !== null && rec > lw.v) hint += ' → 오늘 <b>올렸습니다.</b>';
+  } else if (typeof START_W[item.k] === 'number') {
+    hint = '<b>시작 제안 무게</b>입니다. 첫 세션에 실제로 해보고 맞추세요 — 마지막 세트에서 2회 남으면 맞는 무게입니다.';
+  } else {
+    hint = '첫 기록입니다. 마지막 세트에서 <b>2회 더 할 수 있을 것 같은</b> 무게로 잡으세요.';
+  }
+  s += '<div class="w-hint">' + hint + '</div>';
+  s += '<div class="w-hint" style="border-top:1px solid var(--c-border);margin-top:8px;padding-top:8px">📏 ' + wNote(name, u) + '</div></div>';
+  return s;
 }
 
 var altOpen = {};
@@ -2170,7 +2363,14 @@ function renderRpe() {
     '<span style="font-weight:800;color:var(--c-accent)">' + tgt.rpe + '</span> '
     + (document.getElementById('rpe-body').style.display === 'none' ? '▾' : '▴');
 
-  var html = '<div class="card-sub" style="margin:0 0 8px">' + tgt.line + '</div>';
+  var html = '';
+  html += '<div class="card-sub" style="margin:0 0 10px;padding:9px 10px;background:var(--c-surface-2);border-radius:10px">'
+        + '<b>RPE</b> = Rate of Perceived Exertion, <b>자각 강도</b>입니다. '
+        + '“이 세트가 나에게 얼마나 힘들었나”를 1~10으로 스스로 매기는 눈금이에요. '
+        + '같은 50kg도 잘 잔 날과 못 잔 날이 다르기 때문에, <b>정해진 무게보다 정확한 기준</b>이 됩니다.<br><br>'
+        + '숫자만 보면 애매하니 이 앱에서는 <b>“몇 회 더 할 수 있었나”</b>로 바꿔 씁니다. 그게 판단하기 훨씬 쉽습니다.'
+        + '</div>';
+  html += '<div class="card-sub" style="margin:0 0 8px">' + tgt.line + '</div>';
   for (var i = 0; i < RPE_SCALE.length; i++) {
     var r = RPE_SCALE[i];
     var here = (tgt.rpe.indexOf(r.n) >= 0);
