@@ -511,6 +511,27 @@ body {
 .grp .grp-tag.solo { background: var(--c-surface-2); color: var(--c-text); }
 .grp .grp-rest { margin-left: auto; font-weight: 700; color: var(--c-muted); font-size: 11px; }
 .grp-line { -webkit-flex: 1; flex: 1; height: 1px; background: var(--c-border); }
+
+/* 거리슛 기준선 */
+.sb-pct { text-align: center; margin: 4px 0 12px; }
+.sb-pct .n { font-size: 40px; font-weight: 800; line-height: 1; color: var(--c-accent); }
+.sb-pct .n.dim { color: var(--c-muted); }
+.sb-pct .u { font-size: 17px; font-weight: 800; margin-left: 2px; }
+.sb-pct .sub { font-size: 12px; color: var(--c-muted); margin-top: 5px; }
+.sb-row { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 7px; margin-bottom: 9px; }
+.sb-lb { -webkit-flex: 0 0 42px; flex: 0 0 42px; font-size: 12px; font-weight: 800; color: var(--c-muted); }
+.sb-v { -webkit-flex: 1; flex: 1; text-align: center; font-size: 19px; font-weight: 800; color: var(--c-text); }
+.sb-b {
+  min-width: 42px; height: 36px; border-radius: 9px; border: 1px solid var(--c-border);
+  background: var(--c-surface); font-size: 13px; font-weight: 800; color: var(--c-text);
+  font-family: inherit; cursor: pointer; padding: 0 6px;
+}
+.sb-b:active { -webkit-transform: scale(0.94); transform: scale(0.94); }
+.sb-note { font-size: 11.5px; line-height: 1.55; color: var(--c-muted); margin-top: 10px; }
+.sb-note b { color: var(--c-text); }
+.sb-due { display: inline-block; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 9px; }
+.sb-due.now { background: var(--c-accent-light); color: var(--c-accent); }
+.sb-due.wait { background: var(--c-surface-2); color: var(--c-muted); }
 .fold-head {
   display: -webkit-flex; display: flex;
   -webkit-justify-content: space-between; justify-content: space-between;
@@ -940,6 +961,15 @@ body {
     </div>
 
     <!-- 쿨다운 -->
+    <!-- 거리슛 기준선 -->
+    <div class="card" id="shot-card" style="display:none">
+      <div class="fold-head" onclick="toggleShot()">
+        <span class="card-title-text" style="font-size:13px;font-weight:700">🎯 거리슛 기준선</span>
+        <span class="fold-meta" id="shot-head"></span>
+      </div>
+      <div id="shot-body" style="display:none;margin-top:10px"></div>
+    </div>
+
     <!-- 유산소 병행 안내 -->
     <div class="card" id="cardio-card">
       <div class="fold-head" onclick="toggleCardio()">
@@ -1111,10 +1141,10 @@ rebuild: {
       { k:'r1a4', ss:'B1', name:'래터럴 바운드 + 착지 스틱', target:'좌우 10회 × 4', detail:'착지 후 1초 정지 — 감속 능력이 방향전환의 기초',
         ankle:{ name:'루프밴드 사이드 스텝 + 몬스터워크', target:'20보 × 4', detail:'중둔근 강화. 착지 없이 측면 안정성' },
         alts:['스케이터 점프','사이드 런지 좌우 12회×4'] },
-      { k:'r1a5', ss:'B2', name:'밴드 우드찹 (파워)', target:'좌우 12회 × 3', detail:'도어앵커 높은 위치 → 반대쪽 골반으로. 회전 파워', grip:true,
+      { k:'r1a5', ss:'B2', name:'밴드 우드찹 (파워)', target:'좌우 12회 × 3', detail:'도어앵커 높은 위치 → 반대쪽 골반으로. <b>밴드는 시작 구간에 저항이 거의 없다 — 그 구간을 최대 속도로 끊어야</b> 파워 훈련이 된다. 천천히 끌면 끝에서만 일한다', grip:true,
         alts:['덤벨 스윙 (10kg) 15회×4','러시안 트위스트 좌우 20회×3'] },
-      { k:'r1a6', name:'피로 하 슛 폼 반복', target:'25회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>공을 들고 릴리스 직전까지</b> 슛 동작만 반복한다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>무릎이 먼저 펴지고 팔이 따라 나오는 순서</b>를 지킬 것. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
-        alts:['볼 우드찹 좌우 15회×3','한발 서서 볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
+      { k:'r1a6', name:'피로 하 슛 폼 반복', target:'25회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>경기용 코프볼(약 450g)</b>을 들고 릴리스 직전까지 슛 동작만 반복한다. 무게 도구가 아니라 <b>실전과 같은 공</b>이어야 의미가 있다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>이번 사이클 우선순위는 거리슛</b>이다. 힘의 순서는 <b>무릎·고관절 신전 → 몸통 세우기 → 어깨 → 손끝</b>. 지치면 하체가 빠지고 팔로만 밀게 되는데, <b>릴리스가 머리 위에서 끝나는지</b>로 확인할 수 있다. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
+        alts:['코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','한발 서서 코프볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','코프볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
     ]},
     gym:{ name:'A · 파워 재건 (헬스장)', sub:'착지 기술 + 점프 파워 · 세트 사이 90초', min:'55분', items:[
       { k:'r1a1g', name:'스쿼트 점프 (제자리)', target:'8회 × 5', rpe:'RPE 7', detail:'헬스장에 플라이오 박스가 없어 제자리로 합니다. <b>목적은 높이가 아니라 착지 기술</b> — 무릎이 안으로 모이지 않게, 소리 없이 내려앉기',
@@ -1129,9 +1159,9 @@ rebuild: {
         ankle:{ name:'케이블 힙 어브덕션', target:'양쪽 15회 × 4', detail:'중둔근만 강화. 착지 없음' },
         alts:['스케이터 점프 좌우 10회×4','루프밴드 사이드 스텝 20보×4'] },
       { k:'r1a5g', ss:'B2', name:'케이블 우드찹', target:'좌우 12회 × 4', detail:'상단 풀리 → 반대쪽 골반으로. 회전 파워를 슛으로 연결', grip:true,
-        alts:['행잉 레그레이즈 12회×4','케이블 로테이션 좌우 15회×4','케틀벨 스윙 (16kg) 20회×4','러시안 트위스트 20회×4'] },
-      { k:'r1a6g', name:'피로 하 슛 폼 반복', target:'25회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>공을 들고 릴리스 직전까지</b> 슛 동작만 반복한다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>무릎이 먼저 펴지고 팔이 따라 나오는 순서</b>를 지킬 것. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
-        alts:['볼 우드찹 좌우 15회×3','한발 서서 볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
+        alts:['케틀벨 윈드밀 (16kg) 좌우 6회×3','한 손 케틀벨 스윙 (16kg) 좌우 12회×4','수트케이스 캐리 (16kg) 20m×4','케이블 로테이션 좌우 15회×4','행잉 레그레이즈 12회×4'] },
+      { k:'r1a6g', name:'피로 하 슛 폼 반복', target:'25회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>경기용 코프볼(약 450g)</b>을 들고 릴리스 직전까지 슛 동작만 반복한다. 무게 도구가 아니라 <b>실전과 같은 공</b>이어야 의미가 있다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>이번 사이클 우선순위는 거리슛</b>이다. 힘의 순서는 <b>무릎·고관절 신전 → 몸통 세우기 → 어깨 → 손끝</b>. 지치면 하체가 빠지고 팔로만 밀게 되는데, <b>릴리스가 머리 위에서 끝나는지</b>로 확인할 수 있다. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
+        alts:['코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','한발 서서 코프볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','코프볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
     ]}
   },
   B: {
@@ -1142,8 +1172,8 @@ rebuild: {
       { k:'r1b3', name:'덤벨 RDL (루마니안 데드리프트)', target:'12회 × 4', rpe:'RPE 8', detail:'10kg + 5kg 양손. 3초 하강. 햄스트링이 늘어나는 지점까지만', ss:'A1', grip:true,
         ankle:{ name:'힙 쓰러스트', target:'15회 × 4', detail:'선 자세 부하 없이 후면사슬' },
         alts:['싱글레그 RDL (한발 루마니안 데드리프트) 양발 10회×4','굿모닝 20회×4'] },
-      { k:'r1b4', name:'덤벨 숄더프레스 (5kg×2)', target:'12회 × 4', detail:'머리 위 안정성 — 리바운드 경합에 쓰인다', ss:'A2', grip:true,
-        alts:['파이크 푸시업 12회×4','밴드 오버헤드프레스 15회×4'] },
+      { k:'r1b4', name:'덤벨 숄더프레스 (5kg×2)', target:'12회 × 4', detail:'<b>슛의 마지막 구간과 같은 동작</b>이다 — 머리 위로 밀어 올리는 힘. 리바운드 경합에도 그대로 쓰인다. 팔꿈치를 완전히 펴고 귀 옆까지', ss:'A2', grip:true,
+        alts:['한 손 덤벨 오버헤드 프레스 좌우 10회×4 (편측 오버헤드 안정성)','파이크 푸시업 12회×4','밴드 오버헤드프레스 15회×4'] },
       { k:'r1b5', name:'풀업 (철봉)', target:'최대 × 4', rpe:'RPE 8', detail:'<b>순서가 전부다 — ① 매달린 채 어깨를 귀에서 멀어지게 아래로 내린다 ② 그 상태로 팔꿈치를 뒷주머니 쪽으로 당긴다.</b> “턱을 바에 올린다”가 아니라 <b>“가슴을 바로 가져간다”</b>. 팔꿈치가 옆으로 벌어지면 승모근·이두로 넘어간다. 아직 못 올라가면 <b>스캐퓰러 풀업 → 이심성(5초 하강) → 밴드 보조</b> 순으로 쌓는다. <b>엄지 통증이 있으면 오늘은 밴드 랫풀다운만</b>', ss:'B1', grip:true,
         alts:['스캐퓰러 풀업 8회×3 (어깨만 내렸다 올리기)','이심성 풀업 (5초 하강) 5회×4','밴드 보조 풀업 8회×4'] },
       { k:'r1b7', name:'밴드 랫풀다운', target:'15회 × 4', detail:'<b>문 위쪽에 도어앵커</b>를 걸고 앉아 상체를 45도 뒤로 눕힌 뒤 당긴다. 풀업과 같은 궤적인데 <b>저항을 마음대로 맞출 수 있어</b> 광배 볼륨을 쌓기에 좋다 — 풀업이 아직 안 될 때 이게 진짜 일꾼이다. 어깨를 먼저 내리고 팔꿈치를 뒷주머니로', ss:'B2', grip:true,
@@ -1160,8 +1190,8 @@ rebuild: {
       { k:'r1b3g', name:'스미스 루마니안 데드리프트', target:'10회 × 4', rpe:'RPE 8', detail:'3초 하강. 고정 궤도라 자세 잡기 쉽다. 스트랩 사용 가능', ss:'A1', grip:true,
         ankle:{ name:'라잉 레그컬 + 백 익스텐션', target:'12회 × 4 / 15회 × 3', detail:'선 자세 부하 없이 후면사슬. 로만체어는 발목에 체중이 실리지 않는다' },
         alts:['백 익스텐션 (로만체어) 15회×3','덤벨 RDL 12회×4','라잉 레그컬 12회×4','바벨 RDL 10회×4'] },
-      { k:'r1b4g', name:'스미스 오버헤드프레스', target:'10회 × 4', detail:'앉거나 서서. 머리 위 안정성 — 리바운드 경합에 쓰인다', ss:'A2', grip:true,
-        alts:['덤벨 숄더프레스 12회×4','바벨 OHP 8회×4','EZ바 프레스 12회×4'] },
+      { k:'r1b4g', name:'스미스 오버헤드프레스', target:'10회 × 4', detail:'앉거나 서서. <b>슛의 마지막 구간과 같은 동작</b> — 머리 위로 밀어 올리는 힘이 곧 슛 거리다. 리바운드 경합에도 그대로 쓰인다', ss:'A2', grip:true,
+        alts:['한 손 덤벨 오버헤드 프레스 좌우 10회×4 (편측 오버헤드 안정성)','덤벨 숄더프레스 12회×4','바벨 OHP 8회×4','EZ바 프레스 12회×4'] },
       { k:'r1b5g', name:'랫풀다운 (DRAX)', target:'12회 × 4', detail:'허벅지 패드를 조여 고정하고 <b>가슴 앞으로</b> 당긴다. 목 뒤로 넘기지 않는다. <b>어깨를 먼저 아래로 내린 뒤</b> 팔꿈치를 당겨야 광배에 걸린다 — 팔로만 당기면 승모근이 가져간다', ss:'B1', grip:true,
         alts:['풀업 최대×4','스미스 인버티드 로우 15회×3','케이블 스트레이트암 풀다운 15회×3'] },
       { k:'r1b6g', name:'스미스 카프 레이즈', target:'15회 × 4', detail:'3초에 걸쳐 내리기. 스미스는 균형을 안 잡아도 돼서 <b>발목 강화에 가장 안전한 형태</b>. 통증 없는 범위에서', ss:'B2',
@@ -1206,10 +1236,10 @@ strength: {
       { k:'r2a4', ss:'B1', name:'래터럴 바운드 + 스틱', target:'좌우 8회 × 4', detail:'측면 파워 — 디펜스 미러링의 기초',
         ankle:{ name:'루프밴드 몬스터워크 + 클램쉘', target:'20보 × 4', detail:'중둔근 강화로 발목 부담 분산' },
         alts:['스케이터 점프','사이드 런지 좌우 12회×4'] },
-      { k:'r2a5', ss:'B2', name:'밴드 우드찹 (상단 → 하단)', target:'좌우 12회 × 4', detail:'회전 파워를 슛으로 연결', grip:true,
+      { k:'r2a5', ss:'B2', name:'밴드 우드찹 (상단 → 하단)', target:'좌우 12회 × 4', detail:'회전 파워를 슛으로 연결. <b>밴드는 시작 구간 저항이 거의 없으니 그 구간을 최대 속도로 끊는다</b>', grip:true,
         alts:['덤벨 스윙 (10kg) 20회×4','러시안 트위스트 (5kg) 좌우 20회×4'] },
-      { k:'r2a6', name:'피로 하 슛 폼 반복', target:'30회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>공을 들고 릴리스 직전까지</b> 슛 동작만 반복한다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>무릎이 먼저 펴지고 팔이 따라 나오는 순서</b>를 지킬 것. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
-        alts:['볼 우드찹 좌우 15회×3','한발 서서 볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
+      { k:'r2a6', name:'피로 하 슛 폼 반복', target:'30회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>경기용 코프볼(약 450g)</b>을 들고 릴리스 직전까지 슛 동작만 반복한다. 무게 도구가 아니라 <b>실전과 같은 공</b>이어야 의미가 있다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>이번 사이클 우선순위는 거리슛</b>이다. 힘의 순서는 <b>무릎·고관절 신전 → 몸통 세우기 → 어깨 → 손끝</b>. 지치면 하체가 빠지고 팔로만 밀게 되는데, <b>릴리스가 머리 위에서 끝나는지</b>로 확인할 수 있다. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
+        alts:['코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','한발 서서 코프볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','코프볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
     ]},
     gym:{ name:'A · 파워 / 플라이오 (헬스장)', sub:'최대 출력. 속도가 떨어지면 세트 종료', min:'60분', items:[
       { k:'r2a1g', name:'드롭 점프 → 가속', target:'6회 × 5', rpe:'RPE 9', detail:'플라이오 박스가 없어 <b>올림픽 플랫벤치</b>를 씁니다. 올라서기 전 <b>벤치가 흔들리지 않는지 확인</b>. 내려와 즉시 점프 → 5m 가속. <b>사람이 많아 뛸 자리가 없으면 스텝밀 전력</b>이나 제자리 반응 점프로. 세트 사이 2분 완전 회복',
@@ -1224,9 +1254,9 @@ strength: {
         ankle:{ name:'케이블 힙 어브덕션 + 몬스터워크', target:'15회 × 4 / 20보 × 3', detail:'중둔근만' },
         alts:['스케이터 점프 좌우 10회×4','루프밴드 사이드 스텝 20보×4'] },
       { k:'r2a5g', ss:'B2', name:'케이블 우드찹 (파워)', target:'좌우 12회 × 5', detail:'전신으로 끌어내리기. 회전 파워', grip:true,
-        alts:['행잉 레그레이즈 15회×4','케이블 로테이션 15회×4','케틀벨 스윙 (16kg) 20회×4','러시안 트위스트 20회×4'] },
-      { k:'r2a6g', name:'피로 하 슛 폼 반복', target:'30회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>공을 들고 릴리스 직전까지</b> 슛 동작만 반복한다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>무릎이 먼저 펴지고 팔이 따라 나오는 순서</b>를 지킬 것. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
-        alts:['볼 우드찹 좌우 15회×3','한발 서서 볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
+        alts:['케틀벨 윈드밀 (16kg) 좌우 6회×3','한 손 케틀벨 스윙 (16kg) 좌우 12회×4','수트케이스 캐리 (16kg) 20m×4','케이블 로테이션 15회×4','행잉 레그레이즈 15회×4'] },
+      { k:'r2a6g', name:'피로 하 슛 폼 반복', target:'30회', detail:'파워 세션 <b>직후 바로</b>. 바스켓이 없어도 된다 — <b>경기용 코프볼(약 450g)</b>을 들고 릴리스 직전까지 슛 동작만 반복한다. 무게 도구가 아니라 <b>실전과 같은 공</b>이어야 의미가 있다. 경기 4쿼터의 지친 다리로 폼을 유지하는 게 목적이지 성공률이 목적이 아니다. <b>이번 사이클 우선순위는 거리슛</b>이다. 힘의 순서는 <b>무릎·고관절 신전 → 몸통 세우기 → 어깨 → 손끝</b>. 지치면 하체가 빠지고 팔로만 밀게 되는데, <b>릴리스가 머리 위에서 끝나는지</b>로 확인할 수 있다. 거울 앞이나 휴대폰 촬영으로 남기면 국면 간 비교가 된다', grip:true,
+        alts:['코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','한발 서서 코프볼 홀드 30초×4 (착지 안정 + 볼 컨트롤)','코프볼 데드버그 좌우 12회×3','코트에서 할 땐 하프 니 슛','이미지 트레이닝 5분'] }
     ]}
   },
   B: {
@@ -1306,7 +1336,7 @@ convert: {
         ankle:{ name:'힙 쓰러스트 폭발', target:'10회 × 4', detail:'' },
         alts:['백팩 점프 스쿼트'] },
       { k:'r3a5', name:'캐치앤슛 드릴', target:'30회', detail:'컷 → 캐치 → 슛을 경기 속도로. <b>바스켓이 없으면</b> 컷 동작 후 공을 받아 <b>릴리스 직전까지</b>만 — 발이 멈추기 전에 손이 준비되는 순서를 몸에 남기는 게 목적이다', grip:true,
-        alts:['컷 → 캐치 → 릴리스 폼 반복 30회','볼 우드찹 좌우 15회×3','코트에서 할 땐 하프 니 슛 30구','이미지 트레이닝 5분'] }
+        alts:['컷 → 캐치 → 릴리스 폼 반복 30회','코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','코트에서 할 땐 하프 니 슛 30구','이미지 트레이닝 5분'] }
     ]},
     gym:{ name:'A · 스피드 / 방향전환 (헬스장)', sub:'경기 속도 재현. 공간이 좁으면 홈트 쪽 권장', min:'50분', items:[
       { k:'r3a1g', name:'트레드밀 스프린트 / 셔틀', target:'8회 (회복 90초)', rpe:'RPE 9', detail:'감속 → 재가속. 공간이 없으면 스텝밀·자전거 인터벌로 — <b>평지 트레드밀은 감속 자극이 없어</b> 컨디셔닝 대용일 뿐이다. <b>방향전환에서 발목이 가장 위험</b>하니 웜업을 충분히',
@@ -1322,7 +1352,7 @@ convert: {
         ankle:{ name:'케틀벨 스윙 (16kg)', target:'20회 × 5', detail:'힙 파워, 착지 충격 없음' },
         alts:['덤벨 하중 점프 스쿼트 6회×4'] },
       { k:'r3a5g', name:'캐치앤슛 드릴', target:'30회', detail:'컷 → 캐치 → 슛을 경기 속도로. <b>바스켓이 없으면</b> 컷 동작 후 공을 받아 <b>릴리스 직전까지</b>만 — 발이 멈추기 전에 손이 준비되는 순서를 몸에 남기는 게 목적이다', grip:true,
-        alts:['컷 → 캐치 → 릴리스 폼 반복 30회','볼 우드찹 좌우 15회×3','코트에서 할 땐 하프 니 슛 30구','이미지 트레이닝 5분'] }
+        alts:['컷 → 캐치 → 릴리스 폼 반복 30회','코프볼 우드찹 좌우 15회×3 (아쿠아백 있으면 그걸로)','코트에서 할 땐 하프 니 슛 30구','이미지 트레이닝 5분'] }
     ]}
   },
   B: {
@@ -1572,7 +1602,7 @@ var YT_TERMS = [
   ['컷 &amp; 셔플','lateral shuffle cutting drill'], ['본 종목 램프업 세트','warm up ramp up sets'],
   ['본 종목 가볍게 램프업','warm up ramp up sets'], ['밴드 풀어파트 + 페이스풀','band pull apart face pull'],
   ['종아리·아킬레스 스트레칭','calf achilles stretch'], ['고관절 굴곡근 + 둔근 스트레칭','hip flexor glute stretch'],
-  ['월드 그레이티스트 스트레칭','worlds greatest stretch'], ['볼 우드찹','medicine ball wood chop'], ['볼 데드버그','dead bug with ball'], ['한발 서서 볼 홀드','single leg balance ball hold'], ['스플릿 점프','split jump plyometric lunge'],
+  ['월드 그레이티스트 스트레칭','worlds greatest stretch'], ['코프볼 우드찹','wood chop rotational core'], ['코프볼 데드버그','dead bug core exercise'], ['한발 서서 코프볼 홀드','single leg balance hold'], ['아쿠아백','aqua bag training rotation'], ['케틀벨 윈드밀','kettlebell windmill'], ['한 손 케틀벨 스윙','one arm kettlebell swing'], ['수트케이스 캐리','suitcase carry core'], ['한 손 덤벨 오버헤드 프레스','single arm dumbbell overhead press'], ['스플릿 점프','split jump plyometric lunge'],
   ['싱글레그 RDL','single leg romanian deadlift'], ['밴드 우드찹','banded wood chop'], ['포고 점프','pogo jump plyometric'], ['점프 램프업','jump warm up progression'], ['점프 프라이밍','jump priming warm up'], ['제자리 반응 점프','pogo jump reactive'], ['반응 점프','pogo jump reactive'], ['미니 셔틀','shuttle run agility drill'], ['제자리 컷팅 풋워크','cutting footwork drill'], ['드롭 점프','drop jump plyometrics'], ['뎁스 점프','depth jump'], ['박스 점프','box jump'], ['케틀벨 스윙','kettlebell swing form'], ['브로드 점프','broad jump standing long jump'],
   ['턱 점프','tuck jump'], ['스플릿 점프','split jump'], ['래터럴 바운드','lateral bound'],
   ['스케이터','skater jump'], ['싱글레그 홉','single leg hop'],
@@ -1991,6 +2021,7 @@ function render() {
   document.getElementById('memo-input').value = data.memo || '';
 
   renderEquip();
+  renderShot();
   renderCardio();
   renderRehab();
   renderAnkleCare();
@@ -2528,6 +2559,106 @@ function renderEnvHint() {
     el.className = 'env-hint nudge';
     el.innerHTML = '오늘은 <b>' + rec.label + '</b>을 권합니다 — ' + rec.why + ' 그래도 지금 환경으로 진행하셔도 됩니다.';
   }
+}
+
+// ═══════════════════════════════════════════
+// 거리슛 기준선
+//   저장: store.dates[k].shot = { a: 시도, m: 성공 }
+//   ※ 새 저장소 키 없음 → 백업 번들 그대로
+//   ※ 준수율(pct)에 반영하지 않는다 — 측정이지 준수가 아니다
+//   ※ 경기 기록은 SKC 앱이 담당한다. 여기는 수비 없는 연습 성공률만.
+// ═══════════════════════════════════════════
+var SHOT_CYCLE = 14;          // 2주 주기
+var shotOpen = false;
+
+function getShot(d) {
+  var x = store.dates[dateKey(d || currentDate)];
+  return (x && x.shot) ? x.shot : null;
+}
+function lastShot() {
+  var todayK = dateKey(currentDate), bestK = null, best = null;
+  for (var k in store.dates) {
+    if (!store.dates.hasOwnProperty(k) || k >= todayK) continue;
+    var s = store.dates[k].shot;
+    if (s && s.a > 0) { if (bestK === null || k > bestK) { bestK = k; best = s; } }
+  }
+  return bestK === null ? null : { a: best.a, m: best.m, date: bestK };
+}
+function shotPct(s) { return (s && s.a > 0) ? Math.round(s.m / s.a * 100) : null; }
+function bumpShot(field, step) {
+  var d = getDayData();
+  if (!d.shot) d.shot = { a: 0, m: 0 };
+  d.shot[field] = Math.max(0, (d.shot[field] || 0) + step);
+  if (d.shot.m > d.shot.a) d.shot.m = d.shot.a;   // 성공이 시도를 넘을 수 없다
+  saveStore(store);                                // pct 는 건드리지 않는다
+  renderShot();
+}
+function clearShot() {
+  var d = getDayData();
+  try { delete d.shot; } catch (e) { d.shot = null; }
+  saveStore(store);
+  renderShot();
+}
+function toggleShot() { shotOpen = !shotOpen; renderShot(); }
+
+function renderShot() {
+  var card = document.getElementById('shot-card');
+  if (!card) return;
+  var type = getRoutineForDate(currentDate).type;
+  var cur = getShot(currentDate);
+  // 코프볼 훈련일(코트가 있는 날)이나 이미 기록이 있는 날에만 띄운다
+  if (type !== 'K' && !cur) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  var lw = lastShot();
+  var days = null;
+  if (lw) days = Math.round((ymdToDate(dateKey(currentDate)) - ymdToDate(lw.date)) / 86400000);
+  var due = (!lw || days >= SHOT_CYCLE);
+
+  var pc = shotPct(cur);
+  document.getElementById('shot-head').innerHTML =
+    (cur ? '<span style="font-weight:800;color:var(--c-accent)">' + pc + '%</span> '
+         : '<span class="sb-due ' + (due ? 'now' : 'wait') + '">' + (due ? '측정할 때' : (SHOT_CYCLE - days) + '일 뒤') + '</span> ')
+    + (shotOpen ? '▴' : '▾');
+
+  var body = document.getElementById('shot-body');
+  body.style.display = shotOpen ? '' : 'none';
+  if (!shotOpen) return;
+
+  var a = cur ? cur.a : 0, m = cur ? cur.m : 0;
+  var s = '';
+  s += '<div class="sb-pct"><span class="n' + (a ? '' : ' dim') + '">' + (a ? pc : '–') + '</span><span class="u">%</span>'
+     + '<div class="sub">' + m + ' / ' + a + ' 성공</div></div>';
+  s += '<div class="sb-row"><span class="sb-lb">시도</span>'
+     + '<button class="sb-b" onclick="bumpShot(\'a\',-10)">−10</button>'
+     + '<button class="sb-b" onclick="bumpShot(\'a\',-1)">−1</button>'
+     + '<span class="sb-v">' + a + '</span>'
+     + '<button class="sb-b" onclick="bumpShot(\'a\',1)">+1</button>'
+     + '<button class="sb-b" onclick="bumpShot(\'a\',10)">+10</button></div>';
+  s += '<div class="sb-row"><span class="sb-lb">성공</span>'
+     + '<button class="sb-b" onclick="bumpShot(\'m\',-5)">−5</button>'
+     + '<button class="sb-b" onclick="bumpShot(\'m\',-1)">−1</button>'
+     + '<span class="sb-v">' + m + '</span>'
+     + '<button class="sb-b" onclick="bumpShot(\'m\',1)">+1</button>'
+     + '<button class="sb-b" onclick="bumpShot(\'m\',5)">+5</button></div>';
+  if (cur) s += '<div class="sb-row"><span class="sb-lb"></span><button class="sb-b" style="-webkit-flex:1;flex:1" onclick="clearShot()">이 날 기록 지우기</button></div>';
+
+  var note;
+  if (lw) {
+    var lp = shotPct(lw), ago = lw.date.slice(5).replace('-', '/');
+    note = '지난 측정 <b>' + lp + '%</b> (' + lw.m + '/' + lw.a + ', ' + ago + ')';
+    if (cur && a >= 20) {
+      var diff = pc - lp;
+      note += ' → 오늘 <b>' + (diff > 0 ? '+' : '') + diff + '%p</b>';
+    }
+    if (!due) note += '<br>다음 측정은 <b>' + (SHOT_CYCLE - days) + '일 뒤</b>입니다. 너무 자주 재면 그날 컨디션만 보게 됩니다.';
+  } else {
+    note = '<b>첫 측정입니다.</b> 이 값이 앞으로의 기준선이 됩니다.';
+  }
+  note += '<br><br><b>수비 없이, 같은 자리에서, 50구.</b> 경기 기록이 아니라 폼이 살아 있는지 보는 숫자입니다. '
+        + '30% 이상이면 폼은 멀쩡하고 경기에서 안 들어간 건 슛 선택이나 운입니다. 10% 아래면 그때 기술을 봅니다.';
+  s += '<div class="sb-note">' + note + '</div>';
+  body.innerHTML = s;
 }
 
 function renderEquip() {
